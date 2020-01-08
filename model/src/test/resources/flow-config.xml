@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etl-flow>
+    <conversions>
+        <conversion name="conversion1" sourceType="java" targetType="java">
+            <field source="field1" target="field1_2"/>
+            <field source="field2" target="field2_2"/>
+            <field source="field3" target="field3_2"/>
+        </conversion>
+        <conversion name="conversion2" sourceType="PostgreSQL" targetType="OracleDB">
+            <field source="FIELD1" target="FIELD1_2"/>
+            <field source="FIELD2" target="FIELD2_2"/>
+            <field source="FIELD3" target="FIELD3_2"/>
+        </conversion>
+    </conversions>
+</etl-flow>

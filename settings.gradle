@@ -1,0 +1,4 @@
+rootProject.name = 'model-transformer'
+
+include ":h2-transformer-adapter"
+include ":model"

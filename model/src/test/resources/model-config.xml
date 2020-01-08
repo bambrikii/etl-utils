@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etl-model>
+    <models>
+        <model name="model1">
+            <fields>
+                <field name="intField" type="int" />
+                <field name="stringField" type="string" length="9" />
+                <field name="doubleConfig" type="double" scale="3" precision="5"/>
+            </fields>
+        </model>
+    </models>
+</etl-moodel>

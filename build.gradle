@@ -1,0 +1,19 @@
+allprojects {
+
+    group = "org.bambrikii.etl"
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+}
+
+subprojects {
+    apply plugin: "java"
+    
+    dependencies {
+        compileOnly("org.projectlombok:lombok:$lombokVersion")
+	annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+    }
+
+}
