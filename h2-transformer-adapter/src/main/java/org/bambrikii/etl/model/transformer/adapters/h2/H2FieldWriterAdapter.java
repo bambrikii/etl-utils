@@ -1,19 +1,45 @@
+package org.bambrikii.etl.model.transformer.adapters.h2;
 
 import org.bambikii.etl.model.transformer.adapters.FieldWriterAdapter;
+import org.bambikii.etl.model.transformer.builders.FieldWriterFactory;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-/**
- *
- * @author Alexander_Arakelian
- */
-public class H2FieldWriterAdapter<T> implements FieldWriterAdapter<T> {
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
-    public void writeField(T obj, String fieldName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+public class H2FieldWriterAdapter extends FieldWriterFactory<PreparedStatement> {
+    @Override
+    protected FieldWriterAdapter<PreparedStatement, String> getStringWriter(String name) {
+        return (obj, value) -> {
+            int pos = -1;
+            try {
+                obj.setString(pos, value);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        };
     }
 
+    @Override
+    protected FieldWriterAdapter<PreparedStatement, Integer> getIntWriter(String name) {
+        return (obj, value) -> {
+            int pos = -1;
+            try {
+                obj.setInt(pos, value);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        };
+    }
+
+    @Override
+    protected FieldWriterAdapter<PreparedStatement, Double> getDoubleWriter(String name) {
+        return (obj, value) -> {
+            int pos = -1;
+            try {
+                obj.setDouble(pos, value);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        };
+    }
 }

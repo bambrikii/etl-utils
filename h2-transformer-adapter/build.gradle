@@ -1,3 +1,5 @@
 dependencies {
     compile project(":model")
+    
+    compile("com.h2database:h2:$h2dbVersion")
 }
