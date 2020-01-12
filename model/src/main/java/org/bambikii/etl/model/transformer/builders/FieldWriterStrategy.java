@@ -2,9 +2,9 @@ package org.bambikii.etl.model.transformer.builders;
 
 import org.bambikii.etl.model.transformer.adapters.FieldWriterAdapter;
 
-import static org.bambikii.etl.model.transformer.builders.FieldReaderFactory.*;
+import static org.bambikii.etl.model.transformer.builders.FieldReaderStrategy.*;
 
-public abstract class FieldWriterFactory<T> {
+public abstract class FieldWriterStrategy<T> {
     public FieldWriterAdapter<T, ?> createOne(String name, String type) {
         switch (type) {
             case STRING:

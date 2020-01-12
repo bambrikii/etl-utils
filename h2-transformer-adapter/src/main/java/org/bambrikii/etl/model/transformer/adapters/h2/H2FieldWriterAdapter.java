@@ -1,12 +1,12 @@
 package org.bambrikii.etl.model.transformer.adapters.h2;
 
 import org.bambikii.etl.model.transformer.adapters.FieldWriterAdapter;
-import org.bambikii.etl.model.transformer.builders.FieldWriterFactory;
+import org.bambikii.etl.model.transformer.builders.FieldWriterStrategy;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class H2FieldWriterAdapter extends FieldWriterFactory<PreparedStatement> {
+public class H2FieldWriterAdapter extends FieldWriterStrategy<PreparedStatement> {
     @Override
     protected FieldWriterAdapter<PreparedStatement, String> getStringWriter(String name) {
         return (obj, value) -> {

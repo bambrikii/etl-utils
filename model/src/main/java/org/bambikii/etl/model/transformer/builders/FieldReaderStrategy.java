@@ -2,7 +2,7 @@ package org.bambikii.etl.model.transformer.builders;
 
 import org.bambikii.etl.model.transformer.adapters.FieldReaderAdapter;
 
-public abstract class FieldReaderFactory<T> {
+public abstract class FieldReaderStrategy<T> {
     public static final String STRING = "STRING";
     public static final String INT = "INT";
     public static final String DOUBLE = "DOUBLE";

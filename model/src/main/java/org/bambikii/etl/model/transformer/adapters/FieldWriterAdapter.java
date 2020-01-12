@@ -1,5 +1,5 @@
 package org.bambikii.etl.model.transformer.adapters;
 
-public interface FieldWriterAdapter<T, I> {
-    void writeField(T obj, I value);
+public interface FieldWriterAdapter<W, I> {
+    void writeField(W obj, I value);
 }

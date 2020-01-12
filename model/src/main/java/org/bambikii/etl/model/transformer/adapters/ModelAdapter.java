@@ -1,23 +1,22 @@
 package org.bambikii.etl.model.transformer.adapters;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class ModelAdapter<T, R, W> {
-    private List<FieldTransformerPair> fieldTransformers = new ArrayList<>();
+public class ModelAdapter<S, T> {
+    private final List<FieldTransformerPair> fieldAdapters;
 
-    public <O> void addFieldTransformer(FieldReaderAdapter<R, O> readerAdapter, FieldWriterAdapter<W, O> writerAdapter) {
-        FieldTransformerPair pair = new FieldTransformerPair();
-        pair.setFieldReader(readerAdapter);
-        pair.setFieldWriter(writerAdapter);
-        fieldTransformers.add(pair);
+    public ModelAdapter(ArrayList<FieldTransformerPair> transformers) {
+        fieldAdapters = Collections.unmodifiableList(transformers);
     }
 
-    public void read(T obj) {
-        for (FieldTransformerPair pair : fieldTransformers) {
+    public void adapt(S source, T target) {
+        for (FieldTransformerPair pair : fieldAdapters) {
             FieldWriterAdapter writer = pair.getFieldWriter();
             FieldReaderAdapter reader = pair.getFieldReader();
-            writer.writeField(obj, reader.readField(obj));
+            Object value = reader.readField(source);
+            writer.writeField(target, value);
         }
     }
 }
