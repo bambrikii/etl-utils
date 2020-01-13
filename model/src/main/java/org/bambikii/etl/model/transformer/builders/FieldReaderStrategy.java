@@ -3,9 +3,9 @@ package org.bambikii.etl.model.transformer.builders;
 import org.bambikii.etl.model.transformer.adapters.FieldReaderAdapter;
 
 public abstract class FieldReaderStrategy<T> {
-    public static final String STRING = "STRING";
-    public static final String INT = "INT";
-    public static final String DOUBLE = "DOUBLE";
+    public static final String STRING = "string";
+    public static final String INT = "int";
+    public static final String DOUBLE = "double";
 
     public FieldReaderAdapter<T, ?> createOne(String name, String type) {
         switch (type) {

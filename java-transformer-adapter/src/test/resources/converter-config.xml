@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<conversion-root>
+    <conversions>
+        <conversion name="conversion1" sourceModel="model1" sourceReaderType="java-map" targetReaderType="java-map">
+            <fields>
+                <field source="stringField" target="stringField_2"/>
+                <field source="intField" target="intField_2"/>
+                <field source="doubleField" target="doubleField_2"/>
+            </fields>
+        </conversion>
+        <!--
+        <conversion name="conversion2" model="model1" sourceType="PostgreSQL" targetType="OracleDB">
+            <field source="FIELD1" target="FIELD1_2"/>
+            <field source="FIELD2" target="FIELD2_2"/>
+            <field source="FIELD3" target="FIELD3_2"/>
+        </conversion>
+        -->
+    </conversions>
+</conversion-root>

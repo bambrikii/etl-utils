@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model-root>
+    <models>
+        <model name="model1">
+            <fields>
+                <field name="intField" type="int"/>
+                <field name="stringField" type="string" length="9"/>
+                <field name="doubleField" type="double" scale="3" precision="5"/>
+            </fields>
+        </model>
+    </models>
+</model-root>
