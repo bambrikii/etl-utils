@@ -1,5 +1,5 @@
 rootProject.name = 'model-transformer'
 
-include ":h2-transformer-adapter"
-include ":java-transformer-adapter"
 include ":model"
+include ":java-transformer-adapter"
+include ":db-transformer-adapter"

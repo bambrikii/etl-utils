@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<conversion-root>
+    <conversions>
+        <conversion name="conversion1" sourceModel="model1" sourceReaderType="h2" targetReaderType="h2">
+            <fields>
+                <field source="col1" target="col1_2"/>
+                <field source="col2" target="col2_2"/>
+            </fields>
+        </conversion>
+    </conversions>
+</conversion-root>

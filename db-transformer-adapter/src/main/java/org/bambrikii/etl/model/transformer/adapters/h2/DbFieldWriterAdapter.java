@@ -6,13 +6,14 @@ import org.bambikii.etl.model.transformer.builders.FieldWriterStrategy;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class H2FieldWriterAdapter extends FieldWriterStrategy<PreparedStatement> {
+public class DbFieldWriterAdapter extends FieldWriterStrategy<PreparedStatement> {
+    private int paramIndex = 1;
+
     @Override
     protected FieldWriterAdapter<PreparedStatement, String> getStringWriter(String name) {
         return (obj, value) -> {
-            int pos = -1;
             try {
-                obj.setString(pos, value);
+                obj.setString(paramIndex++, value);
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
@@ -22,9 +23,8 @@ public class H2FieldWriterAdapter extends FieldWriterStrategy<PreparedStatement>
     @Override
     protected FieldWriterAdapter<PreparedStatement, Integer> getIntWriter(String name) {
         return (obj, value) -> {
-            int pos = -1;
             try {
-                obj.setInt(pos, value);
+                obj.setInt(paramIndex++, value);
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
@@ -34,9 +34,8 @@ public class H2FieldWriterAdapter extends FieldWriterStrategy<PreparedStatement>
     @Override
     protected FieldWriterAdapter<PreparedStatement, Double> getDoubleWriter(String name) {
         return (obj, value) -> {
-            int pos = -1;
             try {
-                obj.setDouble(pos, value);
+                obj.setDouble(paramIndex++, value);
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
