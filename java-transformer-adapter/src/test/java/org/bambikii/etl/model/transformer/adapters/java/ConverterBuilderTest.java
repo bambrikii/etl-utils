@@ -1,6 +1,6 @@
 package org.bambikii.etl.model.transformer.adapters.java;
 
-import org.bambikii.etl.model.transformer.adapters.ModelAdapter;
+import org.bambikii.etl.model.transformer.adapters.ModelFieldAdapter;
 import org.bambikii.etl.model.transformer.builders.ConverterBuilder;
 import org.bambrikii.etl.model.transformer.adapters.java.JavaMapFactory;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ public class ConverterBuilderTest {
     @Test
     public void shouldConvert() throws JAXBException {
         ConverterBuilder builder = new ConverterBuilder();
-        Map<String, ModelAdapter> adapter = builder
+        Map<String, ModelFieldAdapter> adapter = builder
                 .readerStrategy("java-map", JavaMapFactory.fieldReader())
                 .writerStrategy("java-map", JavaMapFactory.fieldWriter())
                 .modelConfig(ConverterBuilderTest.class.getResourceAsStream("/model-config.xml"))

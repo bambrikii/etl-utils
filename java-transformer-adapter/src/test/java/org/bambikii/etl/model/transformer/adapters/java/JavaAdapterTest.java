@@ -1,6 +1,6 @@
 package org.bambikii.etl.model.transformer.adapters.java;
 
-import org.bambikii.etl.model.transformer.adapters.ModelAdapter;
+import org.bambikii.etl.model.transformer.adapters.ModelFieldAdapter;
 import org.bambrikii.etl.model.transformer.adapters.java.JavaMapFactory;
 import org.bambrikii.etl.model.transformer.adapters.java.JavaReflectionFactory;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JavaAdapterTest {
     @Test
     public void shouldBuildJavaMap() {
-        ModelAdapter adapter = createTestAdapter(
+        ModelFieldAdapter adapter = createTestAdapter(
                 JavaMapFactory.fieldReader(),
                 JavaMapFactory.fieldWriter()
         );
@@ -29,7 +29,7 @@ public class JavaAdapterTest {
 
     @Test
     public void shouldBuildJavaReflection() {
-        ModelAdapter adapter = createTestAdapter(
+        ModelFieldAdapter adapter = createTestAdapter(
                 JavaReflectionFactory.fieldReader(TestInClass.class),
                 JavaReflectionFactory.fieldWriter(TestOutClass.class)
         );

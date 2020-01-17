@@ -1,6 +1,6 @@
 package org.bambrikii.etl.model.transformer.adapters.h2;
 
-import org.bambikii.etl.model.transformer.adapters.ModelAdapter;
+import org.bambikii.etl.model.transformer.adapters.ModelFieldAdapter;
 import org.bambikii.etl.model.transformer.builders.ConverterBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +20,7 @@ public class DbAdapterTest {
     @Test
     public void shouldReadAndWrite() throws SQLException, JAXBException {
         ConverterBuilder builder = new ConverterBuilder();
-        Map<String, ModelAdapter> adapter = builder
+        Map<String, ModelFieldAdapter> adapter = builder
                 .readerStrategy("h2", DbAdapterFactory.fieldReader())
                 .writerStrategy("h2", DbAdapterFactory.fieldWriter())
                 .modelConfig(DbAdapterTest.class.getResourceAsStream("/model-config.xml"))

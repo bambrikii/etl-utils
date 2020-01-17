@@ -3,7 +3,7 @@ package org.bambikii.etl.model.transformer.builders;
 import org.bambikii.etl.model.transformer.adapters.FieldReaderAdapter;
 import org.bambikii.etl.model.transformer.adapters.FieldConversionPair;
 import org.bambikii.etl.model.transformer.adapters.FieldWriterAdapter;
-import org.bambikii.etl.model.transformer.adapters.ModelAdapter;
+import org.bambikii.etl.model.transformer.adapters.ModelFieldAdapter;
 import org.bambikii.etl.model.transformer.config.ConfigMarshaller;
 import org.bambikii.etl.model.transformer.config.model.*;
 
@@ -56,8 +56,8 @@ public class ConverterBuilder {
         return this;
     }
 
-    public Map<String, ModelAdapter> build() {
-        Map<String, ModelAdapter> converters = new HashMap<>();
+    public Map<String, ModelFieldAdapter> build() {
+        Map<String, ModelFieldAdapter> converters = new HashMap<>();
         conversionRoot
                 .getModelConversionConfigs()
                 .forEach(conversion -> {
@@ -75,7 +75,7 @@ public class ConverterBuilder {
                                 FieldWriterAdapter fieldWriter = createFieldWriter(sourceModelFieldConfig, targetModelFieldConfig, fieldConversionConfig, fieldWriterStrategy);
                                 fieldConversionPairs.add(new FieldConversionPair(fieldReader, fieldWriter));
                             });
-                    converters.put(conversion.getName(), new ModelAdapter(fieldConversionPairs));
+                    converters.put(conversion.getName(), new ModelFieldAdapter(fieldConversionPairs));
                 });
         return converters;
     }

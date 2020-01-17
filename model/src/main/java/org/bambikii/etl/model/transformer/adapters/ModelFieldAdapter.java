@@ -3,10 +3,10 @@ package org.bambikii.etl.model.transformer.adapters;
 import java.util.Collections;
 import java.util.List;
 
-public class ModelAdapter<S, T> {
+public class ModelFieldAdapter<S, T> {
     private final List<FieldConversionPair> fieldAdapters;
 
-    public ModelAdapter(List<FieldConversionPair> transformers) {
+    public ModelFieldAdapter(List<FieldConversionPair> transformers) {
         fieldAdapters = Collections.unmodifiableList(transformers);
     }
 
