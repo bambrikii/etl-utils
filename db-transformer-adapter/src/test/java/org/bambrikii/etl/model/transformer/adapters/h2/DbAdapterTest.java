@@ -1,6 +1,7 @@
 package org.bambrikii.etl.model.transformer.adapters.h2;
 
 import org.bambikii.etl.model.transformer.adapters.ModelFieldAdapter;
+import org.bambikii.etl.model.transformer.adapters.ModelInputAdapter;
 import org.bambikii.etl.model.transformer.builders.ConverterBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,7 @@ public class DbAdapterTest {
     @Test
     public void shouldReadAndWrite() throws SQLException, JAXBException {
         ConverterBuilder builder = new ConverterBuilder();
-        Map<String, ModelFieldAdapter> adapter = builder
+        Map<String, ModelFieldAdapter> adapters = builder
                 .readerStrategy("h2", DbAdapterFactory.fieldReader())
                 .writerStrategy("h2", DbAdapterFactory.fieldWriter())
                 .modelConfig(DbAdapterTest.class.getResourceAsStream("/model-config.xml"))
@@ -39,14 +40,25 @@ public class DbAdapterTest {
                 statement3.execute("insert into t1 (col1, col2) values ('str1', 3)");
             }
 
-            try (ResultSet rs = cn.createStatement().executeQuery("select col1, col2 from t1");
-                 PreparedStatement statement5 = cn.prepareStatement("insert into t2 (col1_2, col2_2) values (?1, ?2)");
-            ) {
-                while (rs.next()) {
-                    adapter.get("conversion1").adapt(rs, statement5);
-                    statement5.execute();
-                }
-            }
+            String selectQuery = "select col1, col2 from t1";
+            String insertQuery = "insert into t2 (col1_2, col2_2) values (?1, ?2)";
+            ModelFieldAdapter conversion1Adapter = adapters.get("conversion1");
+//            try (ResultSet rs = cn.createStatement().executeQuery(selectQuery);
+//                 PreparedStatement statement5 = cn.prepareStatement(insertQuery);
+//            ) {
+//                while (rs.next()) {
+//                    conversion1Adapter.adapt(rs, statement5);
+//                    statement5.execute();
+//                }
+//            }
+
+            ModelInputAdapter
+                    .adapt(
+                            conversion1Adapter,
+                            DbModelAdapterFactory.createInputAdapter(cn, selectQuery),
+                            DbModelAdapterFactory.createInputAdvance(),
+                            DbModelAdapterFactory.createOutputAdapter(cn, insertQuery)
+                    );
 
             try (ResultSet rs = cn.createStatement().executeQuery("select col1_2, col2_2 from t2")) {
                 if (rs.next()) {
