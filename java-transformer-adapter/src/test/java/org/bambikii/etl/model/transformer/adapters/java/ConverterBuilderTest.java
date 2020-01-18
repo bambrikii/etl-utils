@@ -1,8 +1,10 @@
 package org.bambikii.etl.model.transformer.adapters.java;
 
 import org.bambikii.etl.model.transformer.adapters.ModelFieldAdapter;
+import org.bambikii.etl.model.transformer.adapters.ModelInputAdapter;
 import org.bambikii.etl.model.transformer.builders.ConverterBuilder;
 import org.bambrikii.etl.model.transformer.adapters.java.JavaMapFactory;
+import org.bambrikii.etl.model.transformer.adapters.java.JavaModelAdapterFactory;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.bind.JAXBException;
@@ -15,7 +17,7 @@ public class ConverterBuilderTest {
     @Test
     public void shouldConvert() throws JAXBException {
         ConverterBuilder builder = new ConverterBuilder();
-        Map<String, ModelFieldAdapter> adapter = builder
+        Map<String, ModelFieldAdapter> adapters = builder
                 .readerStrategy("java-map", JavaMapFactory.fieldReader())
                 .writerStrategy("java-map", JavaMapFactory.fieldWriter())
                 .modelConfig(ConverterBuilderTest.class.getResourceAsStream("/model-config.xml"))
@@ -29,7 +31,11 @@ public class ConverterBuilderTest {
 
         Map<String, Object> target = new HashMap<>();
 
-        adapter.get("conversion1").adapt(source, target);
+        ModelInputAdapter.adapt(
+                adapters.get("conversion1"),
+                JavaModelAdapterFactory.createJavaInputAdapter(source),
+                JavaModelAdapterFactory.createJavaOutputAdapter(target)
+        );
 
         assertEquals("str1", target.get("stringField_2"));
         assertEquals(2, target.get("intField_2"));

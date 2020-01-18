@@ -1,4 +1,4 @@
-package org.bambrikii.etl.model.transformer.adapters.h2;
+package org.bambrikii.etl.model.transformer.adapters.db;
 
 import org.bambikii.etl.model.transformer.adapters.ModelFieldAdapter;
 import org.bambikii.etl.model.transformer.adapters.ModelInputAdapter;
@@ -8,12 +8,13 @@ import org.junit.jupiter.api.Test;
 import javax.xml.bind.JAXBException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 
+import static org.bambrikii.etl.model.transformer.adapters.db.DbModelAdapterFactory.createDbInputAdapter;
+import static org.bambrikii.etl.model.transformer.adapters.db.DbModelAdapterFactory.createDbOutputAdapter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -28,8 +29,7 @@ public class DbAdapterTest {
                 .converterConfig(DbAdapterTest.class.getResourceAsStream("/converter-config.xml"))
                 .build();
 
-        String url = "jdbc:h2:mem:";
-        try (Connection cn = DriverManager.getConnection(url);
+        try (Connection cn = DriverManager.getConnection("jdbc:h2:mem:");
              Statement statement1 = cn.createStatement();
              Statement statement2 = cn.createStatement();
         ) {
@@ -40,25 +40,11 @@ public class DbAdapterTest {
                 statement3.execute("insert into t1 (col1, col2) values ('str1', 3)");
             }
 
-            String selectQuery = "select col1, col2 from t1";
-            String insertQuery = "insert into t2 (col1_2, col2_2) values (?1, ?2)";
-            ModelFieldAdapter conversion1Adapter = adapters.get("conversion1");
-//            try (ResultSet rs = cn.createStatement().executeQuery(selectQuery);
-//                 PreparedStatement statement5 = cn.prepareStatement(insertQuery);
-//            ) {
-//                while (rs.next()) {
-//                    conversion1Adapter.adapt(rs, statement5);
-//                    statement5.execute();
-//                }
-//            }
-
-            ModelInputAdapter
-                    .adapt(
-                            conversion1Adapter,
-                            DbModelAdapterFactory.createInputAdapter(cn, selectQuery),
-                            DbModelAdapterFactory.createInputAdvance(),
-                            DbModelAdapterFactory.createOutputAdapter(cn, insertQuery)
-                    );
+            ModelInputAdapter.adapt(
+                    adapters.get("conversion1"),
+                    createDbInputAdapter(cn, "select col1, col2 from t1"),
+                    createDbOutputAdapter(cn, "insert into t2 (col1_2, col2_2) values (?1, ?2)")
+            );
 
             try (ResultSet rs = cn.createStatement().executeQuery("select col1_2, col2_2 from t2")) {
                 if (rs.next()) {

@@ -1,4 +1,4 @@
-package org.bambrikii.etl.model.transformer.adapters.h2;
+package org.bambrikii.etl.model.transformer.adapters.db;
 
 import org.bambikii.etl.model.transformer.builders.FieldReaderStrategy;
 import org.bambikii.etl.model.transformer.builders.FieldWriterStrategy;
