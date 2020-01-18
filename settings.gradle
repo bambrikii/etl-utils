@@ -1,5 +1,6 @@
-rootProject.name = 'model-transformer'
+rootProject.name = 'etl-utils'
 
-include ":model"
-include ":java-transformer-adapter"
-include ":db-transformer-adapter"
+include ":etl-model"
+include ":etl-adapters:etl-adapter-java"
+include ":etl-adapters:etl-adapter-db"
+include ":etl-adapters:etl-adapter-json"
