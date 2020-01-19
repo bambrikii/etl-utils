@@ -1,21 +1,21 @@
 package org.bambikii.etl.model.transformer.adapters.java;
 
-import org.bambikii.etl.model.transformer.adapters.ModelFieldAdapter;
-import org.bambrikii.etl.model.transformer.adapters.java.JavaMapFactory;
-import org.bambrikii.etl.model.transformer.adapters.java.JavaReflectionFactory;
+import org.bambikii.etl.model.transformer.adapters.EtlFieldAdapter;
+import org.bambrikii.etl.model.transformer.adapters.java.EtlJavaMapFactory;
+import org.bambrikii.etl.model.transformer.adapters.java.EtlJavaReflectionFactory;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.bambikii.etl.model.transformer.adapters.java.AdapterTestUtils.*;
+import static org.bambikii.etl.model.transformer.adapters.java.EtlAdapterTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JavaAdapterTest {
+public class EtlJavaAdapterTest {
     @Test
     public void shouldBuildJavaMap() {
-        ModelFieldAdapter adapter = createTestAdapter(
-                JavaMapFactory.fieldReader(),
-                JavaMapFactory.fieldWriter()
+        EtlFieldAdapter adapter = createTestAdapter(
+                EtlJavaMapFactory.fieldReader(),
+                EtlJavaMapFactory.fieldWriter()
         );
 
         Map<String, Object> source = createTestInMap();
@@ -29,9 +29,9 @@ public class JavaAdapterTest {
 
     @Test
     public void shouldBuildJavaReflection() {
-        ModelFieldAdapter adapter = createTestAdapter(
-                JavaReflectionFactory.fieldReader(TestInClass.class),
-                JavaReflectionFactory.fieldWriter(TestOutClass.class)
+        EtlFieldAdapter adapter = createTestAdapter(
+                EtlJavaReflectionFactory.fieldReader(TestInClass.class),
+                EtlJavaReflectionFactory.fieldWriter(TestOutClass.class)
         );
 
         TestInClass source = createTestInClass();

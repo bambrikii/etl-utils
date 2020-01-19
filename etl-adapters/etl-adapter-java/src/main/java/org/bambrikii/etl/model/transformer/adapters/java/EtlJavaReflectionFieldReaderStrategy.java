@@ -1,18 +1,18 @@
 package org.bambrikii.etl.model.transformer.adapters.java;
 
-import org.bambikii.etl.model.transformer.adapters.FieldReaderAdapter;
-import org.bambikii.etl.model.transformer.builders.FieldReaderStrategy;
+import org.bambikii.etl.model.transformer.adapters.EtlFieldExtractable;
+import org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class JavaReflectionFieldReaderStrategy<T> extends FieldReaderStrategy<T> {
+public class EtlJavaReflectionFieldReaderStrategy<T> extends EtlFieldReaderStrategy<T> {
     private final Class<T> cls;
 
-    public JavaReflectionFieldReaderStrategy(Class<T> cls) {
+    public EtlJavaReflectionFieldReaderStrategy(Class<T> cls) {
         this.cls = cls;
     }
 
-    private <O> FieldReaderAdapter<T, O> getField(String name) {
+    private <O> EtlFieldExtractable<T, O> getField(String name) {
         String methodName = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
         return (obj) -> {
             try {
@@ -24,17 +24,17 @@ public class JavaReflectionFieldReaderStrategy<T> extends FieldReaderStrategy<T>
     }
 
     @Override
-    protected FieldReaderAdapter<T, String> getStringReader(String name) {
+    protected EtlFieldExtractable<T, String> getStringReader(String name) {
         return getField(name);
     }
 
     @Override
-    protected FieldReaderAdapter<T, Integer> getIntReader(String name) {
+    protected EtlFieldExtractable<T, Integer> getIntReader(String name) {
         return getField(name);
     }
 
     @Override
-    protected FieldReaderAdapter<T, Double> getDoubleReader(String name) {
+    protected EtlFieldExtractable<T, Double> getDoubleReader(String name) {
         return getField(name);
     }
 }

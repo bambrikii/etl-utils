@@ -1,41 +1,43 @@
 package org.bambikii.etl.model.transformer.builders;
 
-import org.bambikii.etl.model.transformer.adapters.FieldReaderAdapter;
-import org.bambikii.etl.model.transformer.adapters.FieldConversionPair;
-import org.bambikii.etl.model.transformer.adapters.FieldWriterAdapter;
-import org.bambikii.etl.model.transformer.adapters.ModelFieldAdapter;
-import org.bambikii.etl.model.transformer.config.ConfigMarshaller;
+import org.bambikii.etl.model.transformer.adapters.EtlFieldExtractable;
+import org.bambikii.etl.model.transformer.adapters.EtlFieldConversionPair;
+import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
+import org.bambikii.etl.model.transformer.adapters.EtlFieldAdapter;
+import org.bambikii.etl.model.transformer.config.EtlConfigMarshaller;
 import org.bambikii.etl.model.transformer.config.model.*;
 
 import javax.xml.bind.JAXBException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-public class ConverterBuilder {
-    private final ConfigMarshaller marshaller;
-    private final Map<String, FieldReaderStrategy> readerStrategies;
-    private final Map<String, FieldWriterStrategy> writerStrategies;
+public class EtlConverterBuilder {
+    private final Map<String, EtlFieldReaderStrategy> readerStrategies;
+    private final Map<String, EtlFieldWriterStrategy> writerStrategies;
     private ConversionRootConfig conversionRoot;
     private Map<String, LinkedHashMap<String, ModelFieldConfig>> modelFieldConfigs;
 
-    public ConverterBuilder() {
-        this.marshaller = new ConfigMarshaller();
+    public EtlConverterBuilder() {
         this.readerStrategies = new HashMap<>();
         this.writerStrategies = new HashMap<>();
     }
 
-    public ConverterBuilder readerStrategy(String name, FieldReaderStrategy strategy) {
+    public EtlConverterBuilder readerStrategy(String name, EtlFieldReaderStrategy strategy) {
         readerStrategies.put(name, strategy);
         return this;
     }
 
-    public ConverterBuilder writerStrategy(String name, FieldWriterStrategy strategy) {
+    public EtlConverterBuilder writerStrategy(String name, EtlFieldWriterStrategy strategy) {
         writerStrategies.put(name, strategy);
         return this;
     }
 
-    public ConverterBuilder modelConfig(InputStream modelInputStream) throws JAXBException {
-        ModelRootConfig modelRoot = marshaller.unmarshalModelConfig(modelInputStream);
+    public EtlConverterBuilder modelConfig(InputStream modelInputStream) throws JAXBException {
+        ModelRootConfig modelRoot = EtlConfigMarshaller.unmarshalModelConfig(modelInputStream);
 
         Map<String, LinkedHashMap<String, ModelFieldConfig>> modelFieldConfigs = new HashMap<>();
         modelRoot
@@ -51,13 +53,13 @@ public class ConverterBuilder {
         return this;
     }
 
-    public ConverterBuilder converterConfig(InputStream conversionInputStream) throws JAXBException {
-        conversionRoot = marshaller.unmarshalConversionConfig(conversionInputStream);
+    public EtlConverterBuilder converterConfig(InputStream conversionInputStream) throws JAXBException {
+        conversionRoot = EtlConfigMarshaller.unmarshalConversionConfig(conversionInputStream);
         return this;
     }
 
-    public Map<String, ModelFieldAdapter> build() {
-        Map<String, ModelFieldAdapter> converters = new HashMap<>();
+    public Map<String, EtlFieldAdapter> build() {
+        Map<String, EtlFieldAdapter> converters = new HashMap<>();
         conversionRoot
                 .getModelConversionConfigs()
                 .forEach(conversion -> {
@@ -65,31 +67,31 @@ public class ConverterBuilder {
                     String targetModel = conversion.getTargetModel();
                     LinkedHashMap<String, ModelFieldConfig> sourceModelFieldConfig = modelFieldConfigs.get(sourceModel);
                     LinkedHashMap<String, ModelFieldConfig> targetModelFieldConfig = modelFieldConfigs.get(targetModel);
-                    FieldReaderStrategy fieldReaderStrategy = createReaderStrategy(conversion);
-                    FieldWriterStrategy fieldWriterStrategy = createWriterStrategy(conversion);
-                    List<FieldConversionPair> fieldConversionPairs = new ArrayList<>();
+                    EtlFieldReaderStrategy etlFieldReaderStrategy = createReaderStrategy(conversion);
+                    EtlFieldWriterStrategy etlFieldWriterStrategy = createWriterStrategy(conversion);
+                    List<EtlFieldConversionPair> etlFieldConversionPairs = new ArrayList<>();
                     conversion
                             .getFields()
                             .forEach(fieldConversionConfig -> {
-                                FieldReaderAdapter fieldReader = createFieldReader(sourceModelFieldConfig, targetModelFieldConfig, fieldConversionConfig, fieldReaderStrategy);
-                                FieldWriterAdapter fieldWriter = createFieldWriter(sourceModelFieldConfig, targetModelFieldConfig, fieldConversionConfig, fieldWriterStrategy);
-                                fieldConversionPairs.add(new FieldConversionPair(fieldReader, fieldWriter));
+                                EtlFieldExtractable fieldReader = createFieldReader(sourceModelFieldConfig, targetModelFieldConfig, fieldConversionConfig, etlFieldReaderStrategy);
+                                EtlFieldLoadable fieldWriter = createFieldWriter(sourceModelFieldConfig, targetModelFieldConfig, fieldConversionConfig, etlFieldWriterStrategy);
+                                etlFieldConversionPairs.add(new EtlFieldConversionPair(fieldReader, fieldWriter));
                             });
-                    converters.put(conversion.getName(), new ModelFieldAdapter(fieldConversionPairs));
+                    converters.put(conversion.getName(), new EtlFieldAdapter(etlFieldConversionPairs));
                 });
         return converters;
     }
 
-    private FieldReaderStrategy createReaderStrategy(ModelConversionConfig conversion) {
+    private EtlFieldReaderStrategy createReaderStrategy(ModelConversionConfig conversion) {
         String sourceType = conversion.getSourceReaderType();
         return readerStrategies.get(sourceType);
     }
 
-    private FieldReaderAdapter createFieldReader(
+    private EtlFieldExtractable createFieldReader(
             LinkedHashMap<String, ModelFieldConfig> sourceModelFieldConfig,
             LinkedHashMap<String, ModelFieldConfig> targetModelFieldConfig,
             FieldCoversionConfig fieldConversion,
-            FieldReaderStrategy fieldReaderStrategy
+            EtlFieldReaderStrategy etlFieldReaderStrategy
     ) {
         String sourceFieldName = fieldConversion.getSource();
         ModelFieldConfig fieldConfig = tryGetField(
@@ -97,15 +99,15 @@ public class ConverterBuilder {
                 targetModelFieldConfig, fieldConversion.getTarget()
         );
         String sourceFieldType = fieldConfig.getType();
-        return fieldReaderStrategy.createOne(sourceFieldName, sourceFieldType);
+        return etlFieldReaderStrategy.createOne(sourceFieldName, sourceFieldType);
     }
 
-    private FieldWriterStrategy createWriterStrategy(ModelConversionConfig conversion) {
+    private EtlFieldWriterStrategy createWriterStrategy(ModelConversionConfig conversion) {
         String targetType = conversion.getTargetReaderType();
         return writerStrategies.get(targetType);
     }
 
-    private FieldWriterAdapter createFieldWriter(LinkedHashMap<String, ModelFieldConfig> sourceModelFieldConfig, LinkedHashMap<String, ModelFieldConfig> targetModelFieldConfig, FieldCoversionConfig fieldConversion, FieldWriterStrategy fieldWriterStrategy) {
+    private EtlFieldLoadable createFieldWriter(LinkedHashMap<String, ModelFieldConfig> sourceModelFieldConfig, LinkedHashMap<String, ModelFieldConfig> targetModelFieldConfig, FieldCoversionConfig fieldConversion, EtlFieldWriterStrategy etlFieldWriterStrategy) {
         String targetFieldName = fieldConversion.getTarget();
         ModelFieldConfig fieldConfig = tryGetField(
                 targetModelFieldConfig, fieldConversion.getTarget(),
@@ -113,7 +115,7 @@ public class ConverterBuilder {
         );
         String targetFieldType = fieldConfig.getType();
 
-        return fieldWriterStrategy.createOne(targetFieldName, targetFieldType);
+        return etlFieldWriterStrategy.createOne(targetFieldName, targetFieldType);
     }
 
     private ModelFieldConfig tryGetField(

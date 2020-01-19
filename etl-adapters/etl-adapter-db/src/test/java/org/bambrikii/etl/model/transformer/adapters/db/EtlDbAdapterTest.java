@@ -1,8 +1,8 @@
 package org.bambrikii.etl.model.transformer.adapters.db;
 
-import org.bambikii.etl.model.transformer.adapters.ModelFieldAdapter;
-import org.bambikii.etl.model.transformer.adapters.ModelInputAdapter;
-import org.bambikii.etl.model.transformer.builders.ConverterBuilder;
+import org.bambikii.etl.model.transformer.adapters.EtlFieldAdapter;
+import org.bambikii.etl.model.transformer.adapters.EtlUtils;
+import org.bambikii.etl.model.transformer.builders.EtlConverterBuilder;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.bind.JAXBException;
@@ -13,20 +13,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 
-import static org.bambrikii.etl.model.transformer.adapters.db.DbModelAdapterFactory.createDbInputAdapter;
-import static org.bambrikii.etl.model.transformer.adapters.db.DbModelAdapterFactory.createDbOutputAdapter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class DbAdapterTest {
+public class EtlDbAdapterTest {
     @Test
     public void shouldReadAndWrite() throws SQLException, JAXBException {
-        ConverterBuilder builder = new ConverterBuilder();
-        Map<String, ModelFieldAdapter> adapters = builder
-                .readerStrategy("h2", DbAdapterFactory.fieldReader())
-                .writerStrategy("h2", DbAdapterFactory.fieldWriter())
-                .modelConfig(DbAdapterTest.class.getResourceAsStream("/model-config.xml"))
-                .converterConfig(DbAdapterTest.class.getResourceAsStream("/converter-config.xml"))
+        EtlConverterBuilder builder = new EtlConverterBuilder();
+        Map<String, EtlFieldAdapter> adapters = builder
+                .readerStrategy("h2", EtlDbAdapterFactory.createDbFieldReader())
+                .writerStrategy("h2", EtlDbAdapterFactory.createDbFieldWriter())
+                .modelConfig(EtlDbAdapterTest.class.getResourceAsStream("/model-config.xml"))
+                .converterConfig(EtlDbAdapterTest.class.getResourceAsStream("/converter-config.xml"))
                 .build();
 
         try (Connection cn = DriverManager.getConnection("jdbc:h2:mem:");
@@ -40,10 +38,10 @@ public class DbAdapterTest {
                 statement3.execute("insert into t1 (col1, col2) values ('str1', 3)");
             }
 
-            ModelInputAdapter.adapt(
+            EtlUtils.transform(
                     adapters.get("conversion1"),
-                    createDbInputAdapter(cn, "select col1, col2 from t1"),
-                    createDbOutputAdapter(cn, "insert into t2 (col1_2, col2_2) values (?1, ?2)")
+                    EtlDbAdapterFactory.createDbInputAdapter(cn, "select col1, col2 from t1"),
+                    EtlDbAdapterFactory.createDbOutputAdapter(cn, "insert into t2 (col1_2, col2_2) values (?1, ?2)")
             );
 
             try (ResultSet rs = cn.createStatement().executeQuery("select col1_2, col2_2 from t2")) {

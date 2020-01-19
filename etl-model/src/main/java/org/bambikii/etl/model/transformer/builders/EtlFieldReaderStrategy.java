@@ -1,13 +1,13 @@
 package org.bambikii.etl.model.transformer.builders;
 
-import org.bambikii.etl.model.transformer.adapters.FieldReaderAdapter;
+import org.bambikii.etl.model.transformer.adapters.EtlFieldExtractable;
 
-public abstract class FieldReaderStrategy<T> {
+public abstract class EtlFieldReaderStrategy<T> {
     public static final String STRING = "string";
     public static final String INT = "int";
     public static final String DOUBLE = "double";
 
-    public FieldReaderAdapter<T, ?> createOne(String name, String type) {
+    public EtlFieldExtractable<T, ?> createOne(String name, String type) {
         switch (type) {
             case STRING:
                 return getStringReader(name);
@@ -20,13 +20,13 @@ public abstract class FieldReaderStrategy<T> {
         }
     }
 
-    protected abstract FieldReaderAdapter<T, String> getStringReader(String name);
+    protected abstract EtlFieldExtractable<T, String> getStringReader(String name);
 
-    protected abstract FieldReaderAdapter<T, Integer> getIntReader(String name);
+    protected abstract EtlFieldExtractable<T, Integer> getIntReader(String name);
 
-    protected abstract FieldReaderAdapter<T, Double> getDoubleReader(String name);
+    protected abstract EtlFieldExtractable<T, Double> getDoubleReader(String name);
 
-    protected <O> FieldReaderAdapter<T, O> getMoreReader(String name, String type) {
+    protected <O> EtlFieldExtractable<T, O> getMoreReader(String name, String type) {
         throw new IllegalStateException("Unexpected value: " + name + ", " + type);
     }
 }

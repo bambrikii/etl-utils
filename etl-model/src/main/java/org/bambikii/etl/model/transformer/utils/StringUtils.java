@@ -1,7 +1,7 @@
-package org.bambikii.etl.model.transformer.builders;
+package org.bambikii.etl.model.transformer.utils;
 
-public class ConverterUtils {
-    private ConverterUtils() {
+public class StringUtils {
+    private StringUtils() {
     }
 
     public static boolean isEmpty(String str) {

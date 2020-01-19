@@ -1,17 +1,17 @@
 package org.bambrikii.etl.model.transformer.adapters.db;
 
-import org.bambikii.etl.model.transformer.adapters.FieldReaderAdapter;
-import org.bambikii.etl.model.transformer.builders.FieldReaderStrategy;
+import org.bambikii.etl.model.transformer.adapters.EtlFieldExtractable;
+import org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DbFieldReaderAdapter extends FieldReaderStrategy<ResultSet> {
+public class EtlDbFieldReaderAdapter extends EtlFieldReaderStrategy<ResultSet> {
     private final Map<String, Integer> columnPositions;
 
-    public DbFieldReaderAdapter() {
+    public EtlDbFieldReaderAdapter() {
         columnPositions = new HashMap<>();
     }
 
@@ -25,7 +25,7 @@ public class DbFieldReaderAdapter extends FieldReaderStrategy<ResultSet> {
     }
 
     @Override
-    protected FieldReaderAdapter<ResultSet, String> getStringReader(String name) {
+    protected EtlFieldExtractable<ResultSet, String> getStringReader(String name) {
         return obj -> {
             try {
                 return obj.getString(getCachedColumnPosition(obj, name));
@@ -36,7 +36,7 @@ public class DbFieldReaderAdapter extends FieldReaderStrategy<ResultSet> {
     }
 
     @Override
-    protected FieldReaderAdapter<ResultSet, Integer> getIntReader(String name) {
+    protected EtlFieldExtractable<ResultSet, Integer> getIntReader(String name) {
         return obj -> {
             try {
                 return obj.getInt(getCachedColumnPosition(obj, name));
@@ -47,7 +47,7 @@ public class DbFieldReaderAdapter extends FieldReaderStrategy<ResultSet> {
     }
 
     @Override
-    protected FieldReaderAdapter<ResultSet, Double> getDoubleReader(String name) {
+    protected EtlFieldExtractable<ResultSet, Double> getDoubleReader(String name) {
         return obj -> {
             try {
                 return obj.getDouble(getCachedColumnPosition(obj, name));

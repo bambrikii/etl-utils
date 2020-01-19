@@ -1,16 +1,16 @@
 package org.bambrikii.etl.model.transformer.adapters.db;
 
-import org.bambikii.etl.model.transformer.adapters.FieldWriterAdapter;
-import org.bambikii.etl.model.transformer.builders.FieldWriterStrategy;
+import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
+import org.bambikii.etl.model.transformer.builders.EtlFieldWriterStrategy;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class DbFieldWriterAdapter extends FieldWriterStrategy<PreparedStatement> {
+public class EtlDbFieldWriterAdapter extends EtlFieldWriterStrategy<PreparedStatement> {
     private int paramIndex = 1;
 
     @Override
-    protected FieldWriterAdapter<PreparedStatement, String> getStringWriter(String name) {
+    protected EtlFieldLoadable<PreparedStatement, String> getStringWriter(String name) {
         return (obj, value) -> {
             try {
                 obj.setString(paramIndex++, value);
@@ -21,7 +21,7 @@ public class DbFieldWriterAdapter extends FieldWriterStrategy<PreparedStatement>
     }
 
     @Override
-    protected FieldWriterAdapter<PreparedStatement, Integer> getIntWriter(String name) {
+    protected EtlFieldLoadable<PreparedStatement, Integer> getIntWriter(String name) {
         return (obj, value) -> {
             try {
                 obj.setInt(paramIndex++, value);
@@ -32,7 +32,7 @@ public class DbFieldWriterAdapter extends FieldWriterStrategy<PreparedStatement>
     }
 
     @Override
-    protected FieldWriterAdapter<PreparedStatement, Double> getDoubleWriter(String name) {
+    protected EtlFieldLoadable<PreparedStatement, Double> getDoubleWriter(String name) {
         return (obj, value) -> {
             try {
                 obj.setDouble(paramIndex++, value);

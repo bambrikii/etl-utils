@@ -1,18 +1,18 @@
 package org.bambrikii.etl.model.transformer.adapters.java;
 
-import org.bambikii.etl.model.transformer.adapters.FieldWriterAdapter;
-import org.bambikii.etl.model.transformer.builders.FieldWriterStrategy;
+import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
+import org.bambikii.etl.model.transformer.builders.EtlFieldWriterStrategy;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class JavaReflectionFieldWriterStrategy<T> extends FieldWriterStrategy<T> {
+public class EtlJavaReflectionFieldWriterStrategy<T> extends EtlFieldWriterStrategy<T> {
     private final Class<T> cls;
 
-    public JavaReflectionFieldWriterStrategy(Class<T> cls) {
+    public EtlJavaReflectionFieldWriterStrategy(Class<T> cls) {
         this.cls = cls;
     }
 
-    private FieldWriterAdapter setField(String name, Class<?> param) {
+    private EtlFieldLoadable setField(String name, Class<?> param) {
         String methodName = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
         return (obj, value) -> {
             try {
@@ -24,17 +24,17 @@ public class JavaReflectionFieldWriterStrategy<T> extends FieldWriterStrategy<T>
     }
 
     @Override
-    protected FieldWriterAdapter<T, String> getStringWriter(String name) {
+    protected EtlFieldLoadable<T, String> getStringWriter(String name) {
         return setField(name, String.class);
     }
 
     @Override
-    protected FieldWriterAdapter<T, Integer> getIntWriter(String name) {
+    protected EtlFieldLoadable<T, Integer> getIntWriter(String name) {
         return setField(name, Integer.class);
     }
 
     @Override
-    protected FieldWriterAdapter<T, Double> getDoubleWriter(String name) {
+    protected EtlFieldLoadable<T, Double> getDoubleWriter(String name) {
         return setField(name, Double.class);
     }
 }
