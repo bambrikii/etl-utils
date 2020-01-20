@@ -3,7 +3,7 @@ package org.bambikii.etl.model.transformer.adapters.java;
 import org.bambikii.etl.model.transformer.adapters.EtlFieldAdapter;
 import org.bambikii.etl.model.transformer.adapters.EtlUtils;
 import org.bambikii.etl.model.transformer.builders.EtlConverterBuilder;
-import org.bambrikii.etl.model.transformer.adapters.java.EtlJavaMapFactory;
+import org.bambrikii.etl.model.transformer.adapters.java.map.EtlJavaMapFactory;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.bind.JAXBException;

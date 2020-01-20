@@ -17,4 +17,12 @@ public class ObjectUtils {
             ex.printStackTrace();
         }
     }
+
+    public static <T> T newInstance(Class<T> cls) {
+        try {
+            return cls.newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            throw new RuntimeException("Failed to instantiate class " + cls);
+        }
+    }
 }

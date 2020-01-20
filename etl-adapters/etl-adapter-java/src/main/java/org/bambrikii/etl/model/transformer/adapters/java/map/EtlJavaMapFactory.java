@@ -1,4 +1,4 @@
-package org.bambrikii.etl.model.transformer.adapters.java;
+package org.bambrikii.etl.model.transformer.adapters.java.map;
 
 import org.bambikii.etl.model.transformer.adapters.EtlModelInputFactory;
 import org.bambikii.etl.model.transformer.adapters.EtlModelOutputFactory;
@@ -18,7 +18,6 @@ public class EtlJavaMapFactory {
     public static EtlFieldWriterStrategy<Map<String, Object>> fieldWriter() {
         return new EtlJavaMapFieldWriterStrategy();
     }
-
 
     public static EtlModelInputFactory<Map<String, Object>> createJavaInputAdapter(Map<String, Object> source) {
         return new EtlModelInputFactory<Map<String, Object>>() {

@@ -1,10 +1,15 @@
 package org.bambikii.etl.model.transformer.adapters;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class EtlFieldAdapter<S, T> {
     private final List<EtlFieldConversionPair> fieldAdapters;
+
+    public EtlFieldAdapter(EtlFieldConversionPair... transformers) {
+        this(Arrays.asList(transformers));
+    }
 
     public EtlFieldAdapter(List<EtlFieldConversionPair> transformers) {
         fieldAdapters = Collections.unmodifiableList(transformers);

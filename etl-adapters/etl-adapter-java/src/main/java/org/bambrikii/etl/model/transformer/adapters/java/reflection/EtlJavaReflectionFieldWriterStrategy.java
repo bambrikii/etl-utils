@@ -1,11 +1,11 @@
-package org.bambrikii.etl.model.transformer.adapters.java;
+package org.bambrikii.etl.model.transformer.adapters.java.reflection;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
 import org.bambikii.etl.model.transformer.builders.EtlFieldWriterStrategy;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class EtlJavaReflectionFieldWriterStrategy<T> extends EtlFieldWriterStrategy<T> {
+class EtlJavaReflectionFieldWriterStrategy<T> extends EtlFieldWriterStrategy<T> {
     private final Class<T> cls;
 
     public EtlJavaReflectionFieldWriterStrategy(Class<T> cls) {

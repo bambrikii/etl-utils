@@ -1,8 +1,9 @@
 package org.bambikii.etl.model.transformer.adapters.java;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldAdapter;
-import org.bambrikii.etl.model.transformer.adapters.java.EtlJavaMapFactory;
-import org.bambrikii.etl.model.transformer.adapters.java.EtlJavaReflectionFactory;
+import org.bambikii.etl.model.transformer.adapters.EtlUtils;
+import org.bambrikii.etl.model.transformer.adapters.java.map.EtlJavaMapFactory;
+import org.bambrikii.etl.model.transformer.adapters.java.reflection.EtlJavaReflectionFactory;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -21,7 +22,11 @@ public class EtlJavaAdapterTest {
         Map<String, Object> source = createTestInMap();
         Map<String, Object> target = createTestOutMap();
 
-        adapter.adapt(source, target);
+        EtlUtils.transform(
+                adapter,
+                EtlJavaReflectionFactory.createJavaInputAdapter(source),
+                EtlJavaReflectionFactory.createJavaOutputAdapter(target)
+        );
 
         assertEquals("str1", target.get("field1"));
         assertEquals(2, target.get("field2"));
@@ -37,7 +42,11 @@ public class EtlJavaAdapterTest {
         TestInClass source = createTestInClass();
         TestOutClass target = createTestOutClass();
 
-        adapter.adapt(source, target);
+        EtlUtils.transform(
+                adapter,
+                EtlJavaReflectionFactory.createJavaInputAdapter(source),
+                EtlJavaReflectionFactory.createJavaOutputAdapter(target)
+        );
 
         assertEquals("str1", target.getField1());
         assertEquals(Integer.valueOf(2), target.getField2());

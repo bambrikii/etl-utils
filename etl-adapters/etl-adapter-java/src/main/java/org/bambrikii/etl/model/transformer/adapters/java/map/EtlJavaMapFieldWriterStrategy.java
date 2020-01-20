@@ -1,11 +1,11 @@
-package org.bambrikii.etl.model.transformer.adapters.java;
+package org.bambrikii.etl.model.transformer.adapters.java.map;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
 import org.bambikii.etl.model.transformer.builders.EtlFieldWriterStrategy;
 
 import java.util.Map;
 
-public class EtlJavaMapFieldWriterStrategy extends EtlFieldWriterStrategy<Map<String, Object>> {
+class EtlJavaMapFieldWriterStrategy extends EtlFieldWriterStrategy<Map<String, Object>> {
     @Override
     protected EtlFieldLoadable<Map<String, Object>, String> getStringWriter(String name) {
         return (obj, value) -> obj.put(name, value);

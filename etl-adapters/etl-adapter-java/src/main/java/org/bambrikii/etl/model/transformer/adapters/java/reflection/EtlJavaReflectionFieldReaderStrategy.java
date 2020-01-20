@@ -1,11 +1,11 @@
-package org.bambrikii.etl.model.transformer.adapters.java;
+package org.bambrikii.etl.model.transformer.adapters.java.reflection;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldExtractable;
 import org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class EtlJavaReflectionFieldReaderStrategy<T> extends EtlFieldReaderStrategy<T> {
+class EtlJavaReflectionFieldReaderStrategy<T> extends EtlFieldReaderStrategy<T> {
     private final Class<T> cls;
 
     public EtlJavaReflectionFieldReaderStrategy(Class<T> cls) {
