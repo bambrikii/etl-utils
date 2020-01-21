@@ -1,4 +1,4 @@
-package org.bambrikii.etl.model.transformer.adapters.java.maptree;
+package org.bambrikii.etl.model.transformer.adapters.java.maptree.io;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
 

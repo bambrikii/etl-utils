@@ -1,15 +1,24 @@
 package org.bambrikii.etl.model.transformer.adapters.java.maptree;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelOutputFactory;
+import org.bambikii.etl.model.transformer.adapters.EtlModelInputFactory;
+import org.bambrikii.etl.model.transformer.adapters.java.maptree.io.EtlTreeResultSet;
 
-public class EtlTreeInputFactory implements EtlModelOutputFactory<EtlTreeStatement> {
-    @Override
-    public EtlTreeStatement create() {
-        return new EtlTreeStatement();
+import java.util.Map;
+
+public class EtlTreeInputFactory implements EtlModelInputFactory<EtlTreeResultSet> {
+    private final Map<String, Object> data;
+
+    public EtlTreeInputFactory(Map<String, Object> data) {
+        this.data = data;
     }
 
     @Override
-    public boolean complete(EtlTreeStatement statement) {
-        return false;
+    public EtlTreeResultSet create() {
+        return new EtlTreeResultSet(data);
+    }
+
+    @Override
+    public boolean next(EtlTreeResultSet resultSet) {
+        return resultSet.next();
     }
 }

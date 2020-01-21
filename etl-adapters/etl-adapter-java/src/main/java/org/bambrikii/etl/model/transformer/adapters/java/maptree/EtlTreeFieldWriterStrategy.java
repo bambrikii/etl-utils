@@ -2,6 +2,7 @@ package org.bambrikii.etl.model.transformer.adapters.java.maptree;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
 import org.bambikii.etl.model.transformer.builders.EtlFieldWriterStrategy;
+import org.bambrikii.etl.model.transformer.adapters.java.maptree.io.EtlTreeStatement;
 
 public class EtlTreeFieldWriterStrategy extends EtlFieldWriterStrategy<EtlTreeStatement> {
     @Override

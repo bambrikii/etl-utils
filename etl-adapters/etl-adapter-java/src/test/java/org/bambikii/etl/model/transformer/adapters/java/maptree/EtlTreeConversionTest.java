@@ -8,7 +8,10 @@ import org.bambrikii.etl.model.transformer.adapters.java.maptree.EtlTreeFieldRea
 import org.bambrikii.etl.model.transformer.adapters.java.maptree.EtlTreeFieldWriterStrategy;
 import org.junit.jupiter.api.Test;
 
-public class EtlJsonConversionTest {
+import java.util.HashMap;
+import java.util.Map;
+
+public class EtlTreeConversionTest {
 
     @Test
     public void shouldTransform() {
@@ -20,9 +23,10 @@ public class EtlJsonConversionTest {
                         writerStrategy.createOne("field1", "string1")
                 )
         );
+        Map<String, Object> data = new HashMap<>();
         EtlUtils.transform(
                 adapter,
-                EtlTreeFactory.jsonInput(),
+                EtlTreeFactory.jsonInput(data),
                 EtlTreeFactory.jsonOutput()
 
         );
