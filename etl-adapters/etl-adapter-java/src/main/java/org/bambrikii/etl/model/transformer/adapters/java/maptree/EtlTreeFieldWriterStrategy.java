@@ -7,16 +7,16 @@ import org.bambrikii.etl.model.transformer.adapters.java.maptree.io.EtlTreeState
 public class EtlTreeFieldWriterStrategy extends EtlFieldWriterStrategy<EtlTreeStatement> {
     @Override
     protected EtlFieldLoadable<EtlTreeStatement, String> getStringWriter(String name) {
-        throw new UnsupportedOperationException("not yet implemented");
+        return (obj, value) -> obj.setField(name, value, String.class);
     }
 
     @Override
     protected EtlFieldLoadable<EtlTreeStatement, Integer> getIntWriter(String name) {
-        throw new UnsupportedOperationException("not yet implemented");
+        return (obj, value) -> obj.setField(name, value, Integer.class);
     }
 
     @Override
     protected EtlFieldLoadable<EtlTreeStatement, Double> getDoubleWriter(String name) {
-        throw new UnsupportedOperationException("not yet implemented");
+        return (obj, value) -> obj.setField(name, value, Double.class);
     }
 }

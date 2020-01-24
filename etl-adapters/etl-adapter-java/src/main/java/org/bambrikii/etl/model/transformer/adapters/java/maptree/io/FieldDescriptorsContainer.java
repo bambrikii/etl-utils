@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.bambrikii.etl.model.transformer.adapters.java.maptree.io.FieldDescriptor.NOT_AVAILABLE_FIELD_DESCRIPTOR;
+
 public class FieldDescriptorsContainer {
     public static final String ARRAY_SUFFIX = "[]";
     private Map<String, List<String>> namesArr = new HashMap<>();
@@ -21,6 +23,9 @@ public class FieldDescriptorsContainer {
 
     public FieldDescriptor getFieldDescriptor(String fullName, int simpleNamePosition) {
         List<String> namesArr = ensureNamesSplit(fullName);
+        if (simpleNamePosition >= namesArr.size()) {
+            return NOT_AVAILABLE_FIELD_DESCRIPTOR;
+        }
         Map<Integer, FieldDescriptor> descriptorsByPos;
         if (!fieldDescriptors.containsKey(fullName)) {
             descriptorsByPos = new HashMap<>();
@@ -38,7 +43,13 @@ public class FieldDescriptorsContainer {
                 isArray = false;
             }
             String distinctName = buildDistinctName(namesArr, simpleNamePosition);
-            FieldDescriptor fieldDescriptor = new FieldDescriptor(simpleName, distinctName, isArray, simpleNamePosition);
+            boolean isLeaf = simpleNamePosition == namesArr.size() - 1;
+            FieldDescriptor fieldDescriptor = new FieldDescriptor(
+                    simpleName,
+                    distinctName,
+                    simpleNamePosition, isArray,
+                    isLeaf
+            );
             descriptorsByPos.put(simpleNamePosition, fieldDescriptor);
             return fieldDescriptor;
         }
@@ -51,6 +62,8 @@ public class FieldDescriptorsContainer {
             String name = namesArr.get(i);
             if (name.endsWith(ARRAY_SUFFIX)) {
                 distinctNameBuilder.append(name, 0, name.length() - ARRAY_SUFFIX.length());
+            } else {
+                distinctNameBuilder.append(name);
             }
             if (i > 0) {
                 distinctNameBuilder.append(".");
