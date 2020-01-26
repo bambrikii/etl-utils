@@ -15,7 +15,6 @@ public class CursorsContainerTest {
         Cursor cursor = container.ensureCursor(descriptor, 2, null);
 
         assertTrue(container.next());
-        assertTrue(container.next());
         assertFalse(container.next());
     }
 
@@ -30,8 +29,6 @@ public class CursorsContainerTest {
 
         assertTrue(container.next());
         assertTrue(container.next());
-        assertTrue(container.next());
-        assertTrue(container.next());
         assertFalse(container.next());
     }
 
@@ -44,8 +41,6 @@ public class CursorsContainerTest {
         Cursor cursor1 = container.ensureCursor(descriptor1, 2, null);
         Cursor cursor2 = container.ensureCursor(descriptor2, 2, null);
 
-        assertTrue(container.next());
-        assertTrue(container.next());
         assertTrue(container.next());
         assertTrue(container.next());
         assertFalse(container.next());
@@ -64,10 +59,6 @@ public class CursorsContainerTest {
         Cursor cursor2 = container.ensureCursor(descriptor2, 2, parentCursor);
 
         assertTrue(container.next());
-        assertTrue(container.next());
-        assertTrue(container.next());
-        assertTrue(container.next());
-
         assertTrue(container.next());
         assertTrue(container.next());
         // As no reads and cursors are ensured, current cursors are getting exhausted.

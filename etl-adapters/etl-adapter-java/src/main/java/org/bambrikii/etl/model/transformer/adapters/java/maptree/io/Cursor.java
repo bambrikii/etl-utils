@@ -9,7 +9,7 @@ class Cursor {
     private final Cursor parentCursor;
     private Map<String, Cursor> children = new HashMap<>();
 
-    private int currentPosition = -1;
+    private int currentPosition = 0;
 
     public Cursor(FieldDescriptor fieldDescriptor, int size, Cursor parentCursor) {
         this.fieldDescriptor = fieldDescriptor;

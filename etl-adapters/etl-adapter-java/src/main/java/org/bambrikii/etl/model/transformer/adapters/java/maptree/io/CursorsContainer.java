@@ -39,4 +39,26 @@ public class CursorsContainer {
         }
         return false;
     }
+
+    public Cursor ensureCursor(FieldDescriptor descriptor) {
+        if (!descriptor.isArray()) {
+            return null;
+        }
+        Cursor parentCursor = findParentCursor(descriptor);
+        return ensureCursor(descriptor, -1, parentCursor);
+    }
+
+    private Cursor findParentCursor(FieldDescriptor descriptor) {
+        if (descriptor == null) {
+            return null;
+        }
+        FieldDescriptor parent = descriptor.getParent();
+        if (parent == null) {
+            return null;
+        }
+        if (parent.isArray()) {
+            return ensureCursor(parent);
+        }
+        return findParentCursor(parent);
+    }
 }

@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class EtlTreeResultSetTest {
@@ -34,19 +37,18 @@ public class EtlTreeResultSetTest {
 
         EtlTreeResultSet resultSet = new EtlTreeResultSet(data);
 
-        if (resultSet.next()) {
-            assertEquals("stringField1Value", resultSet.getObject("stringField1", String.class));
-            assertEquals(Integer.valueOf(2), resultSet.getObject("intField2", Integer.class));
+        assertEquals("stringField1Value", resultSet.getObject("stringField1", String.class));
+        assertEquals(Integer.valueOf(2), resultSet.getObject("intField2", Integer.class));
 
-            assertEquals("stringField4Value", resultSet.getObject("classField3.stringField4", String.class));
+        assertEquals("stringField4Value", resultSet.getObject("classField3.stringField4", String.class));
 
-            assertEquals("stringField6Value", resultSet.getObject("listField5..stringField6", String.class));
-        } else {
+        assertEquals("stringField6Value", resultSet.getObject("listField5..stringField6", String.class));
+        if (!resultSet.next()) { // Advancing listField5
             fail();
         }
-        if (resultSet.next()) {
-            assertEquals(Integer.valueOf(7), resultSet.getObject("listField5..intField7", Integer.class));
-        } else {
+
+        assertEquals(Integer.valueOf(7), resultSet.getObject("listField5..intField7", Integer.class));
+        if (resultSet.next()) { // Advancing listField5
             fail();
         }
     }
@@ -76,38 +78,54 @@ public class EtlTreeResultSetTest {
 
         EtlTreeResultSet resultSet = new EtlTreeResultSet(data);
 
-        if (!resultSet.next()) {
-            fail();
-        }
         assertEquals("str1", resultSet.getObject("list1..list2.", String.class));
-
         if (!resultSet.next()) {
             fail();
         }
+
         assertEquals("str2", resultSet.getObject("list1..list2.", String.class));
-
         if (!resultSet.next()) {
             fail();
         }
+
         assertEquals("str3", resultSet.getObject("list1..list3.", String.class));
-
         if (!resultSet.next()) {
             fail();
         }
+
         assertEquals("str4", resultSet.getObject("list1..list3.", String.class));
+        if (resultSet.next()) {
+            fail();
+        }
     }
 
     @Test
     public void shouldReadNestedMaps() {
-        Map<String, Object> data = new HashMap<>();
-        Map<String, Object> map2 = new HashMap<>();
         Map<String, Object> map3 = new HashMap<>();
         map3.put("str1", "str1Value");
+
+        Map<String, Object> map2 = new HashMap<>();
         map2.put("map2", map3);
+
+        Map<String, Object> data = new HashMap<>();
         data.put("map1", map2);
 
         EtlTreeResultSet resultSet = new EtlTreeResultSet(data);
 
         assertEquals("str1Value", resultSet.getObject("map1.map2.str1", String.class));
+        assertTrue(resultSet.isStatusValid());
+    }
+
+    @Test
+    public void shouldFailRead() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("list1", new ArrayList());
+
+        EtlTreeResultSet resultSet = new EtlTreeResultSet(data);
+
+        assertNull(resultSet.getObject("list1.", String.class));
+
+        assertEquals(1, resultSet.statuses().size());
+        assertFalse(resultSet.isStatusValid());
     }
 }

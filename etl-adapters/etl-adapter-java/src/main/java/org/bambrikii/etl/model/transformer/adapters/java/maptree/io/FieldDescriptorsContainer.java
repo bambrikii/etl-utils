@@ -15,6 +15,10 @@ public class FieldDescriptorsContainer {
     private final Map<String, Map<Integer, String>> distinctNamesByFullNameAndPos = new HashMap<>();
     private final Map<String, FieldDescriptor> byDistinctName = new HashMap<>();
 
+    public FieldDescriptor ensureFieldDescriptor(String fullName) {
+        return ensureFieldDescriptor(fullName, ensureNamesArr(fullName).size() - 1);
+    }
+
     public FieldDescriptor ensureFieldDescriptor(String fullName, int pos) {
         if (pos < 0) {
             return null;
