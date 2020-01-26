@@ -1,12 +1,8 @@
-package org.bambikii.etl.model.transformer.adapters.java.maptree;
+package org.bambrikii.etl.model.transformer.adapters.java.maptree;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldAdapter;
 import org.bambikii.etl.model.transformer.adapters.EtlFieldConversionPair;
 import org.bambikii.etl.model.transformer.adapters.EtlUtils;
-import org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy;
-import org.bambrikii.etl.model.transformer.adapters.java.maptree.EtlTreeFactory;
-import org.bambrikii.etl.model.transformer.adapters.java.maptree.EtlTreeFieldReaderStrategy;
-import org.bambrikii.etl.model.transformer.adapters.java.maptree.EtlTreeFieldWriterStrategy;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

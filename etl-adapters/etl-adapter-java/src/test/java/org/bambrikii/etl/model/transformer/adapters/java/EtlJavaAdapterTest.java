@@ -1,4 +1,4 @@
-package org.bambikii.etl.model.transformer.adapters.java;
+package org.bambrikii.etl.model.transformer.adapters.java;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldAdapter;
 import org.bambikii.etl.model.transformer.adapters.EtlUtils;
@@ -8,19 +8,18 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.bambikii.etl.model.transformer.adapters.java.EtlAdapterTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EtlJavaAdapterTest {
     @Test
     public void shouldBuildJavaMap() {
-        EtlFieldAdapter adapter = createTestAdapter(
+        EtlFieldAdapter adapter = EtlAdapterTestUtils.createTestAdapter(
                 EtlJavaMapFactory.fieldReader(),
                 EtlJavaMapFactory.fieldWriter()
         );
 
-        Map<String, Object> source = createTestInMap();
-        Map<String, Object> target = createTestOutMap();
+        Map<String, Object> source = EtlAdapterTestUtils.createTestInMap();
+        Map<String, Object> target = EtlAdapterTestUtils.createTestOutMap();
 
         EtlUtils.transform(
                 adapter,
@@ -34,13 +33,13 @@ public class EtlJavaAdapterTest {
 
     @Test
     public void shouldBuildJavaReflection() {
-        EtlFieldAdapter adapter = createTestAdapter(
+        EtlFieldAdapter adapter = EtlAdapterTestUtils.createTestAdapter(
                 EtlJavaReflectionFactory.fieldReader(TestInClass.class),
                 EtlJavaReflectionFactory.fieldWriter(TestOutClass.class)
         );
 
-        TestInClass source = createTestInClass();
-        TestOutClass target = createTestOutClass();
+        TestInClass source = EtlAdapterTestUtils.createTestInClass();
+        TestOutClass target = EtlAdapterTestUtils.createTestOutClass();
 
         EtlUtils.transform(
                 adapter,

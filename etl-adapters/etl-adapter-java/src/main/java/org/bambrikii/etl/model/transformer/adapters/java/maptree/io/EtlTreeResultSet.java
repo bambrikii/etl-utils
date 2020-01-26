@@ -4,23 +4,21 @@ import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
 import org.bambrikii.etl.model.transformer.adapters.java.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.bambrikii.etl.model.transformer.adapters.java.maptree.io.FieldDescriptor.NOT_AVAILABLE_FIELD_DESCRIPTOR;
+import static org.bambrikii.etl.model.transformer.adapters.java.maptree.io.FieldDescriptorsContainer.NOT_AVAILABLE_FIELD_DESCRIPTOR;
 
 public class EtlTreeResultSet {
     private final Object source;
     private final FieldDescriptorsContainer fieldDescriptors;
+    private final CursorsContainer cursorsContainer;
 
-    private final Map<String, Cursor> cursors;
-    private Cursor currentCursor;
 
     public EtlTreeResultSet(Object source) {
         this.source = source;
         fieldDescriptors = new FieldDescriptorsContainer();
-        cursors = new HashMap<>();
+        cursorsContainer = new CursorsContainer();
     }
 
     public <T> T getObject(String name, Class<T> valueClass) {
@@ -28,81 +26,49 @@ public class EtlTreeResultSet {
     }
 
     private Object readObject0(String name, Class<?> valueClass) {
-        return readObject(source, name, 0, valueClass);
+        return readObject(source, name, 0, valueClass, null);
     }
 
-    private Object readObject(Object obj, String fullName, int namePos, Class<?> valueClass) {
+    private Object readObject(Object obj, String fullName, int namePos, Class<?> valueClass, Cursor parentCursor) {
         if (obj == null) {
             return null;
         }
-        FieldDescriptor fieldDescriptor = fieldDescriptors.getFieldDescriptor(fullName, namePos);
+        // TODO: add parent argument
+        FieldDescriptor fieldDescriptor = fieldDescriptors.ensureFieldDescriptor(fullName, namePos);
         if (NOT_AVAILABLE_FIELD_DESCRIPTOR.equals(fieldDescriptor)) {
             return obj;
         }
         if (obj instanceof List) {
-            return tryReadList(fullName, namePos, fieldDescriptor, (List) obj, valueClass);
+            return tryReadList(fullName, namePos, fieldDescriptor, (List) obj, valueClass, parentCursor);
         }
         if (obj instanceof Map) {
-            return tryReadMap((Map<String, Object>) obj, fullName, namePos, fieldDescriptor, valueClass);
+            return tryReadMap((Map<String, Object>) obj, fullName, namePos, fieldDescriptor, valueClass, parentCursor);
         }
-        return tryReadReflective(obj, namePos, fieldDescriptor, valueClass);
+        return tryReadReflective(obj, fullName, namePos, fieldDescriptor, valueClass, parentCursor);
     }
 
-    private Object tryReadReflective(Object obj, int namePos, FieldDescriptor fieldDescriptor, Class<?> valueClass) {
-        // TODO: Try reflection
-        Method getter = ReflectionUtils.findGetter(obj, fieldDescriptor.getSimpleName(), valueClass);
-        throw new EtlRuntimeException("Type [" + obj.getClass().getName() + "] for pos [" + namePos + "] is not readable for " + fieldDescriptor + "!");
-    }
-
-    private Object tryReadMap(Map<String, Object> obj, String fullName, int namePos, FieldDescriptor fieldDescriptor, Class<?> valueClass) {
-        Object obj2 = obj.get(fieldDescriptor.getSimpleName());
-        return readObject(obj2, fullName, namePos + 1, valueClass);
-    }
-
-    private Object tryReadList(String fullName, int namePos, FieldDescriptor fieldDescriptor, List list, Class<?> valueClass) {
-        Cursor cursor = ensureCursor(fieldDescriptor, list.size() - 1);
-        int pos = cursor.getCurrentPosition();
+    private Object tryReadList(String fullName, int namePos, FieldDescriptor fieldDescriptor, List list, Class<?> valueClass, Cursor parentCursor) {
+        Cursor cursor = cursorsContainer.ensureCursor(fieldDescriptor, list.size(), parentCursor);
         if (!cursor.canRead()) {
-            throw new EtlRuntimeException("List element " + (list.size() - 1) + " < [" + pos + "] for field " + fieldDescriptor + "!");
+            throw new EtlRuntimeException("List element " + (list.size() - 1) + " < [" + cursor.getSize() + "] for field " + fieldDescriptor + "!");
         }
+        int pos = cursor.getCurrentPosition();
         Object listElem = list.get(pos);
-        return readObject(listElem, fullName, namePos + 1, valueClass);
+        return readObject(listElem, fullName, namePos + 1, valueClass, parentCursor);
     }
 
-    private void validateCurrentCursor(FieldDescriptor fieldDescriptor) {
-        if (currentCursor == null) {
-            return;
-        }
-        FieldDescriptor currentCursorFieldDescriptor = currentCursor.getFieldDescriptor();
-        if (currentCursorFieldDescriptor.getSimpleNamePosition() == fieldDescriptor.getSimpleNamePosition() &&
-                currentCursorFieldDescriptor.getDistinctName().equals(fieldDescriptor.getDistinctName())
-        ) {
-            throw new EtlRuntimeException("Field cursors [" + currentCursorFieldDescriptor.getDistinctName() + "] and [" + fieldDescriptor.getDistinctName() + "] cannot be used simultaneously!");
-        }
+    private Object tryReadMap(Map<String, Object> obj, String fullName, int namePos, FieldDescriptor fieldDescriptor, Class<?> valueClass, Cursor parentCursor) {
+        Object obj2 = obj.get(fieldDescriptor.getSimpleName());
+        return readObject(obj2, fullName, namePos + 1, valueClass, parentCursor);
     }
 
-    private Cursor ensureCursor(FieldDescriptor fieldDescriptor, int size) {
-        String distinctName = fieldDescriptor.getDistinctName();
-        if (cursors.containsKey(distinctName)) {
-            return cursors.get(distinctName);
-        }
-        validateCurrentCursor(fieldDescriptor);
-        Cursor cursor = new Cursor(fieldDescriptor, size, currentCursor);
-        cursors.put(distinctName, cursor);
-        currentCursor = cursor;
-        return cursor;
+    private Object tryReadReflective(Object obj, String fullName, int namePos, FieldDescriptor fieldDescriptor, Class<?> valueClass, Cursor parentCursor) {
+        Method getter = ReflectionUtils.findGetter(obj, fieldDescriptor.getSimpleName());
+        Object value = ReflectionUtils.getValue(getter, obj);
+        return readObject(value, fullName, namePos + 1, valueClass, parentCursor);
     }
 
     public boolean next() {
-        if (currentCursor == null) {
-            // TODO: review the case when currentCursor is null
-            return true;
-        }
-        boolean next = currentCursor.next();
-        if (next) {
-            return true;
-        }
-        currentCursor = currentCursor.getParentCursor();
-        return false;
+        return cursorsContainer.next();
     }
 }

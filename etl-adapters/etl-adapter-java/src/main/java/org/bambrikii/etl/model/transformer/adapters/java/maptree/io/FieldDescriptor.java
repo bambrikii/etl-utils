@@ -1,24 +1,25 @@
 package org.bambrikii.etl.model.transformer.adapters.java.maptree.io;
 
 public class FieldDescriptor {
-    public static final FieldDescriptor NOT_AVAILABLE_FIELD_DESCRIPTOR = new FieldDescriptor(null, null, -1, false, false) {
-    };
     private final String simpleName;
     private final String distinctName;
     private final boolean array;
-    private final int simpleNamePosition;
+    private final int namePos;
     private final boolean leaf;
+    private final FieldDescriptor parent;
 
     public FieldDescriptor(
             String simpleName, String distinctName,
-            int simpleNamePosition, boolean array,
-            boolean leaf
+            int namePos, boolean array,
+            boolean leaf,
+            FieldDescriptor parent
     ) {
         this.simpleName = simpleName;
         this.distinctName = distinctName;
-        this.simpleNamePosition = simpleNamePosition;
+        this.namePos = namePos;
         this.array = array;
         this.leaf = leaf;
+        this.parent = parent;
     }
 
     public String getSimpleName() {
@@ -29,8 +30,8 @@ public class FieldDescriptor {
         return distinctName;
     }
 
-    public int getSimpleNamePosition() {
-        return simpleNamePosition;
+    public int getNamePos() {
+        return namePos;
     }
 
     public boolean isArray() {
@@ -39,5 +40,9 @@ public class FieldDescriptor {
 
     public boolean isLeaf() {
         return leaf;
+    }
+
+    public FieldDescriptor getParent() {
+        return parent;
     }
 }

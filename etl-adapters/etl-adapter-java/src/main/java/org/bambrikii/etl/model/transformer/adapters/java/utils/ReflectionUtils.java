@@ -30,20 +30,20 @@ public class ReflectionUtils {
         }
     }
 
-    public static Method findGetter(Object obj, String propertyName, Class<?> valueCls) {
+    public static Method findGetter(Object obj, String propertyName) {
         String name = "get" + capitalizeName(propertyName);
         try {
-            return obj.getClass().getMethod(name, valueCls);
+            return obj.getClass().getMethod(name);
         } catch (NoSuchMethodException ex) {
-            throw new EtlRuntimeException("Failed to find method " + propertyName, ex);
+            throw new EtlRuntimeException("Failed to find method " + name, ex);
         }
     }
 
-    public static Object getValue(Method setter, Object obj) {
+    public static Object getValue(Method method, Object obj) {
         try {
-            return setter.invoke(obj);
+            return method.invoke(obj);
         } catch (IllegalAccessException | InvocationTargetException ex) {
-            throw new EtlRuntimeException("Failed to invoke method " + setter.getName(), ex);
+            throw new EtlRuntimeException("Failed to invoke method " + method.getName(), ex);
         }
     }
 }

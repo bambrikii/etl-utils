@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class EtlTreeStatement {
     private final Object target;
@@ -14,10 +15,24 @@ public class EtlTreeStatement {
     private final Map<String, Cursor> cursors;
     private Cursor currentCursor;
 
+    public EtlTreeStatement() {
+        this(new HashMap<>());
+    }
+
     public EtlTreeStatement(Object target) {
-        this.target = target;
+        this.target = target == null ? new HashMap<>() : target;
         fieldDescriptors = new FieldDescriptorsContainer();
         cursors = new HashMap<>();
+    }
+
+    public Object getTarget() {
+        return target;
+    }
+
+    public void setField(String name, Object value) {
+        Objects.requireNonNull(value);
+
+        setValue0(target, name, value, 0, value.getClass());
     }
 
     public void setField(String name, Object value, Class<?> valueCls) {
@@ -25,7 +40,7 @@ public class EtlTreeStatement {
     }
 
     private void setValue0(Object obj, String fullName, Object value, int namePos, Class<?> valueCls) {
-        FieldDescriptor fieldDescriptor = fieldDescriptors.getFieldDescriptor(fullName, namePos);
+        FieldDescriptor fieldDescriptor = fieldDescriptors.ensureFieldDescriptor(fullName, namePos);
         if (tryWriteListValue(obj, fieldDescriptor)) {
             return;
         }
@@ -59,7 +74,7 @@ public class EtlTreeStatement {
         }
         Cursor cursor = new Cursor(fieldDescriptor, -1, currentCursor);
         cursors.put(distinctName, cursor);
-        currentCursor = cursor
+        currentCursor = cursor;
         return cursor;
     }
 
@@ -86,11 +101,12 @@ public class EtlTreeStatement {
         if (fieldDescriptor.isLeaf()) {
             Method setter = ReflectionUtils.findSetter(obj, fieldName);
             if (setter == null) {
-                throw new EtlRuntimeException("Failed to find setter for " + fullName + "");
+                return false;
             }
             ReflectionUtils.setValue(setter, obj, value);
+            return true;
         }
-        Method getter = ReflectionUtils.findGetter(obj, fieldName, valueCls);
+        Method getter = ReflectionUtils.findGetter(obj, fieldName);
         Object fieldValue = ReflectionUtils.getValue(getter, obj);
         if (fieldValue == null) {
             throw new EtlRuntimeException("Failed to find property " + fullName + " : " + fieldDescriptor.toString());

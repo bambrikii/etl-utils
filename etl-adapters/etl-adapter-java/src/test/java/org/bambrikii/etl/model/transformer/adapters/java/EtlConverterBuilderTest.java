@@ -1,4 +1,4 @@
-package org.bambikii.etl.model.transformer.adapters.java;
+package org.bambrikii.etl.model.transformer.adapters.java;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldAdapter;
 import org.bambikii.etl.model.transformer.adapters.EtlUtils;

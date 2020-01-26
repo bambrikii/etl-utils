@@ -1,74 +1,119 @@
 package org.bambrikii.etl.model.transformer.adapters.java.maptree.io;
 
+import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.bambrikii.etl.model.transformer.adapters.java.maptree.io.FieldDescriptor.NOT_AVAILABLE_FIELD_DESCRIPTOR;
-
 public class FieldDescriptorsContainer {
+    public static final FieldDescriptor NOT_AVAILABLE_FIELD_DESCRIPTOR = new FieldDescriptor(null, null, -1, false, false, null) {
+    };
     public static final String ARRAY_SUFFIX = "[]";
-    private Map<String, List<String>> namesArr = new HashMap<>();
-    private Map<String, Map<Integer, FieldDescriptor>> fieldDescriptors = new HashMap<>();
+    private final Map<String, List<String>> namesArr = new HashMap<>();
+    private final Map<String, Map<Integer, String>> distinctNamesByFullNameAndPos = new HashMap<>();
+    private final Map<String, FieldDescriptor> byDistinctName = new HashMap<>();
 
-    private List<String> ensureNamesSplit(String name) {
-        if (namesArr.containsKey(name)) {
-            return namesArr.get(name);
+    public FieldDescriptor ensureFieldDescriptor(String fullName, int pos) {
+        if (pos < 0) {
+            return null;
         }
-        List<String> namesArr = Arrays.asList(name.split("\\."));
-        this.namesArr.put(name, namesArr);
+        String distinctName = ensureDistinctName(fullName, pos);
+        if (distinctName == null) {
+            return NOT_AVAILABLE_FIELD_DESCRIPTOR;
+        }
+        if (byDistinctName.containsKey(distinctName)) {
+            return byDistinctName.get(distinctName);
+        }
+
+        boolean isArray;
+        String simpleName = ensureSimpleName(fullName, pos);
+        if (simpleName.endsWith(ARRAY_SUFFIX)) {
+            simpleName = simpleName.substring(0, simpleName.length() - ARRAY_SUFFIX.length());
+            isArray = true;
+        } else {
+            isArray = false;
+        }
+        boolean isLeaf = pos == namesArr.size() - 1;
+        FieldDescriptor parentDescriptor = ensureFieldDescriptor(fullName, pos - 1);
+        FieldDescriptor fieldDescriptor = new FieldDescriptor(
+                simpleName,
+                distinctName,
+                pos, isArray,
+                isLeaf,
+                parentDescriptor
+        );
+        byDistinctName.put(distinctName, fieldDescriptor);
+        return fieldDescriptor;
+    }
+
+    private String ensureSimpleName(String fullName, int pos) {
+        List<String> arr = ensureNamesArr(fullName);
+        if (pos > arr.size() - 1) {
+            throw new EtlRuntimeException("FullName's [" + fullName + "] position [" + pos + "] overflows.");
+        }
+        return arr.get(pos);
+
+    }
+
+    private List<String> ensureNamesArr(String fullName) {
+        if (namesArr.containsKey(fullName)) {
+            return namesArr.get(fullName);
+        }
+        List<String> namesArr = Arrays.asList(fullName.split("\\.", -1));
+        this.namesArr.put(fullName, namesArr);
         return namesArr;
     }
 
-    public FieldDescriptor getFieldDescriptor(String fullName, int simpleNamePosition) {
-        List<String> namesArr = ensureNamesSplit(fullName);
-        if (simpleNamePosition >= namesArr.size()) {
-            return NOT_AVAILABLE_FIELD_DESCRIPTOR;
-        }
-        Map<Integer, FieldDescriptor> descriptorsByPos;
-        if (!fieldDescriptors.containsKey(fullName)) {
-            descriptorsByPos = new HashMap<>();
-            fieldDescriptors.put(fullName, descriptorsByPos);
-        } else {
-            descriptorsByPos = fieldDescriptors.get(fullName);
-        }
-        if (!descriptorsByPos.containsKey(simpleNamePosition)) {
-            String simpleName = namesArr.get(simpleNamePosition);
-            boolean isArray;
-            if (simpleName.endsWith(ARRAY_SUFFIX)) {
-                simpleName = simpleName.substring(0, simpleName.length() - ARRAY_SUFFIX.length());
-                isArray = true;
-            } else {
-                isArray = false;
+    private String ensureDistinctName(String fullName, int pos) {
+        if (!distinctNamesByFullNameAndPos.containsKey(fullName)) {
+            String distinctName = buildDistinctName(fullName, pos);
+            if (distinctName == null) {
+                return null;
             }
-            String distinctName = buildDistinctName(namesArr, simpleNamePosition);
-            boolean isLeaf = simpleNamePosition == namesArr.size() - 1;
-            FieldDescriptor fieldDescriptor = new FieldDescriptor(
-                    simpleName,
-                    distinctName,
-                    simpleNamePosition, isArray,
-                    isLeaf
-            );
-            descriptorsByPos.put(simpleNamePosition, fieldDescriptor);
-            return fieldDescriptor;
+            Map<Integer, String> posMap = new HashMap<>();
+            posMap.put(pos, distinctName);
+            distinctNamesByFullNameAndPos.put(fullName, posMap);
+            return distinctName;
         }
-        return descriptorsByPos.get(simpleNamePosition);
+        Map<Integer, String> posMap = distinctNamesByFullNameAndPos.get(fullName);
+        if (posMap.containsKey(pos)) {
+            return posMap.get(pos);
+        }
+        String distinctName = buildDistinctName(fullName, pos);
+        if (distinctName == null) {
+            return null;
+        }
+        posMap = new HashMap<>();
+        posMap.put(pos, distinctName);
+        return distinctName;
     }
 
-    private String buildDistinctName(List<String> namesArr, int pos) {
+    private String buildDistinctName(String fullName, int pos) {
+        List<String> namesArr = ensureNamesArr(fullName);
+        int size = namesArr.size();
+        if (size == 0) {
+            throw new EtlRuntimeException("Name should have at least one simple name!");
+        }
+        if (pos >= size) {
+            return null;
+        }
         StringBuilder distinctNameBuilder = new StringBuilder();
-        for (int i = 0; i <= pos; i++) {
-            String name = namesArr.get(i);
-            if (name.endsWith(ARRAY_SUFFIX)) {
-                distinctNameBuilder.append(name, 0, name.length() - ARRAY_SUFFIX.length());
-            } else {
-                distinctNameBuilder.append(name);
-            }
-            if (i > 0) {
-                distinctNameBuilder.append(".");
-            }
+        appendToDistinctName(namesArr, distinctNameBuilder, 0);
+        for (int i = 1; i <= pos; i++) {
+            distinctNameBuilder.append(".");
+            appendToDistinctName(namesArr, distinctNameBuilder, i);
         }
         return distinctNameBuilder.toString();
+    }
+
+    private void appendToDistinctName(List<String> namesArr, StringBuilder distinctNameBuilder, int i) {
+        String name = namesArr.get(i);
+        if (name.endsWith(ARRAY_SUFFIX)) {
+            distinctNameBuilder.append(name, 0, name.length() - ARRAY_SUFFIX.length());
+        } else {
+            distinctNameBuilder.append(name);
+        }
     }
 }
