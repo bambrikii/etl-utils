@@ -2,10 +2,12 @@ package org.bambrikii.etl.model.transformer.adapters.java.maptree.io;
 
 import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FieldDescriptorsContainer {
     public static final FieldDescriptor NOT_AVAILABLE_FIELD_DESCRIPTOR = new FieldDescriptor(null, null, -1, false, false, null) {
@@ -14,10 +16,7 @@ public class FieldDescriptorsContainer {
     private final Map<String, List<String>> namesArr = new HashMap<>();
     private final Map<String, Map<Integer, String>> distinctNamesByFullNameAndPos = new HashMap<>();
     private final Map<String, FieldDescriptor> byDistinctName = new HashMap<>();
-
-    public FieldDescriptor ensureFieldDescriptor(String fullName) {
-        return ensureFieldDescriptor(fullName, ensureNamesArr(fullName).size() - 1);
-    }
+    private final Pattern TYPE_PATTERN = Pattern.compile("^(.*)<(.*)>$");
 
     public FieldDescriptor ensureFieldDescriptor(String fullName, int pos) {
         if (pos < 0) {
@@ -31,20 +30,33 @@ public class FieldDescriptorsContainer {
             return byDistinctName.get(distinctName);
         }
 
-        boolean isArray;
+        boolean isArray = false;
         String simpleName = ensureSimpleName(fullName, pos);
+        Class<?> cls = null;
         if (simpleName.endsWith(ARRAY_SUFFIX)) {
             simpleName = simpleName.substring(0, simpleName.length() - ARRAY_SUFFIX.length());
             isArray = true;
         } else {
-            isArray = false;
+            Matcher matcher = TYPE_PATTERN.matcher(simpleName);
+            if (matcher.matches()) {
+                simpleName = matcher.group(1);
+                try {
+                    cls = Class.forName(matcher.group(2));
+                    if (cls.isAssignableFrom(List.class)) {
+                        isArray = true;
+                    }
+                } catch (ClassNotFoundException ex) {
+                    throw new EtlRuntimeException(ex.getMessage(), ex);
+                }
+            }
         }
+        List<String> namesArr = ensureNamesArr(fullName);
         boolean isLeaf = pos == namesArr.size() - 1;
         FieldDescriptor parentDescriptor = ensureFieldDescriptor(fullName, pos - 1);
         FieldDescriptor fieldDescriptor = new FieldDescriptor(
                 simpleName,
                 distinctName,
-                pos, isArray,
+                pos, isArray, cls,
                 isLeaf,
                 parentDescriptor
         );
@@ -65,9 +77,40 @@ public class FieldDescriptorsContainer {
         if (namesArr.containsKey(fullName)) {
             return namesArr.get(fullName);
         }
-        List<String> namesArr = Arrays.asList(fullName.split("\\.", -1));
+//        List<String> namesArr = Arrays.asList(fullName.split("\\.", -1));
+        List<String> namesArr = splitFields(fullName);
         this.namesArr.put(fullName, namesArr);
         return namesArr;
+    }
+
+    public static List<String> splitFields(String fullName) {
+        List<String> fields = new ArrayList<>();
+        int from = 0;
+        boolean inType = false;
+        int length = fullName.length();
+        for (int i = 0; i < length; i++) {
+            char c = fullName.charAt(i);
+            switch (c) {
+                case '<': // starting type
+                    inType = true;
+                    break;
+                case '>': // ending type
+                    inType = false;
+                    break;
+                case '.': // field split
+                    if (!inType) {
+                        fields.add(fullName.substring(from, i));
+                        from = i + 1;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (from <= length) {
+            fields.add(fullName.substring(from));
+        }
+        return fields;
     }
 
     private String ensureDistinctName(String fullName, int pos) {

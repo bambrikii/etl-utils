@@ -12,8 +12,6 @@ import java.util.Objects;
 public class EtlTreeStatement {
     private final Object target;
     private final FieldDescriptorsContainer fieldDescriptors;
-    private final Map<String, Cursor> cursors;
-    private Cursor currentCursor;
 
     public EtlTreeStatement() {
         this(new HashMap<>());
@@ -22,7 +20,6 @@ public class EtlTreeStatement {
     public EtlTreeStatement(Object target) {
         this.target = target == null ? new HashMap<>() : target;
         fieldDescriptors = new FieldDescriptorsContainer();
-        cursors = new HashMap<>();
     }
 
     public Object getTarget() {
@@ -32,74 +29,87 @@ public class EtlTreeStatement {
     public void setField(String name, Object value) {
         Objects.requireNonNull(value);
 
-        setValue0(target, name, value, 0, value.getClass());
+        setValue0(target, null, name, value, 0, value.getClass());
+    }
+
+    public void setField(String listPrefix, String name, Object value) {
+        Objects.requireNonNull(value);
+
+        setValue0(target, listPrefix, name, value, 0, value.getClass());
     }
 
     public void setField(String name, Object value, Class<?> valueCls) {
-        setValue0(target, name, value, 0, valueCls);
+        setValue0(target, null, name, value, 0, valueCls);
     }
 
-    private void setValue0(Object obj, String fullName, Object value, int namePos, Class<?> valueCls) {
+    public void setField(String listPrefix, String name, Object value, Class<?> valueCls) {
+        setValue0(target, listPrefix, name, value, 0, valueCls);
+    }
+
+    private void setValue0(Object obj, String listPrefix, String fullName, Object value, int namePos, Class<?> valueCls) {
+        if (obj == null) {
+            return;
+        }
         FieldDescriptor fieldDescriptor = fieldDescriptors.ensureFieldDescriptor(fullName, namePos);
-        if (tryWriteListValue(obj, fieldDescriptor)) {
+        if (tryWriteListValue(obj, value, listPrefix, fieldDescriptor)) {
             return;
         }
-        String fieldName = fieldDescriptor.getSimpleName();
-        if (tryWriteMapValue(obj, fullName, value, namePos, valueCls, fieldDescriptor, fieldName)) {
+        if (tryWriteMapValue(obj, fullName, value, namePos, valueCls, listPrefix, fieldDescriptor)) {
             return;
         }
-        if (tryWriteReflectiveValue(obj, fullName, value, namePos, valueCls, fieldDescriptor, fieldName)) {
+        if (tryWriteReflectiveValue(obj, fullName, value, namePos, valueCls, listPrefix, fieldDescriptor)) {
             return;
         }
+        throw new EtlRuntimeException("Failed to find property [" + fullName + ":" + namePos + ":" + valueCls.getName() + "] for object " + obj + "");
     }
 
-    private boolean tryWriteListValue(Object obj, FieldDescriptor fieldDescriptor) {
+    private boolean tryWriteListValue(Object obj, Object value, String listPrefix, FieldDescriptor fieldDescriptor) {
         if (!(obj instanceof List)) {
             return false;
         }
 
+        List list = (List) obj;
         if (fieldDescriptor.isLeaf()) {
-            // TODO: set value using cursor
-            ensureCursor(fieldDescriptor);
+            list.add(value);
         } else {
-            // iterate using cursor
+            // TODO: set value using cursor
+            String distinctName = fieldDescriptor.getDistinctName();
+            if (list.size() == 0 || distinctName.equals(listPrefix)) {
+                // TODO: should create object based on some specific type
+                Object newObj = new Object();
+                list.add(newObj);
+            }
         }
         return true;
     }
 
-    private Cursor ensureCursor(FieldDescriptor fieldDescriptor) {
-        String distinctName = fieldDescriptor.getDistinctName();
-        if (cursors.containsKey(distinctName)) {
-            return cursors.get(distinctName);
-        }
-        Cursor cursor = new Cursor(fieldDescriptor, -1, currentCursor);
-        cursors.put(distinctName, cursor);
-        currentCursor = cursor;
-        return cursor;
-    }
 
-    private boolean tryWriteMapValue(Object obj, String fullName, Object value, int namePos, Class<?> valueCls, FieldDescriptor fieldDescriptor, String fieldName) {
+    private boolean tryWriteMapValue(Object obj, String fullName, Object value, int namePos, Class<?> valueCls, String listPrefix, FieldDescriptor fieldDescriptor) {
         if (!(obj instanceof Map)) {
             return false;
         }
+        String fieldName = fieldDescriptor.getSimpleName();
         if (fieldDescriptor.isLeaf()) {
             ((Map) obj).put(fieldName, value);
             return true;
         }
-        Map<String, Object> fieldValue;
+        Object fieldObj;
         if (((Map) obj).containsKey(fieldName)) {
-            fieldValue = (Map<String, Object>) ((Map) obj).get(fieldName);
+            fieldObj = ((Map<String, Object>) obj).get(fieldName);
         } else {
-            fieldValue = new HashMap<>();
-            ((Map) obj).put(fieldName, fieldValue);
+            // TODO: should create object of some specific type
+            fieldDescriptor.getType();
+            fieldObj = new HashMap<>();
+            ((Map) obj).put(fieldName, fieldObj);
         }
-        setValue0(fieldValue, fullName, value, namePos + 1, valueCls);
+        setValue0(fieldObj, listPrefix, fullName, value, namePos + 1, valueCls);
         return true;
     }
 
-    private boolean tryWriteReflectiveValue(Object obj, String fullName, Object value, int namePos, Class<?> valueCls, FieldDescriptor fieldDescriptor, String fieldName) {
+    private boolean tryWriteReflectiveValue(Object obj, String fullName, Object value, int namePos, Class<?> valueCls, String listPrefix, FieldDescriptor fieldDescriptor) {
+        String fieldName = fieldDescriptor.getSimpleName();
         if (fieldDescriptor.isLeaf()) {
-            Method setter = ReflectionUtils.findSetter(obj, fieldName);
+            Method setter = ReflectionUtils.findSetter(obj, fieldName, valueCls);
             if (setter == null) {
                 return false;
             }
@@ -107,11 +117,12 @@ public class EtlTreeStatement {
             return true;
         }
         Method getter = ReflectionUtils.findGetter(obj, fieldName);
-        Object fieldValue = ReflectionUtils.getValue(getter, obj);
-        if (fieldValue == null) {
+        Object fieldObj = ReflectionUtils.getValue(getter, obj);
+        if (fieldObj == null) {
+            // TODO: Should create object based on return type
             throw new EtlRuntimeException("Failed to find property " + fullName + " : " + fieldDescriptor.toString());
         }
-        setValue0(fieldValue, fullName, value, namePos + 1, valueCls);
+        setValue0(fieldObj, listPrefix, fullName, value, namePos + 1, valueCls);
         return true;
     }
 }

@@ -7,7 +7,7 @@ import org.bambrikii.etl.model.transformer.adapters.java.maptree.io.EtlTreeState
 public class EtlTreeFieldWriterStrategy extends EtlFieldWriterStrategy<EtlTreeStatement> {
     @Override
     protected EtlFieldLoadable<EtlTreeStatement, String> getStringWriter(String name) {
-        return (obj, value) -> obj.setField(name, value, String.class);
+        return (obj, value) -> obj.setField(name, (Object) value, String.class);
     }
 
     @Override

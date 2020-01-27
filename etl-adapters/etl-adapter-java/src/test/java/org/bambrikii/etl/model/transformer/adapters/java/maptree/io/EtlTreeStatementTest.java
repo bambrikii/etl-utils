@@ -24,9 +24,13 @@ public class EtlTreeStatementTest {
 
         statement.setField("stringField1", "stringField1Value");
         statement.setField("intField2", Integer.valueOf(2));
-        statement.setField("classField3.stringField4", "stringField4Value");
-        statement.setField("listField5[]", "listField5StringElement6");
-        statement.setField("listField5[]", Integer.valueOf(7));
+        statement.setField("classField3<org.bambrikii.etl.model.transformer.adapters.java.maptree.io.TestClass1>.stringField4", "stringField4Value");
+
+        statement.setField("listField5[].", "listField5StringElement6");
+        statement.setField("listField5[].", Integer.valueOf(7));
+
+        statement.setField("listField6[].", "listField6[]..", "6");
+        statement.setField("listField6[].", "listField6[]..", "7");
 
 
         assertEquals("stringField1Value", data.get("stringField1"));

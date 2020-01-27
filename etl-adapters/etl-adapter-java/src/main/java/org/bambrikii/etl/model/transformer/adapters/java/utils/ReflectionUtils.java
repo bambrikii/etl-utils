@@ -9,10 +9,10 @@ public class ReflectionUtils {
     private ReflectionUtils() {
     }
 
-    public static Method findSetter(Object obj, String propertyName) {
+    public static Method findSetter(Object obj, String propertyName, Class<?> valueCls) {
         String name = "set" + capitalizeName(propertyName);
         try {
-            return obj.getClass().getMethod(name);
+            return obj.getClass().getMethod(name, valueCls);
         } catch (NoSuchMethodException ex) {
             throw new EtlRuntimeException("Failed to find method " + propertyName, ex);
         }
