@@ -42,6 +42,13 @@ public class EtlTreeStatementTest {
         List listField5 = (List) data.get("listField5");
         assertEquals(2, listField5.size());
         assertEquals("listField5StringElement6", listField5.get(0));
-        assertEquals(Integer.valueOf(7), listField5.get(0));
+        assertEquals(Integer.valueOf(7), listField5.get(1));
+
+        List listField6 = (List) data.get("listField6");
+        assertEquals(2, listField6.size());
+        List listField6_2 = (List) listField6.get(0);
+        assertEquals(2, listField6_2.size());
+        assertEquals("6", listField6_2.get(0));
+        assertEquals("7", listField6_2.get(1));
     }
 }

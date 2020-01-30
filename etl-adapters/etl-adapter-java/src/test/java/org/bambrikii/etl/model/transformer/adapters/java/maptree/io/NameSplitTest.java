@@ -11,11 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NameSplitTest {
     public static final String NAME = "(\\.|^|)([^.]*)((<.*>)|(\\[\\])|)(\\.|$|)";
-    private String str = "string.sTring<str.str.str>.strin_g.string.qwe.zzxc[].qwe..[].3234.wer";
+    private String str = "string.sTring<str.str.str>.strin_g.string.qwe.zzxc[]<qwe>.qwe..[].3234.wer";
 
-    private void print(List<String> fields) {
-        for (String field : fields) {
-            System.out.println(": " + field);
+    private void print(List<FieldNameElement> fields) {
+        for (FieldNameElement field : fields) {
+            System.out.println(": " + field.getName() + "<" + field.getType() + ">");
         }
     }
 
@@ -30,20 +30,35 @@ public class NameSplitTest {
     }
 
     @Test
-    public void shouldSplit2() {
+    public void shouldSplitMultipleFields() {
         String str = this.str;
 
-        List<String> fields = splitFields(str);
+        List<FieldNameElement> fields = splitFields(str);
 
         print(fields);
     }
 
     @Test
-    public void shouldSplit3() {
-        List<String> fields = splitFields("list[]..");
+    public void shouldSplitNestedLists() {
+        List<FieldNameElement> fields = splitFields("list[]..");
 
         print(fields);
 
         assertEquals(3, fields.size());
+    }
+
+    @Test
+    public void shouldSplitWithTypes() {
+        List<FieldNameElement> fields = splitFields("sTring<str.str.str>.zzxc[]<qwe>");
+
+        assertEquals(2, fields.size());
+
+        FieldNameElement nameElement1 = fields.get(0);
+        assertEquals("sTring", nameElement1.getName());
+        assertEquals("str.str.str", nameElement1.getType());
+
+        FieldNameElement nameElement2 = fields.get(1);
+        assertEquals("zzxc[]", nameElement2.getName());
+        assertEquals("qwe", nameElement2.getType());
     }
 }

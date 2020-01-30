@@ -13,7 +13,7 @@ public class FieldDescriptorsContainer {
     public static final FieldDescriptor NOT_AVAILABLE_FIELD_DESCRIPTOR = new FieldDescriptor(null, null, -1, false, false, null) {
     };
     public static final String ARRAY_SUFFIX = "[]";
-    private final Map<String, List<String>> namesArr = new HashMap<>();
+    private final Map<String, List<FieldNameElement>> namesArr = new HashMap<String, List<FieldNameElement>>();
     private final Map<String, Map<Integer, String>> distinctNamesByFullNameAndPos = new HashMap<>();
     private final Map<String, FieldDescriptor> byDistinctName = new HashMap<>();
     private final Pattern TYPE_PATTERN = Pattern.compile("^(.*)<(.*)>$");
@@ -31,7 +31,8 @@ public class FieldDescriptorsContainer {
         }
 
         boolean isArray = false;
-        String simpleName = ensureSimpleName(fullName, pos);
+        FieldNameElement nameElement = ensureSimpleName(fullName, pos);
+        String simpleName = nameElement.getName();
         Class<?> cls = null;
         if (simpleName.endsWith(ARRAY_SUFFIX)) {
             simpleName = simpleName.substring(0, simpleName.length() - ARRAY_SUFFIX.length());
@@ -50,7 +51,7 @@ public class FieldDescriptorsContainer {
                 }
             }
         }
-        List<String> namesArr = ensureNamesArr(fullName);
+        List<FieldNameElement> namesArr = ensureNamesArr(fullName);
         boolean isLeaf = pos == namesArr.size() - 1;
         FieldDescriptor parentDescriptor = ensureFieldDescriptor(fullName, pos - 1);
         FieldDescriptor fieldDescriptor = new FieldDescriptor(
@@ -64,8 +65,8 @@ public class FieldDescriptorsContainer {
         return fieldDescriptor;
     }
 
-    private String ensureSimpleName(String fullName, int pos) {
-        List<String> arr = ensureNamesArr(fullName);
+    private FieldNameElement ensureSimpleName(String fullName, int pos) {
+        List<FieldNameElement> arr = ensureNamesArr(fullName);
         if (pos > arr.size() - 1) {
             throw new EtlRuntimeException("FullName's [" + fullName + "] position [" + pos + "] overflows.");
         }
@@ -73,34 +74,42 @@ public class FieldDescriptorsContainer {
 
     }
 
-    private List<String> ensureNamesArr(String fullName) {
+    private List<FieldNameElement> ensureNamesArr(String fullName) {
         if (namesArr.containsKey(fullName)) {
             return namesArr.get(fullName);
         }
 //        List<String> namesArr = Arrays.asList(fullName.split("\\.", -1));
-        List<String> namesArr = splitFields(fullName);
+        List<FieldNameElement> namesArr = splitFields(fullName);
         this.namesArr.put(fullName, namesArr);
         return namesArr;
     }
 
-    public static List<String> splitFields(String fullName) {
-        List<String> fields = new ArrayList<>();
+    public static List<FieldNameElement> splitFields(String fullName) {
+        List<FieldNameElement> fields = new ArrayList<>();
         int from = 0;
         boolean inType = false;
+        int typeFrom = 0;
         int length = fullName.length();
+        String name = null;
+        String type = null;
         for (int i = 0; i < length; i++) {
             char c = fullName.charAt(i);
             switch (c) {
                 case '<': // starting type
                     inType = true;
+                    typeFrom = i;
                     break;
                 case '>': // ending type
                     inType = false;
+                    type = fullName.substring(typeFrom + 1, i);
                     break;
                 case '.': // field split
                     if (!inType) {
-                        fields.add(fullName.substring(from, i));
+                        name = extractSimpleName(fullName, from, typeFrom, i);
+                        fields.add(new FieldNameElement(name, type));
                         from = i + 1;
+                        name = null;
+                        type = null;
                     }
                     break;
                 default:
@@ -108,9 +117,18 @@ public class FieldDescriptorsContainer {
             }
         }
         if (from <= length) {
-            fields.add(fullName.substring(from));
+            name = extractSimpleName(fullName, from, typeFrom, length);
+            fields.add(new FieldNameElement(name, type));
         }
         return fields;
+    }
+
+    private static String extractSimpleName(String fullName, int from, int typeFrom, int i) {
+        String name;
+        name = typeFrom > from
+                ? fullName.substring(from, typeFrom)
+                : fullName.substring(from, i);
+        return name;
     }
 
     private String ensureDistinctName(String fullName, int pos) {
@@ -138,7 +156,7 @@ public class FieldDescriptorsContainer {
     }
 
     private String buildDistinctName(String fullName, int pos) {
-        List<String> namesArr = ensureNamesArr(fullName);
+        List<FieldNameElement> namesArr = ensureNamesArr(fullName);
         int size = namesArr.size();
         if (size == 0) {
             throw new EtlRuntimeException("Name should have at least one simple name!");
@@ -155,8 +173,9 @@ public class FieldDescriptorsContainer {
         return distinctNameBuilder.toString();
     }
 
-    private void appendToDistinctName(List<String> namesArr, StringBuilder distinctNameBuilder, int i) {
-        String name = namesArr.get(i);
+    private void appendToDistinctName(List<FieldNameElement> namesArr, StringBuilder distinctNameBuilder, int i) {
+        FieldNameElement nameElement = namesArr.get(i);
+        String name = nameElement.getName();
         if (name.endsWith(ARRAY_SUFFIX)) {
             distinctNameBuilder.append(name, 0, name.length() - ARRAY_SUFFIX.length());
         } else {
