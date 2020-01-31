@@ -6,17 +6,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class FieldDescriptorsContainer {
-    public static final FieldDescriptor NOT_AVAILABLE_FIELD_DESCRIPTOR = new FieldDescriptor(null, null, -1, false, false, null) {
+    public static final FieldDescriptor NOT_AVAILABLE_FIELD_DESCRIPTOR = new FieldDescriptor(null, null, -1, false, null) {
     };
-    public static final String ARRAY_SUFFIX = "[]";
-    private final Map<String, List<FieldNameElement>> namesArr = new HashMap<String, List<FieldNameElement>>();
+
+    private static final String ARRAY_SUFFIX = "[]";
+    private final Map<String, List<FieldNameElement>> namesArr = new HashMap<>();
     private final Map<String, Map<Integer, String>> distinctNamesByFullNameAndPos = new HashMap<>();
     private final Map<String, FieldDescriptor> byDistinctName = new HashMap<>();
-    private final Pattern TYPE_PATTERN = Pattern.compile("^(.*)<(.*)>$");
 
     public FieldDescriptor ensureFieldDescriptor(String fullName, int pos) {
         if (pos < 0) {
@@ -30,35 +28,13 @@ public class FieldDescriptorsContainer {
             return byDistinctName.get(distinctName);
         }
 
-        boolean isArray = false;
         FieldNameElement nameElement = ensureSimpleName(fullName, pos);
-        String simpleName = nameElement.getName();
-        Class<?> cls = null;
-        if (simpleName.endsWith(ARRAY_SUFFIX)) {
-            simpleName = simpleName.substring(0, simpleName.length() - ARRAY_SUFFIX.length());
-            isArray = true;
-        } else {
-            Matcher matcher = TYPE_PATTERN.matcher(simpleName);
-            if (matcher.matches()) {
-                simpleName = matcher.group(1);
-                try {
-                    cls = Class.forName(matcher.group(2));
-                    if (cls.isAssignableFrom(List.class)) {
-                        isArray = true;
-                    }
-                } catch (ClassNotFoundException ex) {
-                    throw new EtlRuntimeException(ex.getMessage(), ex);
-                }
-            }
-        }
         List<FieldNameElement> namesArr = ensureNamesArr(fullName);
         boolean isLeaf = pos == namesArr.size() - 1;
         FieldDescriptor parentDescriptor = ensureFieldDescriptor(fullName, pos - 1);
         FieldDescriptor fieldDescriptor = new FieldDescriptor(
-                simpleName,
-                distinctName,
-                pos, isArray, cls,
-                isLeaf,
+                nameElement, distinctName,
+                pos, isLeaf,
                 parentDescriptor
         );
         byDistinctName.put(distinctName, fieldDescriptor);
@@ -78,7 +54,6 @@ public class FieldDescriptorsContainer {
         if (namesArr.containsKey(fullName)) {
             return namesArr.get(fullName);
         }
-//        List<String> namesArr = Arrays.asList(fullName.split("\\.", -1));
         List<FieldNameElement> namesArr = splitFields(fullName);
         this.namesArr.put(fullName, namesArr);
         return namesArr;
@@ -86,48 +61,74 @@ public class FieldDescriptorsContainer {
 
     public static List<FieldNameElement> splitFields(String fullName) {
         List<FieldNameElement> fields = new ArrayList<>();
-        int from = 0;
+        int nameFrom = 0;
+        int nameTo = -1;
         boolean inType = false;
-        int typeFrom = 0;
+        int typeFrom = -1;
         int length = fullName.length();
-        String name = null;
-        String type = null;
+        Class<?> type = null;
+        boolean isArray = false;
         for (int i = 0; i < length; i++) {
             char c = fullName.charAt(i);
             switch (c) {
+                case '[':
+                    nameTo = i;
+                    isArray = true;
+                    break;
                 case '<': // starting type
                     inType = true;
                     typeFrom = i;
                     break;
                 case '>': // ending type
                     inType = false;
-                    type = fullName.substring(typeFrom + 1, i);
+                    type = tryClass(fullName, typeFrom, i);
                     break;
                 case '.': // field split
                     if (!inType) {
-                        name = extractSimpleName(fullName, from, typeFrom, i);
-                        fields.add(new FieldNameElement(name, type));
-                        from = i + 1;
-                        name = null;
+                        fields.add(new FieldNameElement(
+                                extractSimpleName(fullName, nameFrom, nameTo, i, typeFrom),
+                                type,
+                                isArray
+                        ));
+                        nameFrom = i + 1;
+                        nameTo = -1;
                         type = null;
+                        isArray = false;
                     }
                     break;
                 default:
                     break;
             }
         }
-        if (from <= length) {
-            name = extractSimpleName(fullName, from, typeFrom, length);
-            fields.add(new FieldNameElement(name, type));
+        if (nameFrom <= length) {
+            fields.add(new FieldNameElement(
+                    extractSimpleName(fullName, nameFrom, nameTo, length, typeFrom),
+                    type,
+                    isArray
+            ));
         }
         return fields;
     }
 
-    private static String extractSimpleName(String fullName, int from, int typeFrom, int i) {
+    private static Class<?> tryClass(String fullName, int typeFrom, int i) {
+        if (typeFrom + 1 >= i) {
+            return null;
+        }
+        String className = fullName.substring(typeFrom + 1, i);
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException ex) {
+            throw new EtlRuntimeException("Failed to find class <" + className + ">!", ex);
+        }
+    }
+
+    private static String extractSimpleName(String fullName, int nameFrom, int nameTo, int currentPos, int typeFrom) {
         String name;
-        name = typeFrom > from
-                ? fullName.substring(from, typeFrom)
-                : fullName.substring(from, i);
+        if (typeFrom > nameFrom) {
+            name = fullName.substring(nameFrom, nameTo != -1 ? nameTo : typeFrom);
+        } else {
+            name = fullName.substring(nameFrom, nameTo != -1 ? nameTo : currentPos);
+        }
         return name;
     }
 
@@ -175,7 +176,7 @@ public class FieldDescriptorsContainer {
 
     private void appendToDistinctName(List<FieldNameElement> namesArr, StringBuilder distinctNameBuilder, int i) {
         FieldNameElement nameElement = namesArr.get(i);
-        String name = nameElement.getName();
+        String name = nameElement.getSimpleName();
         if (name.endsWith(ARRAY_SUFFIX)) {
             distinctNameBuilder.append(name, 0, name.length() - ARRAY_SUFFIX.length());
         } else {

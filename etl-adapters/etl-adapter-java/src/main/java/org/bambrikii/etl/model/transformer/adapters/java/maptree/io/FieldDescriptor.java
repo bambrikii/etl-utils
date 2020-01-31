@@ -1,47 +1,40 @@
 package org.bambrikii.etl.model.transformer.adapters.java.maptree.io;
 
-import java.util.List;
-
 public class FieldDescriptor {
-    private final String simpleName;
     private final String distinctName;
-    private final boolean array;
     private final int namePos;
     private final boolean leaf;
     private final FieldDescriptor parent;
-    private Class<?> type;
+    private final FieldNameElement nameElement;
 
     public FieldDescriptor(
             String simpleName, String distinctName,
-            int namePos, boolean array,
-            boolean leaf,
+            int namePos,
+            boolean leaf, boolean isArray,
             FieldDescriptor parent
     ) {
-        this(
-                simpleName, distinctName,
-                namePos, array, null,
-                leaf,
-                parent
-        );
+        this.nameElement = new FieldNameElement(simpleName, null, isArray);
+        this.distinctName = distinctName;
+        this.namePos = namePos;
+        this.leaf = leaf;
+        this.parent = parent;
     }
 
     public FieldDescriptor(
-            String simpleName, String distinctName,
-            int namePos, boolean array, Class<?> type,
+            FieldNameElement nameElement, String distinctName,
+            int namePos,
             boolean leaf,
             FieldDescriptor parent
     ) {
-        this.simpleName = simpleName;
+        this.nameElement = nameElement;
         this.distinctName = distinctName;
         this.namePos = namePos;
-        this.type = type;
-        this.array = array || (type != null && type.isAssignableFrom(List.class));
         this.leaf = leaf;
         this.parent = parent;
     }
 
     public String getSimpleName() {
-        return simpleName;
+        return nameElement.getSimpleName();
     }
 
     public String getDistinctName() {
@@ -53,7 +46,7 @@ public class FieldDescriptor {
     }
 
     public boolean isArray() {
-        return array;
+        return nameElement.isArray();
     }
 
     public boolean isLeaf() {
@@ -65,6 +58,6 @@ public class FieldDescriptor {
     }
 
     public Class<?> getType() {
-        return type;
+        return nameElement.getType();
     }
 }

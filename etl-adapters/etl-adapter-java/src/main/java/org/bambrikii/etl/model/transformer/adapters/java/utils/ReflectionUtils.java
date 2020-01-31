@@ -46,4 +46,12 @@ public class ReflectionUtils {
             throw new EtlRuntimeException("Failed to invoke method " + method.getName(), ex);
         }
     }
+
+    public static Object tryNewInstance(Class<?> cls) {
+        try {
+            return cls.newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            throw new EtlRuntimeException("Failed to instantiate an object of [" + cls.getName() + "] class");
+        }
+    }
 }

@@ -2,20 +2,27 @@ package org.bambrikii.etl.model.transformer.adapters.java.maptree.io;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.bambrikii.etl.model.transformer.adapters.java.maptree.io.FieldDescriptorsContainer.splitFields;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NameSplitTest {
     public static final String NAME = "(\\.|^|)([^.]*)((<.*>)|(\\[\\])|)(\\.|$|)";
-    private String str = "string.sTring<str.str.str>.strin_g.string.qwe.zzxc[]<qwe>.qwe..[].3234.wer";
+    private String str = "string" +
+            ".sTring<java.util.ArrayList>" +
+            ".strin_g.string.qwe" +
+            ".zzxc[]<org.bambrikii.etl.model.transformer.adapters.java.maptree.io.TestClass1>" +
+            ".qwe..[].3234.wer";
 
     private void print(List<FieldNameElement> fields) {
         for (FieldNameElement field : fields) {
-            System.out.println(": " + field.getName() + "<" + field.getType() + ">");
+            System.out.println(": " + field.getSimpleName() + "<" + field.getType() + ">");
         }
     }
 
@@ -48,17 +55,38 @@ public class NameSplitTest {
     }
 
     @Test
-    public void shouldSplitWithTypes() {
-        List<FieldNameElement> fields = splitFields("sTring<str.str.str>.zzxc[]<qwe>");
+    public void shouldSplitWithType() {
+        List<FieldNameElement> fields = splitFields("sTring<java.util.ArrayList>");
 
-        assertEquals(2, fields.size());
+        assertEquals(1, fields.size());
 
-        FieldNameElement nameElement1 = fields.get(0);
-        assertEquals("sTring", nameElement1.getName());
-        assertEquals("str.str.str", nameElement1.getType());
+        FieldNameElement nameElement = fields.get(0);
+        assertEquals("sTring", nameElement.getSimpleName());
+        assertEquals(true, nameElement.isArray());
+        assertEquals(ArrayList.class, nameElement.getType());
+    }
 
-        FieldNameElement nameElement2 = fields.get(1);
-        assertEquals("zzxc[]", nameElement2.getName());
-        assertEquals("qwe", nameElement2.getType());
+    @Test
+    public void shouldSplitWithArrayAndType() {
+        List<FieldNameElement> fields = splitFields("zzxc[]<java.util.HashMap>");
+
+        assertEquals(1, fields.size());
+
+        FieldNameElement nameElement = fields.get(0);
+        assertEquals("zzxc", nameElement.getSimpleName());
+        assertEquals(true, nameElement.isArray());
+        assertEquals(HashMap.class, nameElement.getType());
+    }
+
+    @Test
+    public void shouldSplitWithArray() {
+        List<FieldNameElement> fields = splitFields("zzxc3[]");
+
+        assertEquals(1, fields.size());
+
+        FieldNameElement nameElement = fields.get(0);
+        assertEquals("zzxc3", nameElement.getSimpleName());
+        assertEquals(true, nameElement.isArray());
+        assertNull(nameElement.getType());
     }
 }

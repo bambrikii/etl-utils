@@ -4,6 +4,7 @@ import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
 import org.bambrikii.etl.model.transformer.adapters.java.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,8 +76,16 @@ public class EtlTreeStatement {
             // TODO: set value using cursor
             String distinctName = fieldDescriptor.getDistinctName();
             if (list.size() == 0 || distinctName.equals(listPrefix)) {
-                // TODO: should create object based on some specific type
-                Object newObj = new Object();
+                Object newObj;
+                if (fieldDescriptor.isArray()) {
+                    newObj = new ArrayList<>();
+                } else {
+                    Class<?> cls = fieldDescriptor.getType();
+                    if (cls == null) {
+                        throw new EtlRuntimeException("Class or array flag is expected for [" + distinctName + "] field.");
+                    }
+                    newObj = ReflectionUtils.tryNewInstance(cls);
+                }
                 list.add(newObj);
             }
         }

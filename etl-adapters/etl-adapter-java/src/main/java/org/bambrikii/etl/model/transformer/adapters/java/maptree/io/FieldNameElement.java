@@ -1,19 +1,35 @@
 package org.bambrikii.etl.model.transformer.adapters.java.maptree.io;
 
+import java.util.List;
+
 public class FieldNameElement {
-    private String name;
-    private String type;
+    private final String simpleName;
+    private final Class<?> type;
+    private final boolean array;
 
-    public FieldNameElement(String name, String type) {
-        this.name = name;
+    private static boolean evaluateArray(Class<?> type) {
+        return type != null && List.class.isAssignableFrom(type);
+    }
+
+    public FieldNameElement(String simpleName, Class<?> type) {
+        this(simpleName, type, evaluateArray(type));
+    }
+
+    public FieldNameElement(String simpleName, Class<?> type, boolean isArray) {
+        this.simpleName = simpleName;
         this.type = type;
+        this.array = isArray || evaluateArray(type);
     }
 
-    public String getName() {
-        return name;
+    public String getSimpleName() {
+        return simpleName;
     }
 
-    public String getType() {
+    public boolean isArray() {
+        return array;
+    }
+
+    public Class<?> getType() {
         return type;
     }
 }
