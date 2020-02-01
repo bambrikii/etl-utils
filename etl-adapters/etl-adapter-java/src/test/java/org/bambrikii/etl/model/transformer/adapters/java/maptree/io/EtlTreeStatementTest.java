@@ -26,11 +26,11 @@ public class EtlTreeStatementTest {
         statement.setField("intField2", Integer.valueOf(2));
         statement.setField("classField3<org.bambrikii.etl.model.transformer.adapters.java.maptree.io.TestClass1>.stringField4", "stringField4Value");
 
-        statement.setField("listField5[].", "listField5StringElement6");
-        statement.setField("listField5[].", Integer.valueOf(7));
+        statement.setField("listField5.", "listField5StringElement6");
+        statement.setField("listField5.", Integer.valueOf(7));
 
-        statement.setField("listField6[].", "listField6[]..", "6");
-        statement.setField("listField6[].", "listField6[]..", "7");
+        statement.setField("listField6.", "listField6[].[].", "6");
+        statement.setField("listField6.", "listField6[].[].", "7");
 
 
         assertEquals("stringField1Value", data.get("stringField1"));
@@ -46,9 +46,34 @@ public class EtlTreeStatementTest {
 
         List listField6 = (List) data.get("listField6");
         assertEquals(2, listField6.size());
-        List listField6_2 = (List) listField6.get(0);
-        assertEquals(2, listField6_2.size());
-        assertEquals("6", listField6_2.get(0));
-        assertEquals("7", listField6_2.get(1));
+
+        List listField6_1 = (List) listField6.get(0);
+        assertEquals(1, listField6_1.size());
+        assertEquals("6", listField6_1.get(0));
+
+        List listField6_2 = (List) listField6.get(1);
+        assertEquals(1, listField6_2.size());
+        assertEquals("7", listField6_2.get(0));
+    }
+
+    @Test
+    public void shouldSetNestedList() {
+        Map<String, Object> data = new HashMap<>();
+
+        EtlTreeStatement statement = new EtlTreeStatement(data);
+
+        statement.setField("listField6.", "listField6[].[].", "6");
+        statement.setField("listField6.", "listField6[].[].", "7");
+
+        List listField6 = (List) data.get("listField6");
+        assertEquals(2, listField6.size());
+
+        List listField6_1 = (List) listField6.get(0);
+        assertEquals(1, listField6_1.size());
+        assertEquals("6", listField6_1.get(0));
+
+        List listField6_2 = (List) listField6.get(1);
+        assertEquals(1, listField6_2.size());
+        assertEquals("7", listField6_2.get(0));
     }
 }

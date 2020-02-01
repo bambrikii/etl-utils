@@ -13,6 +13,7 @@ import java.util.Objects;
 public class EtlTreeStatement {
     private final Object target;
     private final FieldDescriptorsContainer fieldDescriptors;
+    private final CursorsContainer cursorsContainer;
 
     public EtlTreeStatement() {
         this(new HashMap<>());
@@ -21,6 +22,7 @@ public class EtlTreeStatement {
     public EtlTreeStatement(Object target) {
         this.target = target == null ? new HashMap<>() : target;
         fieldDescriptors = new FieldDescriptorsContainer();
+        cursorsContainer = new CursorsContainer();
     }
 
     public Object getTarget() {
@@ -52,7 +54,7 @@ public class EtlTreeStatement {
             return;
         }
         FieldDescriptor fieldDescriptor = fieldDescriptors.ensureFieldDescriptor(fullName, namePos);
-        if (tryWriteListValue(obj, value, listPrefix, fieldDescriptor)) {
+        if (tryWriteListValue(obj, listPrefix, fullName, fieldDescriptor, value, namePos, valueCls)) {
             return;
         }
         if (tryWriteMapValue(obj, fullName, value, namePos, valueCls, listPrefix, fieldDescriptor)) {
@@ -64,7 +66,7 @@ public class EtlTreeStatement {
         throw new EtlRuntimeException("Failed to find property [" + fullName + ":" + namePos + ":" + valueCls.getName() + "] for object " + obj + "");
     }
 
-    private boolean tryWriteListValue(Object obj, Object value, String listPrefix, FieldDescriptor fieldDescriptor) {
+    private boolean tryWriteListValue(Object obj, String listPrefix, String fullName, FieldDescriptor fieldDescriptor, Object value, int namePos, Class<?> valueCls) {
         if (!(obj instanceof List)) {
             return false;
         }
@@ -72,26 +74,23 @@ public class EtlTreeStatement {
         List list = (List) obj;
         if (fieldDescriptor.isLeaf()) {
             list.add(value);
-        } else {
-            // TODO: set value using cursor
-            String distinctName = fieldDescriptor.getDistinctName();
-            if (list.size() == 0 || distinctName.equals(listPrefix)) {
-                Object newObj;
-                if (fieldDescriptor.isArray()) {
-                    newObj = new ArrayList<>();
-                } else {
-                    Class<?> cls = fieldDescriptor.getType();
-                    if (cls == null) {
-                        throw new EtlRuntimeException("Class or array flag is expected for [" + distinctName + "] field.");
-                    }
-                    newObj = ReflectionUtils.tryNewInstance(cls);
-                }
-                list.add(newObj);
-            }
+            return true;
         }
+
+        Object fieldObj = tryCreateInstance(fieldDescriptor);
+        String distinctName = fieldDescriptor.getDistinctName();
+        if (distinctName.equals(listPrefix)) {
+            Cursor cursor = cursorsContainer.ensureCursor(fieldDescriptor);
+            list.add(fieldObj);
+            cursor.next();
+        } else {
+            Cursor cursor = cursorsContainer.ensureCursor(fieldDescriptor);
+            int currentPosition = cursor.getCurrentPosition();
+            list.add(currentPosition, fieldObj);
+        }
+        setValue0(fieldObj, listPrefix, fullName, value, namePos + 1, valueCls);
         return true;
     }
-
 
     private boolean tryWriteMapValue(Object obj, String fullName, Object value, int namePos, Class<?> valueCls, String listPrefix, FieldDescriptor fieldDescriptor) {
         if (!(obj instanceof Map)) {
@@ -106,13 +105,22 @@ public class EtlTreeStatement {
         if (((Map) obj).containsKey(fieldName)) {
             fieldObj = ((Map<String, Object>) obj).get(fieldName);
         } else {
-            // TODO: should create object of some specific type
-            fieldDescriptor.getType();
-            fieldObj = new HashMap<>();
+            fieldObj = tryCreateInstance(fieldDescriptor);
             ((Map) obj).put(fieldName, fieldObj);
         }
         setValue0(fieldObj, listPrefix, fullName, value, namePos + 1, valueCls);
         return true;
+    }
+
+    private Object tryCreateInstance(FieldDescriptor fieldDescriptor) {
+        if (fieldDescriptor.isArray()) {
+            return new ArrayList<>();
+        }
+        Class<?> cls = fieldDescriptor.getType();
+        if (cls != null) {
+            return ReflectionUtils.tryNewInstance(cls);
+        }
+        throw new EtlRuntimeException("Cannot determine type for [" + fieldDescriptor.getDistinctName() + "] field!");
     }
 
     private boolean tryWriteReflectiveValue(Object obj, String fullName, Object value, int namePos, Class<?> valueCls, String listPrefix, FieldDescriptor fieldDescriptor) {
