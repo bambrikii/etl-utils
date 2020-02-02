@@ -1,6 +1,8 @@
 package org.bambrikii.etl.model.transformer.adapters.java.maptree.io;
 
 import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
+import org.bambrikii.etl.model.transformer.adapters.java.maptree.io.cursors.WriteCursor;
+import org.bambrikii.etl.model.transformer.adapters.java.maptree.io.cursors.WriteCursorsContainer;
 import org.bambrikii.etl.model.transformer.adapters.java.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -13,7 +15,7 @@ import java.util.Objects;
 public class EtlTreeStatement {
     private final Object target;
     private final FieldDescriptorsContainer fieldDescriptors;
-    private final CursorsContainer cursorsContainer;
+    private final WriteCursorsContainer cursorsContainer;
 
     public EtlTreeStatement() {
         this(new HashMap<>());
@@ -22,7 +24,7 @@ public class EtlTreeStatement {
     public EtlTreeStatement(Object target) {
         this.target = target == null ? new HashMap<>() : target;
         fieldDescriptors = new FieldDescriptorsContainer();
-        cursorsContainer = new CursorsContainer();
+        cursorsContainer = new WriteCursorsContainer();
     }
 
     public Object getTarget() {
@@ -79,12 +81,11 @@ public class EtlTreeStatement {
 
         Object fieldObj = tryCreateInstance(fieldDescriptor);
         String distinctName = fieldDescriptor.getDistinctName();
+        WriteCursor cursor = cursorsContainer.ensureCursor(fieldDescriptor);
         if (distinctName.equals(listPrefix)) {
-            Cursor cursor = cursorsContainer.ensureCursor(fieldDescriptor);
             list.add(fieldObj);
-            cursor.next();
+            cursor.advanceSize();
         } else {
-            Cursor cursor = cursorsContainer.ensureCursor(fieldDescriptor);
             int currentPosition = cursor.getCurrentPosition();
             list.add(currentPosition, fieldObj);
         }
@@ -137,7 +138,7 @@ public class EtlTreeStatement {
         Object fieldObj = ReflectionUtils.getValue(getter, obj);
         if (fieldObj == null) {
             // TODO: Should create object based on return type
-            throw new EtlRuntimeException("Failed to find property " + fullName + " : " + fieldDescriptor.toString());
+            throw new EtlRuntimeException("Final attempt to set value with reflection: failed to find property [" + fullName + "] : [" + fieldDescriptor.toString() + "]!");
         }
         setValue0(fieldObj, listPrefix, fullName, value, namePos + 1, valueCls);
         return true;

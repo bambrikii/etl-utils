@@ -2,17 +2,30 @@ package org.bambrikii.etl.model.transformer.adapters.db;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldExtractable;
 import org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy;
+import org.bambikii.etl.model.transformer.builders.EtlNamable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EtlDbFieldReaderAdapter extends EtlFieldReaderStrategy<ResultSet> {
+public class EtlDbFieldReaderAdapter extends EtlFieldReaderStrategy<ResultSet> implements EtlNamable {
+    public static final String ETL_DB_NAME = "db";
+
     private final Map<String, Integer> columnPositions;
+    private final String name;
 
     public EtlDbFieldReaderAdapter() {
+        this(ETL_DB_NAME);
+    }
+
+    public EtlDbFieldReaderAdapter(String name) {
         columnPositions = new HashMap<>();
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     private Integer getCachedColumnPosition(ResultSet obj, String name) throws SQLException {

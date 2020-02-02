@@ -3,7 +3,8 @@ package org.bambikii.etl.model.transformer.builders;
 import org.bambikii.etl.model.transformer.adapters.EtlFieldExtractable;
 import org.bambikii.etl.model.transformer.adapters.EtlFieldConversionPair;
 import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
-import org.bambikii.etl.model.transformer.adapters.EtlFieldAdapter;
+import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
+import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
 import org.bambikii.etl.model.transformer.config.EtlConfigMarshaller;
 import org.bambikii.etl.model.transformer.config.model.*;
 
@@ -15,28 +16,48 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EtlConverterBuilder {
-    private final Map<String, EtlFieldReaderStrategy> readerStrategies;
-    private final Map<String, EtlFieldWriterStrategy> writerStrategies;
-    private ConversionRootConfig conversionRoot;
-    private Map<String, LinkedHashMap<String, ModelFieldConfig>> modelFieldConfigs;
+public class EtlAdapterConfigBuilder {
+    protected final Map<String, EtlFieldReaderStrategy> readerStrategies;
+    protected final Map<String, EtlFieldWriterStrategy> writerStrategies;
 
-    public EtlConverterBuilder() {
+    protected ConversionRootConfig conversionRoot;
+    protected Map<String, LinkedHashMap<String, ModelFieldConfig>> modelFieldConfigs;
+
+    public EtlAdapterConfigBuilder() {
         this.readerStrategies = new HashMap<>();
         this.writerStrategies = new HashMap<>();
     }
 
-    public EtlConverterBuilder readerStrategy(String name, EtlFieldReaderStrategy strategy) {
+    public EtlAdapterConfigBuilder readerStrategy(String name, EtlFieldReaderStrategy strategy) {
         readerStrategies.put(name, strategy);
         return this;
     }
 
-    public EtlConverterBuilder writerStrategy(String name, EtlFieldWriterStrategy strategy) {
+    public EtlAdapterConfigBuilder writerStrategy(String name, EtlFieldWriterStrategy strategy) {
         writerStrategies.put(name, strategy);
         return this;
     }
 
-    public EtlConverterBuilder modelConfig(InputStream modelInputStream) throws JAXBException {
+    private String validateName(Object strategy) {
+        if (!(strategy instanceof EtlNamable)) {
+            throw new EtlRuntimeException("Expecting " + EtlNamable.class.getName() + " to be implemented for the strategy " + strategy.getClass().getName() + "!");
+        }
+        return ((EtlNamable) strategy).getName();
+    }
+
+    public EtlAdapterConfigBuilder readerStrategy(EtlFieldReaderStrategy strategy) {
+        String name = validateName(strategy);
+        readerStrategies.put(name, strategy);
+        return this;
+    }
+
+    public EtlAdapterConfigBuilder writerStrategy(EtlFieldWriterStrategy strategy) {
+        String name = validateName(strategy);
+        writerStrategies.put(name, strategy);
+        return this;
+    }
+
+    public EtlAdapterConfigBuilder modelConfig(InputStream modelInputStream) throws JAXBException {
         ModelRootConfig modelRoot = EtlConfigMarshaller.unmarshalModelConfig(modelInputStream);
 
         Map<String, LinkedHashMap<String, ModelFieldConfig>> modelFieldConfigs = new HashMap<>();
@@ -53,38 +74,9 @@ public class EtlConverterBuilder {
         return this;
     }
 
-    public EtlConverterBuilder converterConfig(InputStream conversionInputStream) throws JAXBException {
+    public EtlAdapterConfigBuilder conversionConfig(InputStream conversionInputStream) throws JAXBException {
         conversionRoot = EtlConfigMarshaller.unmarshalConversionConfig(conversionInputStream);
         return this;
-    }
-
-    public Map<String, EtlFieldAdapter> build() {
-        Map<String, EtlFieldAdapter> converters = new HashMap<>();
-        conversionRoot
-                .getModelConversionConfigs()
-                .forEach(conversion -> {
-                    String sourceModel = conversion.getSourceModel();
-                    String targetModel = conversion.getTargetModel();
-                    LinkedHashMap<String, ModelFieldConfig> sourceModelFieldConfig = modelFieldConfigs.get(sourceModel);
-                    LinkedHashMap<String, ModelFieldConfig> targetModelFieldConfig = modelFieldConfigs.get(targetModel);
-                    EtlFieldReaderStrategy etlFieldReaderStrategy = createReaderStrategy(conversion);
-                    EtlFieldWriterStrategy etlFieldWriterStrategy = createWriterStrategy(conversion);
-                    List<EtlFieldConversionPair> etlFieldConversionPairs = new ArrayList<>();
-                    conversion
-                            .getFields()
-                            .forEach(fieldConversionConfig -> {
-                                EtlFieldExtractable fieldReader = createFieldReader(sourceModelFieldConfig, targetModelFieldConfig, fieldConversionConfig, etlFieldReaderStrategy);
-                                EtlFieldLoadable fieldWriter = createFieldWriter(sourceModelFieldConfig, targetModelFieldConfig, fieldConversionConfig, etlFieldWriterStrategy);
-                                etlFieldConversionPairs.add(new EtlFieldConversionPair(fieldReader, fieldWriter));
-                            });
-                    converters.put(conversion.getName(), new EtlFieldAdapter(etlFieldConversionPairs));
-                });
-        return converters;
-    }
-
-    private EtlFieldReaderStrategy createReaderStrategy(ModelConversionConfig conversion) {
-        String sourceType = conversion.getSourceReaderType();
-        return readerStrategies.get(sourceType);
     }
 
     private EtlFieldExtractable createFieldReader(
@@ -100,11 +92,6 @@ public class EtlConverterBuilder {
         );
         String sourceFieldType = fieldConfig.getType();
         return etlFieldReaderStrategy.createOne(sourceFieldName, sourceFieldType);
-    }
-
-    private EtlFieldWriterStrategy createWriterStrategy(ModelConversionConfig conversion) {
-        String targetType = conversion.getTargetReaderType();
-        return writerStrategies.get(targetType);
     }
 
     private EtlFieldLoadable createFieldWriter(LinkedHashMap<String, ModelFieldConfig> sourceModelFieldConfig, LinkedHashMap<String, ModelFieldConfig> targetModelFieldConfig, FieldCoversionConfig fieldConversion, EtlFieldWriterStrategy etlFieldWriterStrategy) {
@@ -128,5 +115,27 @@ public class EtlConverterBuilder {
         return currentModelFieldConfig.containsKey(fieldName1)
                 ? currentModelFieldConfig.get(fieldName1)
                 : currentModelFieldConfig.get(fieldName2);
+    }
+
+    public Map<String, EtlModelAdapter> buildMap() {
+        Map<String, EtlModelAdapter> converters = new HashMap<>();
+        conversionRoot
+                .getModelConversionConfigs()
+                .forEach(conversion -> {
+                    LinkedHashMap<String, ModelFieldConfig> sourceModelFieldConfig = modelFieldConfigs.get(conversion.getSourceModel());
+                    LinkedHashMap<String, ModelFieldConfig> targetModelFieldConfig = modelFieldConfigs.get(conversion.getTargetModel());
+                    EtlFieldReaderStrategy etlFieldReaderStrategy = readerStrategies.get(conversion.getSourceReaderType());
+                    EtlFieldWriterStrategy etlFieldWriterStrategy = writerStrategies.get(conversion.getTargetReaderType());
+                    List<EtlFieldConversionPair> etlFieldConversionPairs = new ArrayList<>();
+                    conversion
+                            .getFields()
+                            .forEach(fieldConversionConfig -> {
+                                EtlFieldExtractable fieldReader = createFieldReader(sourceModelFieldConfig, targetModelFieldConfig, fieldConversionConfig, etlFieldReaderStrategy);
+                                EtlFieldLoadable fieldWriter = createFieldWriter(sourceModelFieldConfig, targetModelFieldConfig, fieldConversionConfig, etlFieldWriterStrategy);
+                                etlFieldConversionPairs.add(new EtlFieldConversionPair(fieldReader, fieldWriter));
+                            });
+                    converters.put(conversion.getName(), new EtlModelAdapter(etlFieldConversionPairs));
+                });
+        return converters;
     }
 }

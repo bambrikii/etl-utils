@@ -2,14 +2,22 @@ package org.bambrikii.etl.model.transformer.adapters.java.reflection;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
 import org.bambikii.etl.model.transformer.builders.EtlFieldWriterStrategy;
+import org.bambikii.etl.model.transformer.builders.EtlNamable;
 
 import java.lang.reflect.InvocationTargetException;
 
-class EtlJavaReflectionFieldWriterStrategy<T> extends EtlFieldWriterStrategy<T> {
+import static org.bambrikii.etl.model.transformer.adapters.java.reflection.EtlJavaReflectionFieldReaderStrategy.ETL_JAVA_REFLECTION_NAME;
+
+class EtlJavaReflectionFieldWriterStrategy<T> extends EtlFieldWriterStrategy<T> implements EtlNamable {
     private final Class<T> cls;
 
     public EtlJavaReflectionFieldWriterStrategy(Class<T> cls) {
         this.cls = cls;
+    }
+
+    @Override
+    public String getName() {
+        return ETL_JAVA_REFLECTION_NAME;
     }
 
     private EtlFieldLoadable setField(String name, Class<?> param) {

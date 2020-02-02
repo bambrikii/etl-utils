@@ -5,15 +5,15 @@ import org.bambikii.etl.model.transformer.adapters.EtlModelOutputFactory;
 import org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy;
 import org.bambikii.etl.model.transformer.builders.EtlFieldWriterStrategy;
 
-public class EtlJavaReflectionFactory {
-    private EtlJavaReflectionFactory() {
+public class EtlJavaReflectionAdapterFactory {
+    private EtlJavaReflectionAdapterFactory() {
     }
 
-    public static <T> EtlFieldReaderStrategy<Class<T>> fieldReader(Class<T> cls) {
+    public static <T> EtlFieldReaderStrategy<Class<T>> createFieldReader(Class<T> cls) {
         return new EtlJavaReflectionFieldReaderStrategy(cls);
     }
 
-    public static <T> EtlFieldWriterStrategy<Class<T>> fieldWriter(Class<T> cls) {
+    public static <T> EtlFieldWriterStrategy<Class<T>> createFieldWriter(Class<T> cls) {
         return new EtlJavaReflectionFieldWriterStrategy(cls);
     }
 

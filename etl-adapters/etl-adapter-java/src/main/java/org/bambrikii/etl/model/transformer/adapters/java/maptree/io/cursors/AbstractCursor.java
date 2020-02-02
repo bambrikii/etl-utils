@@ -1,19 +1,19 @@
-package org.bambrikii.etl.model.transformer.adapters.java.maptree.io;
+package org.bambrikii.etl.model.transformer.adapters.java.maptree.io.cursors;
+
+import org.bambrikii.etl.model.transformer.adapters.java.maptree.io.FieldDescriptor;
 
 import java.util.HashMap;
 import java.util.Map;
 
-class Cursor {
+public abstract class AbstractCursor<T extends AbstractCursor> {
     private final FieldDescriptor fieldDescriptor;
-    private final int size;
-    private final Cursor parentCursor;
-    private Map<String, Cursor> children = new HashMap<>();
+    private final T parentCursor;
+    private Map<String, T> children = new HashMap<>();
 
     private int currentPosition = 0;
 
-    public Cursor(FieldDescriptor fieldDescriptor, int size, Cursor parentCursor) {
+    public AbstractCursor(FieldDescriptor fieldDescriptor, T parentCursor) {
         this.fieldDescriptor = fieldDescriptor;
-        this.size = size;
         this.parentCursor = parentCursor;
         if (parentCursor != null) {
             parentCursor.addChild(this);
@@ -28,22 +28,20 @@ class Cursor {
         return currentPosition;
     }
 
-    public int getSize() {
-        return size;
-    }
+    public abstract int getSize();
 
-    public Cursor getParentCursor() {
+    public T getParentCursor() {
         return parentCursor;
     }
 
     public boolean canRead() {
-        if (size <= 0) {
+        if (getSize() <= 0) {
             return false;
         }
         if (currentPosition < 0) {
             return false;
         }
-        if (currentPosition >= size) {
+        if (currentPosition >= getSize()) {
             return false;
         }
         return true;
@@ -58,10 +56,10 @@ class Cursor {
     }
 
     public boolean hasNext() {
-        return currentPosition + 1 < size;
+        return currentPosition + 1 < getSize();
     }
 
-    public void addChild(Cursor childCursor) {
+    public void addChild(T childCursor) {
         children.put(childCursor.getFieldDescriptor().getDistinctName(), childCursor);
     }
 }

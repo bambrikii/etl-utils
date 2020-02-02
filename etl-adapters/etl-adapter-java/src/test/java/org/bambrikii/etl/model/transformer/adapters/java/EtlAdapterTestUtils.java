@@ -1,7 +1,7 @@
 package org.bambrikii.etl.model.transformer.adapters.java;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldConversionPair;
-import org.bambikii.etl.model.transformer.adapters.EtlFieldAdapter;
+import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
 import org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy;
 import org.bambikii.etl.model.transformer.builders.EtlFieldWriterStrategy;
 
@@ -13,11 +13,11 @@ import static org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy
 import static org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy.STRING;
 
 public class EtlAdapterTestUtils {
-    public static EtlFieldAdapter createTestAdapter(
+    public static EtlModelAdapter createTestAdapter(
             EtlFieldReaderStrategy etlFieldReaderStrategy,
             EtlFieldWriterStrategy etlFieldWriterStrategy
     ) {
-        return new EtlFieldAdapter(Arrays.asList(
+        return new EtlModelAdapter(Arrays.asList(
                 new EtlFieldConversionPair(
                         etlFieldReaderStrategy.createOne("field1", STRING),
                         etlFieldWriterStrategy.createOne("field1", STRING)

@@ -1,9 +1,8 @@
 package org.bambrikii.etl.model.transformer.adapters.java;
 
-import org.bambikii.etl.model.transformer.adapters.EtlFieldAdapter;
-import org.bambikii.etl.model.transformer.adapters.EtlUtils;
-import org.bambrikii.etl.model.transformer.adapters.java.map.EtlJavaMapFactory;
-import org.bambrikii.etl.model.transformer.adapters.java.reflection.EtlJavaReflectionFactory;
+import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
+import org.bambrikii.etl.model.transformer.adapters.java.map.EtlJavaMapAdapterFactory;
+import org.bambrikii.etl.model.transformer.adapters.java.reflection.EtlJavaReflectionAdapterFactory;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -13,18 +12,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class EtlJavaAdapterTest {
     @Test
     public void shouldBuildJavaMap() {
-        EtlFieldAdapter adapter = EtlAdapterTestUtils.createTestAdapter(
-                EtlJavaMapFactory.fieldReader(),
-                EtlJavaMapFactory.fieldWriter()
+        EtlModelAdapter adapter = EtlAdapterTestUtils.createTestAdapter(
+                EtlJavaMapAdapterFactory.createFieldReader(),
+                EtlJavaMapAdapterFactory.createFieldWriter()
         );
 
         Map<String, Object> source = EtlAdapterTestUtils.createTestInMap();
         Map<String, Object> target = EtlAdapterTestUtils.createTestOutMap();
 
-        EtlUtils.transform(
-                adapter,
-                EtlJavaReflectionFactory.createJavaInputAdapter(source),
-                EtlJavaReflectionFactory.createJavaOutputAdapter(target)
+        adapter.adapt(
+                EtlJavaReflectionAdapterFactory.createJavaInputAdapter(source),
+                EtlJavaReflectionAdapterFactory.createJavaOutputAdapter(target)
         );
 
         assertEquals("str1", target.get("field1"));
@@ -33,18 +31,17 @@ public class EtlJavaAdapterTest {
 
     @Test
     public void shouldBuildJavaReflection() {
-        EtlFieldAdapter adapter = EtlAdapterTestUtils.createTestAdapter(
-                EtlJavaReflectionFactory.fieldReader(TestInClass.class),
-                EtlJavaReflectionFactory.fieldWriter(TestOutClass.class)
+        EtlModelAdapter adapter = EtlAdapterTestUtils.createTestAdapter(
+                EtlJavaReflectionAdapterFactory.createFieldReader(TestInClass.class),
+                EtlJavaReflectionAdapterFactory.createFieldWriter(TestOutClass.class)
         );
 
         TestInClass source = EtlAdapterTestUtils.createTestInClass();
         TestOutClass target = EtlAdapterTestUtils.createTestOutClass();
 
-        EtlUtils.transform(
-                adapter,
-                EtlJavaReflectionFactory.createJavaInputAdapter(source),
-                EtlJavaReflectionFactory.createJavaOutputAdapter(target)
+        adapter.adapt(
+                EtlJavaReflectionAdapterFactory.createJavaInputAdapter(source),
+                EtlJavaReflectionAdapterFactory.createJavaOutputAdapter(target)
         );
 
         assertEquals("str1", target.getField1());

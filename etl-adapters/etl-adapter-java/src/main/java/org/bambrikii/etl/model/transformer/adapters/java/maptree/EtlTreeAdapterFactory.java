@@ -7,23 +7,23 @@ import org.bambrikii.etl.model.transformer.adapters.java.maptree.io.EtlTreeState
 
 import java.util.Map;
 
-public class EtlTreeFactory {
-    private EtlTreeFactory() {
+public class EtlTreeAdapterFactory {
+    private EtlTreeAdapterFactory() {
     }
 
-    public static EtlTreeFieldReaderStrategy jsonFieldReaderStrategy() {
+    public static EtlTreeFieldReaderStrategy createTreeFieldReader() {
         return new EtlTreeFieldReaderStrategy();
     }
 
-    public static EtlTreeFieldWriterStrategy jsonFieldWriterStrategy() {
+    public static EtlTreeFieldWriterStrategy createTreeFieldWriter() {
         return new EtlTreeFieldWriterStrategy();
     }
 
-    public static EtlModelInputFactory<EtlTreeResultSet> jsonInput(Map<String, Object> data) {
+    public static EtlModelInputFactory<EtlTreeResultSet> createTreeInputAdapter(Map<String, Object> data) {
         return new EtlTreeInputFactory(data);
     }
 
-    public static EtlModelOutputFactory<EtlTreeStatement> jsonOutput() {
+    public static EtlModelOutputFactory<EtlTreeStatement> createTreeOutputAdapter() {
         return new EtlTreeOutputFactory();
     }
 }

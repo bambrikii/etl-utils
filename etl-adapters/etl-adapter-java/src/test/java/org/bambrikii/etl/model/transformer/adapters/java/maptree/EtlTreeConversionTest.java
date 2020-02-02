@@ -1,8 +1,7 @@
 package org.bambrikii.etl.model.transformer.adapters.java.maptree;
 
-import org.bambikii.etl.model.transformer.adapters.EtlFieldAdapter;
+import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
 import org.bambikii.etl.model.transformer.adapters.EtlFieldConversionPair;
-import org.bambikii.etl.model.transformer.adapters.EtlUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -15,9 +14,9 @@ public class EtlTreeConversionTest {
 
     @Test
     public void shouldTransform() {
-        EtlTreeFieldReaderStrategy readerStrategy = EtlTreeFactory.jsonFieldReaderStrategy();
-        EtlTreeFieldWriterStrategy writerStrategy = EtlTreeFactory.jsonFieldWriterStrategy();
-        EtlFieldAdapter adapter = new EtlFieldAdapter(
+        EtlTreeFieldReaderStrategy readerStrategy = EtlTreeAdapterFactory.createTreeFieldReader();
+        EtlTreeFieldWriterStrategy writerStrategy = EtlTreeAdapterFactory.createTreeFieldWriter();
+        EtlModelAdapter adapter = new EtlModelAdapter(
                 new EtlFieldConversionPair(
                         readerStrategy.createOne("field1", STRING),
                         writerStrategy.createOne("field1_2", STRING)
@@ -31,10 +30,9 @@ public class EtlTreeConversionTest {
         data.put("field1", "field1 value");
         data.put("field2", 1);
 
-        EtlUtils.transform(
-                adapter,
-                EtlTreeFactory.jsonInput(data),
-                EtlTreeFactory.jsonOutput()
+        adapter.adapt(
+                EtlTreeAdapterFactory.createTreeInputAdapter(data),
+                EtlTreeAdapterFactory.createTreeOutputAdapter()
         );
     }
 }

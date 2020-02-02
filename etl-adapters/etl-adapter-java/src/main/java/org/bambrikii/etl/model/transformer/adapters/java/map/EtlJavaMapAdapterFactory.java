@@ -7,15 +7,15 @@ import org.bambikii.etl.model.transformer.builders.EtlFieldWriterStrategy;
 
 import java.util.Map;
 
-public class EtlJavaMapFactory {
-    private EtlJavaMapFactory() {
+public class EtlJavaMapAdapterFactory {
+    private EtlJavaMapAdapterFactory() {
     }
 
-    public static EtlFieldReaderStrategy<Map<String, Object>> fieldReader() {
+    public static EtlFieldReaderStrategy<Map<String, Object>> createFieldReader() {
         return new EtlJavaMapFieldReaderStrategy();
     }
 
-    public static EtlFieldWriterStrategy<Map<String, Object>> fieldWriter() {
+    public static EtlFieldWriterStrategy<Map<String, Object>> createFieldWriter() {
         return new EtlJavaMapFieldWriterStrategy();
     }
 

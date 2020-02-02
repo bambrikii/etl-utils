@@ -1,34 +1,38 @@
-package org.bambrikii.etl.model.transformer.adapters.java.maptree.io;
+package org.bambrikii.etl.model.transformer.adapters.java.maptree.io.cursors;
+
+import org.bambrikii.etl.model.transformer.adapters.java.maptree.io.FieldDescriptor;
 
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class CursorsContainer {
-    private final Map<String, Cursor> byDistinctName = new LinkedHashMap<>();
-    private final Deque<Cursor> queue = new LinkedList<>();
+public abstract class AbstractCursorsContainer<T extends AbstractCursor<T>> {
+    private final Map<String, T> byDistinctName = new LinkedHashMap<>();
+    private final Deque<T> queue = new LinkedList<>();
 
-    public Cursor ensureCursor(FieldDescriptor fieldDescriptor, int size, Cursor parentCursor) {
+    public T ensureCursor(FieldDescriptor fieldDescriptor, int size, T parentCursor) {
         String distinctName = fieldDescriptor.getDistinctName();
         if (byDistinctName.containsKey(distinctName)) {
             return byDistinctName.get(distinctName);
         }
-        Cursor cursor = new Cursor(fieldDescriptor, size, parentCursor);
+        T cursor = createCursor(fieldDescriptor, size, parentCursor);
         byDistinctName.put(distinctName, cursor);
         queue.addLast(cursor);
         return cursor;
     }
 
+    protected abstract T createCursor(FieldDescriptor fieldDescriptor, int size, T parentCursor);
+
     public boolean next() {
         while (!queue.isEmpty()) {
-            Cursor cursor = queue.peekLast();
+            T cursor = queue.peekLast();
             if (cursor.hasNext()) {
                 return cursor.next();
             }
             queue.pollLast();
             byDistinctName.remove(cursor.getFieldDescriptor().getDistinctName());
-            Cursor parent = cursor.getParentCursor();
+            T parent = cursor.getParentCursor();
             if (parent != null) {
                 String parentDistinctName = parent.getFieldDescriptor().getDistinctName();
                 if (!byDistinctName.containsKey(parentDistinctName)) {
@@ -40,15 +44,14 @@ public class CursorsContainer {
         return false;
     }
 
-    public Cursor ensureCursor(FieldDescriptor descriptor) {
+    public T ensureCursor(FieldDescriptor descriptor) {
         if (!descriptor.isArray()) {
             return null;
         }
-        Cursor parentCursor = findParentCursor(descriptor);
-        return ensureCursor(descriptor, -1, parentCursor);
+        return ensureCursor(descriptor, -1, findParentCursor(descriptor));
     }
 
-    private Cursor findParentCursor(FieldDescriptor descriptor) {
+    private T findParentCursor(FieldDescriptor descriptor) {
         if (descriptor == null) {
             return null;
         }

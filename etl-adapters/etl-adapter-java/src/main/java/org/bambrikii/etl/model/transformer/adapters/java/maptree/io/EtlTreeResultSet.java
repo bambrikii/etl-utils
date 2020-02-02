@@ -1,5 +1,8 @@
 package org.bambrikii.etl.model.transformer.adapters.java.maptree.io;
 
+import org.bambrikii.etl.model.transformer.adapters.java.maptree.io.cursors.AbstractCursor;
+import org.bambrikii.etl.model.transformer.adapters.java.maptree.io.cursors.ReadCursor;
+import org.bambrikii.etl.model.transformer.adapters.java.maptree.io.cursors.ReadCursorsContainer;
 import org.bambrikii.etl.model.transformer.adapters.java.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -12,13 +15,13 @@ import static org.bambrikii.etl.model.transformer.adapters.java.maptree.io.ReadS
 public class EtlTreeResultSet {
     private final Object source;
     private final FieldDescriptorsContainer fieldDescriptors;
-    private final CursorsContainer cursorsContainer;
+    private final ReadCursorsContainer cursorsContainer;
     private final StatusesContainer statusesContainer;
 
     public EtlTreeResultSet(Object source) {
         this.source = source;
         fieldDescriptors = new FieldDescriptorsContainer();
-        cursorsContainer = new CursorsContainer();
+        cursorsContainer = new ReadCursorsContainer();
         statusesContainer = new StatusesContainer();
     }
 
@@ -30,7 +33,7 @@ public class EtlTreeResultSet {
         return readObject(source, name, 0, valueClass, null);
     }
 
-    private Object readObject(Object obj, String fullName, int namePos, Class<?> valueClass, Cursor parentCursor) {
+    private Object readObject(Object obj, String fullName, int namePos, Class<?> valueClass, ReadCursor parentCursor) {
         if (obj == null) {
             return null;
         }
@@ -47,8 +50,8 @@ public class EtlTreeResultSet {
         return tryReadReflective(obj, fullName, namePos, fieldDescriptor, valueClass, parentCursor);
     }
 
-    private Object tryReadList(String fullName, int namePos, FieldDescriptor fieldDescriptor, List list, Class<?> valueClass, Cursor parentCursor) {
-        Cursor cursor = cursorsContainer.ensureCursor(fieldDescriptor, list.size(), parentCursor);
+    private Object tryReadList(String fullName, int namePos, FieldDescriptor fieldDescriptor, List list, Class<?> valueClass, ReadCursor parentCursor) {
+        AbstractCursor cursor = cursorsContainer.ensureCursor(fieldDescriptor, list.size(), parentCursor);
         if (!cursor.canRead()) {
             String message = "List element " + (list.size() - 1) + " < [" + cursor.getSize() + "] for field " + fieldDescriptor + "!";
             statusesContainer.addStatus(LIST_READ_FAILED, message);
@@ -59,12 +62,12 @@ public class EtlTreeResultSet {
         return readObject(listElem, fullName, namePos + 1, valueClass, parentCursor);
     }
 
-    private Object tryReadMap(Map<String, Object> obj, String fullName, int namePos, FieldDescriptor fieldDescriptor, Class<?> valueClass, Cursor parentCursor) {
+    private Object tryReadMap(Map<String, Object> obj, String fullName, int namePos, FieldDescriptor fieldDescriptor, Class<?> valueClass, ReadCursor parentCursor) {
         Object obj2 = obj.get(fieldDescriptor.getSimpleName());
         return readObject(obj2, fullName, namePos + 1, valueClass, parentCursor);
     }
 
-    private Object tryReadReflective(Object obj, String fullName, int namePos, FieldDescriptor fieldDescriptor, Class<?> valueClass, Cursor parentCursor) {
+    private Object tryReadReflective(Object obj, String fullName, int namePos, FieldDescriptor fieldDescriptor, Class<?> valueClass, ReadCursor parentCursor) {
         Method getter = ReflectionUtils.findGetter(obj, fieldDescriptor.getSimpleName());
         Object value = ReflectionUtils.getValue(getter, obj);
         return readObject(value, fullName, namePos + 1, valueClass, parentCursor);
