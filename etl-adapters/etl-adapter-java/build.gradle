@@ -1,3 +1,40 @@
+apply from: "../../gradle/publish.gradle"
+
 dependencies {
     compile project(":etl-model")
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.project {
+                name 'ETL Utils - Java'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'Java (Reflection, Collections) Implementation of ETL Utils'
+                url 'https://github.com/bambrikii/etl-utils'
+
+                scm {
+                    connection 'scm:git:https://github.com/bambrikii/etl-utils.git'
+                    developerConnection 'scm:git:https://github.com/bambrikii/etl-utils.git'
+                    url 'https://github.com/bambrikii/etl-utils.git'
+                }
+
+                licenses {
+                    license {
+                        name 'GNU General Public License version 3'
+                        url 'https://opensource.org/licenses/GPL-3.0'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'bambrikii'
+                        name 'Alexander Arakelyan'
+                        email 'bambrikii@gmail.com'
+                    }
+                }
+            }
+        }
+    }
 }

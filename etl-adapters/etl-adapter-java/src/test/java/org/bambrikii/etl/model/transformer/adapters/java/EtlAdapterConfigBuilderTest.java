@@ -18,7 +18,7 @@ public class EtlAdapterConfigBuilderTest {
                 .readerStrategy(EtlJavaMapAdapterFactory.createFieldReader())
                 .writerStrategy(EtlJavaMapAdapterFactory.createFieldWriter())
                 .modelConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/model-config.xml"))
-                .conversionConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/mapping-config.xml"))
+                .conversionConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/converter-config.xml"))
                 .buildMap();
 
         EtlModelAdapter modelAdapter = adapters.get("conversion1");
