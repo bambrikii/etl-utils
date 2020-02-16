@@ -1,6 +1,7 @@
 allprojects {
 
-    group = "org.bambrikii.etl"
+    group = "io.github.bambrikii.etl-utils"
+//    archivesBaseName = "etl"
 
     repositories {
         mavenCentral()
@@ -14,6 +15,9 @@ subprojects {
     dependencies {
         compileOnly("org.projectlombok:lombok:${lombokVersion}")
         annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+
+        testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+        testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 
         testImplementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}")
