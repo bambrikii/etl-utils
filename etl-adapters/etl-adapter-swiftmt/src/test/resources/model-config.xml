@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model-root>
+    <models>
+        <model name="model1">
+            <fields>
+                <field name="seme" type="string"/>
+                <field name="function" type="string"/>
+                <field name="linkedMessages" type="string" length="35"/>
+            </fields>
+        </model>
+    </models>
+</model-root>

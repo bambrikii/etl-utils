@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<conversion-root>
+    <conversions>
+        <conversion name="conversion1" sourceModel="model1" sourceReaderType="swift-mt"
+                    targetReaderType="java-map-tree">
+            <fields>
+                <field source="A:20C:SEME:2" target="seme"/>
+                <field source="A:23G::1" target="function"/>
+                <field source="E:13A:CAON:2" target="linkedMessages"/>
+            </fields>
+        </conversion>
+    </conversions>
+</conversion-root>

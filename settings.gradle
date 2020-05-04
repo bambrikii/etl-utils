@@ -3,3 +3,4 @@ rootProject.name = 'etl-utils'
 include ":etl-model"
 include ":etl-adapters:etl-adapter-java"
 include ":etl-adapters:etl-adapter-db"
+include ":etl-adapters:etl-adapter-swiftmt"
