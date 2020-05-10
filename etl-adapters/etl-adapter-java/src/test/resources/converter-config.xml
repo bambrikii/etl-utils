@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <conversion-root>
     <conversions>
-        <conversion name="conversion1" sourceModel="model1" sourceReaderType="java-map" targetReaderType="java-map">
+        <conversion name="conversion1" sourceModel="model1" sourceReaderType="pojo" targetReaderType="pojo">
             <fields>
                 <field source="stringField" target="stringField_2"/>
                 <field source="intField" target="intField_2"/>

@@ -2,8 +2,8 @@ package org.bambrikii.etl.model.transformer.adapers.swiftmt;
 
 import org.apache.commons.io.IOUtils;
 import org.bambikii.etl.model.transformer.builders.EtlAdapterConfigBuilder;
-import org.bambrikii.etl.model.transformer.adapters.java.maptree.EtlTreeAdapterFactory;
-import org.bambrikii.etl.model.transformer.adapters.java.maptree.EtlTreeOutputFactory;
+import org.bambrikii.etl.model.transformer.adapters.pojo.EtlPojoAdapterFactory;
+import org.bambrikii.etl.model.transformer.adapters.pojo.EtlPojoOutputFactory;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.bind.JAXBException;
@@ -19,10 +19,10 @@ public class SwiftMtTest {
     @Test
     public void shouldConvertToObject() throws IOException, JAXBException {
         String swiftMtMessage = IOUtils.resourceToString("/MT564.txt", UTF_8);
-        EtlTreeOutputFactory outputAdapter = EtlTreeAdapterFactory.createTreeOutputAdapter();
+        EtlPojoOutputFactory outputAdapter = EtlPojoAdapterFactory.createPojoOutputAdapter();
         new EtlAdapterConfigBuilder()
                 .readerStrategy(EtlSwiftMtAdapterFactory.createSwiftMtFieldReader())
-                .writerStrategy(EtlTreeAdapterFactory.createTreeFieldWriter())
+                .writerStrategy(EtlPojoAdapterFactory.createPojoFieldWriter())
                 .modelConfig(SwiftMtTest.class.getResourceAsStream("/model-config.xml"))
                 .conversionConfig(SwiftMtTest.class.getResourceAsStream("/mapping-config.xml"))
                 .buildMap()

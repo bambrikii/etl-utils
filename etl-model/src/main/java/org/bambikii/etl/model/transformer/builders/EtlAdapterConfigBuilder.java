@@ -124,8 +124,16 @@ public class EtlAdapterConfigBuilder {
                 .forEach(conversion -> {
                     LinkedHashMap<String, ModelFieldConfig> sourceModelFieldConfig = modelFieldConfigs.get(conversion.getSourceModel());
                     LinkedHashMap<String, ModelFieldConfig> targetModelFieldConfig = modelFieldConfigs.get(conversion.getTargetModel());
-                    EtlFieldReaderStrategy etlFieldReaderStrategy = readerStrategies.get(conversion.getSourceReaderType());
-                    EtlFieldWriterStrategy etlFieldWriterStrategy = writerStrategies.get(conversion.getTargetReaderType());
+                    String sourceReaderType = conversion.getSourceReaderType();
+                    if (!readerStrategies.containsKey(sourceReaderType)) {
+                        throw new RuntimeException("Source conversion strategy [" + sourceReaderType + "] not found. Available strategies: [" + readerStrategies.keySet() + "]");
+                    }
+                    EtlFieldReaderStrategy etlFieldReaderStrategy = readerStrategies.get(sourceReaderType);
+                    String targetReaderType = conversion.getTargetReaderType();
+                    if (!readerStrategies.containsKey(sourceReaderType)) {
+                        throw new RuntimeException("Target conversion strategy [" + targetReaderType + "] not found. Available strategies: [" + writerStrategies.keySet() + "]");
+                    }
+                    EtlFieldWriterStrategy etlFieldWriterStrategy = writerStrategies.get(targetReaderType);
                     List<EtlFieldConversionPair> etlFieldConversionPairs = new ArrayList<>();
                     conversion
                             .getFields()

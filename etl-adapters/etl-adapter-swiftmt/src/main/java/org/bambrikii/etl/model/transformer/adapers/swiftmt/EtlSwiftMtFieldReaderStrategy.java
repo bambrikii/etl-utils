@@ -3,8 +3,9 @@ package org.bambrikii.etl.model.transformer.adapers.swiftmt;
 import org.bambikii.etl.model.transformer.adapters.EtlFieldExtractable;
 import org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy;
 import org.bambikii.etl.model.transformer.builders.EtlNamable;
+import org.bambrikii.etl.model.transformer.adapers.swiftmt.io.SwiftMtResultSet;
 
-public class EtlSwiftMtFieldReaderStrategy extends EtlFieldReaderStrategy<EtlSwiftMtResultSet> implements EtlNamable {
+public class EtlSwiftMtFieldReaderStrategy extends EtlFieldReaderStrategy<SwiftMtResultSet> implements EtlNamable {
     public static final String ETL_SWIFT_MT_NAME = "swift-mt";
 
     @Override
@@ -13,17 +14,17 @@ public class EtlSwiftMtFieldReaderStrategy extends EtlFieldReaderStrategy<EtlSwi
     }
 
     @Override
-    protected EtlFieldExtractable<EtlSwiftMtResultSet, String> getStringReader(String name) {
+    protected EtlFieldExtractable<SwiftMtResultSet, String> getStringReader(String name) {
         return resultSet -> resultSet.getObject(name, String.class);
     }
 
     @Override
-    protected EtlFieldExtractable<EtlSwiftMtResultSet, Integer> getIntReader(String name) {
+    protected EtlFieldExtractable<SwiftMtResultSet, Integer> getIntReader(String name) {
         return resultSet -> resultSet.getObject(name, Integer.class);
     }
 
     @Override
-    protected EtlFieldExtractable<EtlSwiftMtResultSet, Double> getDoubleReader(String name) {
+    protected EtlFieldExtractable<SwiftMtResultSet, Double> getDoubleReader(String name) {
         return resultSet -> resultSet.getObject(name, Double.class);
     }
 }
