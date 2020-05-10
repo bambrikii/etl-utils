@@ -13,11 +13,7 @@ public class FieldDescriptor {
             boolean leaf, boolean isArray,
             FieldDescriptor parent
     ) {
-        this.nameElement = new FieldNameElement(simpleName, null, isArray);
-        this.distinctName = distinctName;
-        this.namePos = namePos;
-        this.leaf = leaf;
-        this.parent = parent;
+        this(new FieldNameElement(simpleName, null, isArray), distinctName, namePos, leaf, parent);
     }
 
     public FieldDescriptor(

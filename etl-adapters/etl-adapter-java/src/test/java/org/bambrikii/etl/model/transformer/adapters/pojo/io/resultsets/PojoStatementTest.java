@@ -25,7 +25,7 @@ public class PojoStatementTest {
 
         statement.setField("stringField1", "stringField1Value");
         statement.setField("intField2", Integer.valueOf(2));
-        statement.setField("classField3<TestClass1>.stringField4", "stringField4Value");
+        statement.setField("classField3<" + TestClass1.class.getName() + ">.stringField4", "stringField4Value");
 
         statement.setField("listField5.", "listField5StringElement6");
         statement.setField("listField5.", Integer.valueOf(7));
