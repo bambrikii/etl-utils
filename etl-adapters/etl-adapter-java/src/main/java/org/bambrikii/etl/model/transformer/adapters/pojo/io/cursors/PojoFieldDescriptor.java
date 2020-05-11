@@ -1,56 +1,43 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors;
 
-public class FieldDescriptor {
-    private final String distinctName;
+import org.bambikii.etl.model.transformer.cursors.AbstractFieldDescriptor;
+
+public class PojoFieldDescriptor extends AbstractFieldDescriptor<String, PojoFieldDescriptor> {
     private final int namePos;
     private final boolean leaf;
-    private final FieldDescriptor parent;
     private final FieldNameElement nameElement;
 
-    public FieldDescriptor(
+    public PojoFieldDescriptor(
             String simpleName, String distinctName,
             int namePos,
-            boolean leaf, boolean isArray,
-            FieldDescriptor parent
+            boolean leaf, boolean array,
+            PojoFieldDescriptor parent
     ) {
-        this(new FieldNameElement(simpleName, null, isArray), distinctName, namePos, leaf, parent);
+        this(new FieldNameElement(simpleName, null, array), distinctName, namePos, leaf, parent);
     }
 
-    public FieldDescriptor(
+    public PojoFieldDescriptor(
             FieldNameElement nameElement, String distinctName,
             int namePos,
             boolean leaf,
-            FieldDescriptor parent
+            PojoFieldDescriptor parent
     ) {
+        super(distinctName, nameElement != null ? nameElement.isArray() : false, parent);
         this.nameElement = nameElement;
-        this.distinctName = distinctName;
         this.namePos = namePos;
         this.leaf = leaf;
-        this.parent = parent;
     }
 
     public String getSimpleName() {
         return nameElement.getSimpleName();
     }
 
-    public String getDistinctName() {
-        return distinctName;
-    }
-
     public int getNamePos() {
         return namePos;
     }
 
-    public boolean isArray() {
-        return nameElement.isArray();
-    }
-
     public boolean isLeaf() {
         return leaf;
-    }
-
-    public FieldDescriptor getParent() {
-        return parent;
     }
 
     public Class<?> getType() {

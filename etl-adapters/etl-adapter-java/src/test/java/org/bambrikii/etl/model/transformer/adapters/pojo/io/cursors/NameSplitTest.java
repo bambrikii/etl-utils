@@ -1,7 +1,5 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors;
 
-import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.FieldDescriptorsContainer;
-import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.FieldNameElement;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -41,14 +39,14 @@ public class NameSplitTest {
     public void shouldSplitMultipleFields() {
         String str = this.str;
 
-        List<FieldNameElement> fields = FieldDescriptorsContainer.splitFields(str);
+        List<FieldNameElement> fields = PojoFieldDescriptorsContainer.splitFields(str);
 
         print(fields);
     }
 
     @Test
     public void shouldSplitNestedLists() {
-        List<FieldNameElement> fields = FieldDescriptorsContainer.splitFields("list[]..");
+        List<FieldNameElement> fields = PojoFieldDescriptorsContainer.splitFields("list[]..");
 
         print(fields);
 
@@ -57,7 +55,7 @@ public class NameSplitTest {
 
     @Test
     public void shouldSplitWithType() {
-        List<FieldNameElement> fields = FieldDescriptorsContainer.splitFields("sTring<java.util.ArrayList>");
+        List<FieldNameElement> fields = PojoFieldDescriptorsContainer.splitFields("sTring<java.util.ArrayList>");
 
         assertEquals(1, fields.size());
 
@@ -69,7 +67,7 @@ public class NameSplitTest {
 
     @Test
     public void shouldSplitWithArrayAndType() {
-        List<FieldNameElement> fields = FieldDescriptorsContainer.splitFields("zzxc[]<java.util.HashMap>");
+        List<FieldNameElement> fields = PojoFieldDescriptorsContainer.splitFields("zzxc[]<java.util.HashMap>");
 
         assertEquals(1, fields.size());
 
@@ -81,7 +79,7 @@ public class NameSplitTest {
 
     @Test
     public void shouldSplitWithArray() {
-        List<FieldNameElement> fields = FieldDescriptorsContainer.splitFields("zzxc3[]");
+        List<FieldNameElement> fields = PojoFieldDescriptorsContainer.splitFields("zzxc3[]");
 
         assertEquals(1, fields.size());
 

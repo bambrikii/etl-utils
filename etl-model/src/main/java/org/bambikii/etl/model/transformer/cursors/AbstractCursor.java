@@ -1,16 +1,16 @@
-package org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors;
+package org.bambikii.etl.model.transformer.cursors;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractCursor<T extends AbstractCursor> {
-    private final FieldDescriptor fieldDescriptor;
+public abstract class AbstractCursor<K, T extends AbstractCursor, D extends AbstractFieldDescriptor<K, D>> {
+    private final D fieldDescriptor;
     private final T parentCursor;
-    private Map<String, T> children = new HashMap<>();
+    private Map<K, T> children = new HashMap<>();
 
     private int currentPosition = 0;
 
-    public AbstractCursor(FieldDescriptor fieldDescriptor, T parentCursor) {
+    public AbstractCursor(D fieldDescriptor, T parentCursor) {
         this.fieldDescriptor = fieldDescriptor;
         this.parentCursor = parentCursor;
         if (parentCursor != null) {
@@ -18,7 +18,7 @@ public abstract class AbstractCursor<T extends AbstractCursor> {
         }
     }
 
-    public FieldDescriptor getFieldDescriptor() {
+    public D getFieldDescriptor() {
         return fieldDescriptor;
     }
 
@@ -32,7 +32,7 @@ public abstract class AbstractCursor<T extends AbstractCursor> {
         return parentCursor;
     }
 
-    public boolean canRead() {
+    public boolean hasCurrent() {
         if (getSize() <= 0) {
             return false;
         }
@@ -58,6 +58,8 @@ public abstract class AbstractCursor<T extends AbstractCursor> {
     }
 
     public void addChild(T childCursor) {
-        children.put(childCursor.getFieldDescriptor().getDistinctName(), childCursor);
+        AbstractFieldDescriptor fieldDescriptor = childCursor.getFieldDescriptor();
+        K distinctName = (K) fieldDescriptor.getDistinctName();
+        children.put(distinctName, childCursor);
     }
 }

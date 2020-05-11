@@ -1,5 +1,8 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors;
 
+import org.bambikii.etl.model.transformer.cursors.AbstractCursor;
+import org.bambikii.etl.model.transformer.cursors.AbstractCursorsContainer;
+import org.bambikii.etl.model.transformer.cursors.AbstractFieldDescriptor;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -8,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AbstractCursorsContainerTest {
     @Test
     public void shouldAdvanceSingleCursor() {
-        AbstractCursorsContainer container = new ReadCursorsContainer();
-        FieldDescriptor parentDescriptor = new FieldDescriptor("field1", "field1", 0, false, false, null);
-        FieldDescriptor descriptor = new FieldDescriptor("field2", "field1.field2", 1, true, true, parentDescriptor);
+        AbstractCursorsContainer container = new PojoReadCursorsContainer();
+        PojoFieldDescriptor parentDescriptor = new PojoFieldDescriptor("field1", "field1", 0, false, false, null);
+        AbstractFieldDescriptor descriptor = new PojoFieldDescriptor("field2", "field1.field2", 1, true, true, parentDescriptor);
 
         AbstractCursor cursor = container.ensureCursor(descriptor, 2, null);
 
@@ -20,9 +23,9 @@ public class AbstractCursorsContainerTest {
 
     @Test
     public void shouldAdvanceNestedCursors() {
-        AbstractCursorsContainer container = new ReadCursorsContainer();
-        FieldDescriptor parentDescriptor = new FieldDescriptor("field1", "field1", 0, true, false, null);
-        FieldDescriptor descriptor = new FieldDescriptor("field2", "field1.field2", 1, true, true, parentDescriptor);
+        AbstractCursorsContainer container = new PojoReadCursorsContainer();
+        PojoFieldDescriptor parentDescriptor = new PojoFieldDescriptor("field1", "field1", 0, true, false, null);
+        AbstractFieldDescriptor descriptor = new PojoFieldDescriptor("field2", "field1.field2", 1, true, true, parentDescriptor);
 
         AbstractCursor parentCursor = container.ensureCursor(parentDescriptor, 2, null);
         AbstractCursor cursor = container.ensureCursor(descriptor, 2, parentCursor);
@@ -34,9 +37,9 @@ public class AbstractCursorsContainerTest {
 
     @Test
     public void shouldAdvanceConcurrentCursors() {
-        AbstractCursorsContainer container = new ReadCursorsContainer();
-        FieldDescriptor descriptor1 = new FieldDescriptor("field1", "field1", 0, true, false, null);
-        FieldDescriptor descriptor2 = new FieldDescriptor("field2", "field2", 0, true, true, null);
+        AbstractCursorsContainer container = new PojoReadCursorsContainer();
+        AbstractFieldDescriptor descriptor1 = new PojoFieldDescriptor("field1", "field1", 0, true, false, null);
+        AbstractFieldDescriptor descriptor2 = new PojoFieldDescriptor("field2", "field2", 0, true, true, null);
 
         AbstractCursor cursor1 = container.ensureCursor(descriptor1, 2, null);
         AbstractCursor cursor2 = container.ensureCursor(descriptor2, 2, null);
@@ -49,10 +52,10 @@ public class AbstractCursorsContainerTest {
 
     @Test
     public void shouldAdvanceConcurrentNestedCursors() {
-        AbstractCursorsContainer container = new ReadCursorsContainer();
-        FieldDescriptor parentDescriptor = new FieldDescriptor("parentField1", "parentField1", 0, true, false, null);
-        FieldDescriptor descriptor1 = new FieldDescriptor("field1", "parentField1.field1", 0, true, false, parentDescriptor);
-        FieldDescriptor descriptor2 = new FieldDescriptor("field2", "parentField1.field2", 0, true, true, parentDescriptor);
+        AbstractCursorsContainer container = new PojoReadCursorsContainer();
+        PojoFieldDescriptor parentDescriptor = new PojoFieldDescriptor("parentField1", "parentField1", 0, true, false, null);
+        AbstractFieldDescriptor descriptor1 = new PojoFieldDescriptor("field1", "parentField1.field1", 0, true, false, parentDescriptor);
+        AbstractFieldDescriptor descriptor2 = new PojoFieldDescriptor("field2", "parentField1.field2", 0, true, true, parentDescriptor);
 
         AbstractCursor parentCursor = container.ensureCursor(parentDescriptor, 2, null);
         AbstractCursor cursor1 = container.ensureCursor(descriptor1, 2, parentCursor);

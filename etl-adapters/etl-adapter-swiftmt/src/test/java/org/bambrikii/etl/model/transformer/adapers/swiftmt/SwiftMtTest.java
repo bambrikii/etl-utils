@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.bambikii.etl.model.transformer.builders.EtlAdapterConfigBuilder;
 import org.bambrikii.etl.model.transformer.adapters.pojo.EtlPojoAdapterFactory;
 import org.bambrikii.etl.model.transformer.adapters.pojo.EtlPojoOutputFactory;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.bind.JAXBException;
@@ -34,11 +35,13 @@ public class SwiftMtTest {
 
         Object result = outputAdapter.getTarget();
         assertThat(result).isNotNull();
-
-        throw new UnsupportedOperationException("Not yet implemented");
+        assertThat(result).extracting("function").contains("NEWM");
+        assertThat(result).extracting("linkedMessages").contains("001");
+        assertThat(result).extracting("seme").contains("9876543210987654");
     }
 
     @Test
+    @Disabled
     public void shouldConvertFromObject() {
         throw new UnsupportedOperationException("Not yet implemented");
     }

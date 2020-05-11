@@ -1,9 +1,11 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors;
 
-public class WriteCursor extends AbstractCursor<WriteCursor> {
+import org.bambikii.etl.model.transformer.cursors.AbstractCursor;
+
+public class PojoWriteCursor extends AbstractCursor<String, PojoWriteCursor, PojoFieldDescriptor> {
     private int size;
 
-    public WriteCursor(FieldDescriptor fieldDescriptor, WriteCursor parentCursor) {
+    public PojoWriteCursor(PojoFieldDescriptor fieldDescriptor, PojoWriteCursor parentCursor) {
         super(fieldDescriptor, parentCursor);
     }
 

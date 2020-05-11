@@ -1,10 +1,10 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo.io.resultsets;
 
 import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
-import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.FieldDescriptor;
-import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.FieldDescriptorsContainer;
-import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.WriteCursor;
-import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.WriteCursorsContainer;
+import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.PojoFieldDescriptor;
+import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.PojoFieldDescriptorsContainer;
+import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.PojoWriteCursor;
+import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.PojoWriteCursorsContainer;
 import org.bambrikii.etl.model.transformer.adapters.pojo.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -16,8 +16,8 @@ import java.util.Objects;
 
 public class PojoStatement {
     private final Object target;
-    private final FieldDescriptorsContainer fieldDescriptors;
-    private final WriteCursorsContainer cursorsContainer;
+    private final PojoFieldDescriptorsContainer fieldDescriptors;
+    private final PojoWriteCursorsContainer cursorsContainer;
 
     public PojoStatement() {
         this(new HashMap<>());
@@ -25,8 +25,8 @@ public class PojoStatement {
 
     public PojoStatement(Object target) {
         this.target = target == null ? new HashMap<>() : target;
-        fieldDescriptors = new FieldDescriptorsContainer();
-        cursorsContainer = new WriteCursorsContainer();
+        fieldDescriptors = new PojoFieldDescriptorsContainer();
+        cursorsContainer = new PojoWriteCursorsContainer();
     }
 
     public Object getTarget() {
@@ -57,7 +57,7 @@ public class PojoStatement {
         if (obj == null) {
             return;
         }
-        FieldDescriptor fieldDescriptor = fieldDescriptors.ensureFieldDescriptor(fullName, namePos);
+        PojoFieldDescriptor fieldDescriptor = fieldDescriptors.ensureFieldDescriptor(fullName, namePos);
         if (tryWriteListValue(obj, listPrefix, fullName, fieldDescriptor, value, namePos, valueCls)) {
             return;
         }
@@ -70,7 +70,7 @@ public class PojoStatement {
         throw new EtlRuntimeException("Failed to find property [" + fullName + ":" + namePos + ":" + valueCls.getName() + "] for object " + obj + "");
     }
 
-    private boolean tryWriteListValue(Object obj, String listPrefix, String fullName, FieldDescriptor fieldDescriptor, Object value, int namePos, Class<?> valueCls) {
+    private boolean tryWriteListValue(Object obj, String listPrefix, String fullName, PojoFieldDescriptor fieldDescriptor, Object value, int namePos, Class<?> valueCls) {
         if (!(obj instanceof List)) {
             return false;
         }
@@ -83,7 +83,7 @@ public class PojoStatement {
 
         Object fieldObj = tryCreateInstance(fieldDescriptor);
         String distinctName = fieldDescriptor.getDistinctName();
-        WriteCursor cursor = cursorsContainer.ensureCursor(fieldDescriptor);
+        PojoWriteCursor cursor = cursorsContainer.ensureCursor(fieldDescriptor);
         if (distinctName.equals(listPrefix)) {
             list.add(fieldObj);
             cursor.advanceSize();
@@ -95,7 +95,7 @@ public class PojoStatement {
         return true;
     }
 
-    private boolean tryWriteMapValue(Object obj, String fullName, Object value, int namePos, Class<?> valueCls, String listPrefix, FieldDescriptor fieldDescriptor) {
+    private boolean tryWriteMapValue(Object obj, String fullName, Object value, int namePos, Class<?> valueCls, String listPrefix, PojoFieldDescriptor fieldDescriptor) {
         if (!(obj instanceof Map)) {
             return false;
         }
@@ -115,7 +115,7 @@ public class PojoStatement {
         return true;
     }
 
-    private Object tryCreateInstance(FieldDescriptor fieldDescriptor) {
+    private Object tryCreateInstance(PojoFieldDescriptor fieldDescriptor) {
         if (fieldDescriptor.isArray()) {
             return new ArrayList<>();
         }
@@ -126,7 +126,7 @@ public class PojoStatement {
         throw new EtlRuntimeException("Cannot determine type for [" + fieldDescriptor.getDistinctName() + "] field!");
     }
 
-    private boolean tryWriteReflectiveValue(Object obj, String fullName, Object value, int namePos, Class<?> valueCls, String listPrefix, FieldDescriptor fieldDescriptor) {
+    private boolean tryWriteReflectiveValue(Object obj, String fullName, Object value, int namePos, Class<?> valueCls, String listPrefix, PojoFieldDescriptor fieldDescriptor) {
         String fieldName = fieldDescriptor.getSimpleName();
         if (fieldDescriptor.isLeaf()) {
             Method setter = ReflectionUtils.findSetter(obj, fieldName, valueCls);

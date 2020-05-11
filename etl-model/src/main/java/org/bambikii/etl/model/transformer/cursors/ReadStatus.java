@@ -1,4 +1,4 @@
-package org.bambrikii.etl.model.transformer.adapters.pojo.io;
+package org.bambikii.etl.model.transformer.cursors;
 
 public class ReadStatus {
     private final ReadStatusEnum status;

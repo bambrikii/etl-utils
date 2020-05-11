@@ -1,22 +1,23 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors;
 
 import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
+import org.bambikii.etl.model.transformer.cursors.AbstractFieldDescriptorsContainer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FieldDescriptorsContainer {
-    public static final FieldDescriptor NOT_AVAILABLE_FIELD_DESCRIPTOR = new FieldDescriptor(null, null, -1, false, null) {
-    };
+import static org.bambikii.etl.model.transformer.cursors.AbstractFieldDescriptor.ARRAY_SUFFIX;
 
-    private static final String ARRAY_SUFFIX = "[]";
+public class PojoFieldDescriptorsContainer extends AbstractFieldDescriptorsContainer {
+    public static final PojoFieldDescriptor NOT_AVAILABLE_FIELD_DESCRIPTOR = new PojoFieldDescriptor(null, null, -1, false, null);
+
     private final Map<String, List<FieldNameElement>> namesArr = new HashMap<>();
     private final Map<String, Map<Integer, String>> distinctNamesByFullNameAndPos = new HashMap<>();
-    private final Map<String, FieldDescriptor> byDistinctName = new HashMap<>();
+    private final Map<String, PojoFieldDescriptor> byDistinctName = new HashMap<>();
 
-    public FieldDescriptor ensureFieldDescriptor(String fullName, int pos) {
+    public PojoFieldDescriptor ensureFieldDescriptor(String fullName, int pos) {
         if (pos < 0) {
             return null;
         }
@@ -31,8 +32,8 @@ public class FieldDescriptorsContainer {
         FieldNameElement nameElement = ensureSimpleName(fullName, pos);
         List<FieldNameElement> namesArr = ensureNamesArr(fullName);
         boolean isLeaf = pos == namesArr.size() - 1;
-        FieldDescriptor parentDescriptor = ensureFieldDescriptor(fullName, pos - 1);
-        FieldDescriptor fieldDescriptor = new FieldDescriptor(
+        PojoFieldDescriptor parentDescriptor = ensureFieldDescriptor(fullName, pos - 1);
+        PojoFieldDescriptor fieldDescriptor = new PojoFieldDescriptor(
                 nameElement, distinctName,
                 pos, isLeaf,
                 parentDescriptor

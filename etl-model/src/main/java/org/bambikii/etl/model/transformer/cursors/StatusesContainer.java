@@ -1,4 +1,4 @@
-package org.bambrikii.etl.model.transformer.adapters.pojo.io;
+package org.bambikii.etl.model.transformer.cursors;
 
 import java.util.ArrayList;
 import java.util.Collections;
