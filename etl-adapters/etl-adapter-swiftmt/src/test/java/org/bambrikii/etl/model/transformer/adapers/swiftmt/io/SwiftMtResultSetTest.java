@@ -17,7 +17,7 @@ public class SwiftMtResultSetTest {
         AbstractMT message = SwiftMessage.parse(messageAsString).toMT();
 
         SwiftMtResultSet rs = new SwiftMtResultSet(message);
-        String val = rs.getObject("A:20C:SEME:2", String.class);
+        String val = rs.getObject("A::20C:SEME:2", String.class);
 
         assertThat(val).isEqualTo("9876543210987654");
     }

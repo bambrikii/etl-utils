@@ -14,7 +14,6 @@ public class EtlDbAdapterFactory {
     private EtlDbAdapterFactory() {
     }
 
-
     public static EtlFieldReaderStrategy<ResultSet> createDbFieldReader() {
         return new EtlDbFieldReaderAdapter();
     }
@@ -22,7 +21,6 @@ public class EtlDbAdapterFactory {
     public static EtlFieldWriterStrategy<PreparedStatement> createDbFieldWriter() {
         return new EtlDbFieldWriterAdapter();
     }
-
 
     public static EtlModelInputFactory<ResultSet> createDbInputAdapter(Connection cn, String selectQuery) {
         return new EtlModelInputFactory<ResultSet>() {
@@ -47,24 +45,6 @@ public class EtlDbAdapterFactory {
     }
 
     public static EtlModelOutputFactory<PreparedStatement> createDbOutputAdapter(Connection cn, String insertQuery) {
-        return new EtlModelOutputFactory<PreparedStatement>() {
-            @Override
-            public PreparedStatement create() {
-                try {
-                    return cn.prepareStatement(insertQuery);
-                } catch (SQLException ex) {
-                    throw new RuntimeException("Failed to create prepared statement [" + insertQuery + "]", ex);
-                }
-            }
-
-            @Override
-            public boolean complete(PreparedStatement statement) {
-                try {
-                    return statement.execute();
-                } catch (SQLException ex) {
-                    throw new RuntimeException("Failed to complete prepared statement [" + insertQuery + "]", ex);
-                }
-            }
-        };
+        return new EtlDbOutputFactory(cn, insertQuery);
     }
 }

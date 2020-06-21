@@ -6,7 +6,10 @@ import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
 import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
 import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
 import org.bambikii.etl.model.transformer.config.EtlConfigMarshaller;
-import org.bambikii.etl.model.transformer.config.model.*;
+import org.bambikii.etl.model.transformer.config.model.ConversionRootConfig;
+import org.bambikii.etl.model.transformer.config.model.FieldCoversionConfig;
+import org.bambikii.etl.model.transformer.config.model.ModelFieldConfig;
+import org.bambikii.etl.model.transformer.config.model.ModelRootConfig;
 
 import javax.xml.bind.JAXBException;
 import java.io.InputStream;

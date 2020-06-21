@@ -1,5 +1,6 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors;
 
+import org.bambrikii.etl.model.transformer.adapters.pojo.io.TestClass1;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class NameSplitTest {
     private String str = "string" +
             ".sTring<java.util.ArrayList>" +
             ".strin_g.string.qwe" +
-            ".zzxc[]<TestClass1>" +
+            ".zzxc[]<" + TestClass1.class.getName() + ">" +
             ".qwe..[].3234.wer";
 
     private void print(List<FieldNameElement> fields) {
