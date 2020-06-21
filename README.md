@@ -4,26 +4,26 @@ It has adapters to read and write the data.
 
 |Type|Factory|Input Adapter|Output Adapter|Field Adapter for Reading|Field Adapter for Writing|Comments|
 |---|---|---|---|---|---|---|
-|Object Tree        |EtlTreeAdapterFactory              |createTreeInputAdapter |createTreeOutputAdapter    |createTreeFieldReader      |createTreeFieldWriter      | |
+|POJO           |EtlPojoAdapterFactory           |createPojoInputAdapter |createPojoOutputAdapter    |createPojoFieldReader          |createPojoFieldWriter          | |
 |DB                 |EtlDbAdapterFactory                |createDbInputAdapter   |createDbOutputAdapter      |createDbFieldReader        |createDbFieldWriter        | |
-|Java Reflection    |EtlJavaReflectionAdapterFactory    |createJavaInputAdapter |createJavaOutputAdapter    |createFieldReader(Class)   |createFieldWriter(Class)   | |
-|Java Map           |EtlJavaMapAdapterFactory           |createJavaInputAdapter |createJavaOutputAdapter    |createFieldReader          |createFieldWriter          | |
+|SwiftMT    |EtlSwiftMtAdapterFactory    |createSwiftMtInputAdapter |createSwiftMtOutputAdapter (TODO)    |createSwiftMtFieldReader   |createSwiftMtFieldWriter (TODO)   | |
 
 ### Configuration
 #### XML
 The conversion can be configured in XML. For this there should be two XML files: one - to define model structure, another - to set field-to-field mappings.
 For example:
 
-![etl-adapter-db/model-config.xml](./etl-adapter-db/model-config.xml)
-![etl-adapter-db/mapping-config.xml](./etl-adapter-db/mapping-config.xml)
+![db adapter model-config.xml](./etl-adapters/etl-adapter-db/src/test/resources/model-config.xml)
+
+![db adapter mapping-config.xml](./etl-adapters/etl-adapter-db/src/test/resources/mapping-config.xml)
 
 It can be completed using EtlAdapterConfigBuilder class.
 For example:
 
 ```java
         Map<String, EtlModelAdapter> adapters = new EtlAdapterConfigBuilder()
-                .readerStrategy(EtlJavaMapAdapterFactory.createFieldReader())
-                .writerStrategy(EtlJavaMapAdapterFactory.createFieldWriter())
+                .readerStrategy(EtlPojoAdapterFactory.createPojoFieldReader())
+                .writerStrategy(EtlPojoAdapterFactory.createPojoFieldWriter())
                 .modelConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/model-config.xml"))
                 .conversionConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/mapping-config.xml"))
                 .buildMap();
@@ -35,8 +35,8 @@ For example:
         // source and target are objects of Map<String,Object> class
 
         modelAdapter.adapt(
-                EtlJavaMapAdapterFactory.createJavaInputAdapter(source), 
-                EtlJavaMapAdapterFactory.createJavaOutputAdapter(target)
+                EtlPojoAdapterFactory.createPojoInputAdapter(source), 
+                EtlPojoAdapterFactory.createPojoOutputAdapter(target)
         );
 
 ```
