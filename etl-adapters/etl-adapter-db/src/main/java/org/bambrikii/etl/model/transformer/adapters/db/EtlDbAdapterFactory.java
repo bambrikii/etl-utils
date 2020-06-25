@@ -8,7 +8,6 @@ import org.bambikii.etl.model.transformer.builders.EtlFieldWriterStrategy;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class EtlDbAdapterFactory {
     private EtlDbAdapterFactory() {
@@ -23,25 +22,7 @@ public class EtlDbAdapterFactory {
     }
 
     public static EtlModelInputFactory<ResultSet> createDbInputAdapter(Connection cn, String selectQuery) {
-        return new EtlModelInputFactory<ResultSet>() {
-            @Override
-            public ResultSet create() {
-                try {
-                    return cn.prepareStatement(selectQuery).executeQuery();
-                } catch (SQLException ex) {
-                    throw new RuntimeException("Failed to execute query[" + selectQuery + "]", ex);
-                }
-            }
-
-            @Override
-            public boolean next(ResultSet resultSet) {
-                try {
-                    return resultSet.next();
-                } catch (SQLException ex) {
-                    throw new RuntimeException("Failed to advance ResultSet.", ex);
-                }
-            }
-        };
+        return new EtlDbInputFactory(cn, selectQuery);
     }
 
     public static EtlModelOutputFactory<PreparedStatement> createDbOutputAdapter(Connection cn, String insertQuery) {
