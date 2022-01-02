@@ -16,9 +16,9 @@ import static org.mockito.Mockito.when;
 
 public class EtlAdapterBuilderTest {
     @Mock
-    private EtlFieldReaderStrategy readerStrategy;
+    private EtlFieldReader readerStrategy;
     @Mock
-    private EtlFieldWriterStrategy writerStrategy;
+    private EtlFieldWriter writerStrategy;
 
     @Mock
     private Object source;

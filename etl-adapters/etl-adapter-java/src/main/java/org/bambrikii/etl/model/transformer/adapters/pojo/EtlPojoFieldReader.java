@@ -1,13 +1,13 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldExtractable;
-import org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy;
+import org.bambikii.etl.model.transformer.builders.EtlFieldReader;
 import org.bambikii.etl.model.transformer.builders.EtlNamable;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.resultsets.PojoResultSet;
 
-public class EtlPojoFieldReaderStrategy extends EtlFieldReaderStrategy<PojoResultSet> implements EtlNamable {
-    public static final String ETL_POJO = "pojo";
+import static org.bambrikii.etl.model.transformer.adapters.pojo.EtlPojoModelReader.ETL_POJO;
 
+public class EtlPojoFieldReader extends EtlFieldReader<PojoResultSet> implements EtlNamable {
     @Override
     public String getName() {
         return ETL_POJO;

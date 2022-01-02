@@ -1,7 +1,7 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelInputFactory;
-import org.bambikii.etl.model.transformer.utils.TransformBuilder;
+import org.bambikii.etl.model.transformer.adapters.EtlModelReader;
+import org.bambikii.etl.model.transformer.builders.TransformBuilder;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.resultsets.PojoResultSet;
 import org.junit.jupiter.api.Test;
 
@@ -11,22 +11,16 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class EtlPojoConversionTest {
-
     @Test
     public void shouldTransform() {
-        EtlPojoFieldReaderStrategy fieldReader = EtlPojoAdapterFactory.createPojoFieldReader();
-        EtlPojoFieldWriterStrategy fieldWriter = EtlPojoAdapterFactory.createPojoFieldWriter();
-
         Map<String, Object> data = new HashMap<>();
         data.put("field1", "field1 value");
         data.put("field2", 1);
 
-        EtlModelInputFactory<PojoResultSet> modelReader = EtlPojoAdapterFactory.createPojoInputAdapter(data);
-        EtlPojoOutputFactory modelWriter = EtlPojoAdapterFactory.createPojoOutputAdapter();
+        EtlModelReader<PojoResultSet> modelReader = EtlPojoAdapterFactory.createPojoReader(data);
+        EtlPojoModelWriter modelWriter = EtlPojoAdapterFactory.createPojoWriter();
 
         new TransformBuilder()
-                .fieldReader(fieldReader)
-                .fieldWriter(fieldWriter)
                 .modelReader(modelReader)
                 .modelWriter(modelWriter)
                 .fieldMapString("field1", "field1_str")

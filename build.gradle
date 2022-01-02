@@ -1,6 +1,6 @@
 allprojects {
 
-    group = "io.github.bambrikii.etl-utils"
+    //	group = "io.github.bambrikii.etl-utils"
     //    archivesBaseName = "etl"
 
     repositories {
@@ -11,8 +11,9 @@ allprojects {
 
 subprojects {
     apply plugin: "java"
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+
+    sourceCompatibility = 11
+    targetCompatibility = 11
 
     dependencies {
         compileOnly("org.projectlombok:lombok:${lombokVersion}")
@@ -24,8 +25,8 @@ subprojects {
         testImplementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}")
 
-        testCompile("org.mockito:mockito-core:${mockitoVersion}")
-        testCompile("org.assertj:assertj-core:${assertJVersion}")
+        testImplementation("org.mockito:mockito-core:${mockitoVersion}")
+        testImplementation("org.assertj:assertj-core:${assertJVersion}")
     }
 
     test {

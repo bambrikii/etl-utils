@@ -1,29 +1,29 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelInputFactory;
+import org.bambikii.etl.model.transformer.adapters.EtlModelReader;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.resultsets.PojoResultSet;
 
 public class EtlPojoAdapterFactory {
     private EtlPojoAdapterFactory() {
     }
 
-    public static EtlPojoFieldReaderStrategy createPojoFieldReader() {
-        return new EtlPojoFieldReaderStrategy();
+    public static EtlPojoFieldReader createPojoFieldReader() {
+        return new EtlPojoFieldReader();
     }
 
-    public static EtlPojoFieldWriterStrategy createPojoFieldWriter() {
-        return new EtlPojoFieldWriterStrategy();
+    public static EtlPojoFieldWriter createPojoFieldWriter() {
+        return new EtlPojoFieldWriter();
     }
 
-    public static EtlModelInputFactory<PojoResultSet> createPojoInputAdapter(Object data) {
-        return new EtlPojoInputFactory(data);
+    public static EtlModelReader<PojoResultSet> createPojoReader(Object data) {
+        return new EtlPojoModelReader(data);
     }
 
-    public static EtlPojoOutputFactory createPojoOutputAdapter() {
-        return new EtlPojoOutputFactory();
+    public static EtlPojoModelWriter createPojoWriter() {
+        return new EtlPojoModelWriter();
     }
 
-    public static EtlPojoOutputFactory createPojoOutputAdapter(Object target) {
-        return new EtlPojoOutputFactory(target);
+    public static EtlPojoModelWriter createPojoWriter(Object target) {
+        return new EtlPojoModelWriter(target);
     }
 }

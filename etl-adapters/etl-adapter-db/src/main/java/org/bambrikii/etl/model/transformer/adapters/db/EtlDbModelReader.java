@@ -1,16 +1,20 @@
 package org.bambrikii.etl.model.transformer.adapters.db;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelInputFactory;
+import org.bambikii.etl.model.transformer.adapters.EtlModelReader;
+import org.bambikii.etl.model.transformer.builders.EtlFieldReader;
+import org.bambikii.etl.model.transformer.builders.EtlNamable;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class EtlDbInputFactory implements EtlModelInputFactory<ResultSet> {
+public class EtlDbModelReader implements EtlModelReader<ResultSet>, EtlNamable {
+    public static final String ETL_DB_NAME = "db";
+
     private final String selectQuery;
     private final Connection cn;
 
-    public EtlDbInputFactory(Connection cn, String selectQuery) {
+    public EtlDbModelReader(Connection cn, String selectQuery) {
         this.cn = cn;
         this.selectQuery = selectQuery;
     }
@@ -31,5 +35,15 @@ public class EtlDbInputFactory implements EtlModelInputFactory<ResultSet> {
         } catch (SQLException ex) {
             throw new RuntimeException("Failed to advance ResultSet.", ex);
         }
+    }
+
+    @Override
+    public EtlFieldReader<ResultSet> createFieldReader() {
+        return new EtlDbFieldReader();
+    }
+
+    @Override
+    public String getName() {
+        return ETL_DB_NAME;
     }
 }

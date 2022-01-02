@@ -1,16 +1,20 @@
 package org.bambrikii.etl.model.transformer.adapters.db;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelOutputFactory;
+import org.bambikii.etl.model.transformer.adapters.EtlModelWriter;
+import org.bambikii.etl.model.transformer.builders.EtlFieldWriter;
+import org.bambikii.etl.model.transformer.builders.EtlNamable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class EtlDbOutputFactory implements EtlModelOutputFactory<PreparedStatement> {
+import static org.bambrikii.etl.model.transformer.adapters.db.EtlDbModelReader.ETL_DB_NAME;
+
+public class EtlDbModelWriter implements EtlModelWriter<PreparedStatement>, EtlNamable {
     private final Connection cn;
     private final String insertQuery;
 
-    public EtlDbOutputFactory(Connection cn, String insertQuery) {
+    public EtlDbModelWriter(Connection cn, String insertQuery) {
         this.cn = cn;
         this.insertQuery = insertQuery;
     }
@@ -31,5 +35,15 @@ public class EtlDbOutputFactory implements EtlModelOutputFactory<PreparedStateme
         } catch (SQLException ex) {
             throw new RuntimeException("Failed to complete prepared statement [" + insertQuery + "]", ex);
         }
+    }
+
+    @Override
+    public EtlFieldWriter<PreparedStatement> createFieldWriter() {
+        return new EtlDbFieldWriter();
+    }
+
+    @Override
+    public String getName() {
+        return ETL_DB_NAME;
     }
 }

@@ -5,10 +5,14 @@
  */
 package org.bambikii.etl.model.transformer.config.model;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 

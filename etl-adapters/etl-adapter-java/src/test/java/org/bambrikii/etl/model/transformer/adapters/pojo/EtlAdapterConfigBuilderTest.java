@@ -1,10 +1,10 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo;
 
+import jakarta.xml.bind.JAXBException;
 import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
 import org.bambikii.etl.model.transformer.builders.EtlAdapterConfigBuilder;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.bind.JAXBException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,8 +27,8 @@ public class EtlAdapterConfigBuilderTest {
         source.put("intField", 2);
         source.put("doubleField", 3.4);
 
-        EtlPojoOutputFactory outputAdapter = EtlPojoAdapterFactory.createPojoOutputAdapter();
-        modelAdapter.adapt(EtlPojoAdapterFactory.createPojoInputAdapter(source), outputAdapter);
+        EtlPojoModelWriter outputAdapter = EtlPojoAdapterFactory.createPojoWriter();
+        modelAdapter.adapt(EtlPojoAdapterFactory.createPojoReader(source), outputAdapter);
 
         Map<String, Object> target = (Map<String, Object>) outputAdapter.getTarget();
 

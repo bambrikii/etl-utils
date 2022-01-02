@@ -1,11 +1,11 @@
 package org.bambikii.etl.model.transformer.config;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import org.bambikii.etl.model.transformer.config.model.ConversionRootConfig;
 import org.bambikii.etl.model.transformer.config.model.ModelRootConfig;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import java.io.InputStream;
 
 public class EtlConfigMarshaller {

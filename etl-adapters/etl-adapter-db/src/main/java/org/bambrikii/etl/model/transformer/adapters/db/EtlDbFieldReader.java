@@ -1,7 +1,7 @@
 package org.bambrikii.etl.model.transformer.adapters.db;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldExtractable;
-import org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy;
+import org.bambikii.etl.model.transformer.builders.EtlFieldReader;
 import org.bambikii.etl.model.transformer.builders.EtlNamable;
 
 import java.sql.ResultSet;
@@ -9,17 +9,17 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EtlDbFieldReaderAdapter extends EtlFieldReaderStrategy<ResultSet> implements EtlNamable {
-    public static final String ETL_DB_NAME = "db";
+import static org.bambrikii.etl.model.transformer.adapters.db.EtlDbModelReader.ETL_DB_NAME;
 
+public class EtlDbFieldReader extends EtlFieldReader<ResultSet> implements EtlNamable {
     private final Map<String, Integer> columnPositions;
     private final String name;
 
-    public EtlDbFieldReaderAdapter() {
+    public EtlDbFieldReader() {
         this(ETL_DB_NAME);
     }
 
-    public EtlDbFieldReaderAdapter(String name) {
+    public EtlDbFieldReader(String name) {
         columnPositions = new HashMap<>();
         this.name = name;
     }

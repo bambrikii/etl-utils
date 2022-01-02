@@ -1,14 +1,16 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
-import org.bambikii.etl.model.transformer.builders.EtlFieldWriterStrategy;
+import org.bambikii.etl.model.transformer.builders.EtlFieldWriter;
 import org.bambikii.etl.model.transformer.builders.EtlNamable;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.resultsets.PojoStatement;
 
-public class EtlPojoFieldWriterStrategy extends EtlFieldWriterStrategy<PojoStatement> implements EtlNamable {
+import static org.bambrikii.etl.model.transformer.adapters.pojo.EtlPojoModelReader.ETL_POJO;
+
+public class EtlPojoFieldWriter extends EtlFieldWriter<PojoStatement> implements EtlNamable {
     @Override
     public String getName() {
-        return EtlPojoFieldReaderStrategy.ETL_POJO;
+        return ETL_POJO;
     }
 
     @Override

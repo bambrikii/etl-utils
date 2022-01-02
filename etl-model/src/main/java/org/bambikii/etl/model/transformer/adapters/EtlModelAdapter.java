@@ -27,8 +27,8 @@ public class EtlModelAdapter<S, T> {
     }
 
     public void adapt(
-            EtlModelInputFactory<S> inputFactory,
-            EtlModelOutputFactory<T> outputFactory
+            EtlModelReader<S> inputFactory,
+            EtlModelWriter<T> outputFactory
     ) {
         S resultSet = null;
         try {

@@ -1,13 +1,13 @@
 package org.bambrikii.etl.model.transformer.adapers.swiftmt;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
-import org.bambikii.etl.model.transformer.builders.EtlFieldWriterStrategy;
+import org.bambikii.etl.model.transformer.builders.EtlFieldWriter;
 import org.bambikii.etl.model.transformer.builders.EtlNamable;
 import org.bambrikii.etl.model.transformer.adapers.swiftmt.io.SwiftMtStatement;
 
-public class EtlSwiftMtFieldWriterStrategy extends EtlFieldWriterStrategy<SwiftMtStatement> implements EtlNamable {
-    public static final String ETL_SWIFT_MT_NAME = "swiftmt";
+import static org.bambrikii.etl.model.transformer.adapers.swiftmt.EtlSwiftMtModelReader.ETL_SWIFT_MT_NAME;
 
+public class EtlSwiftMtFieldWriter extends EtlFieldWriter<SwiftMtStatement> implements EtlNamable {
     @Override
     public String getName() {
         return ETL_SWIFT_MT_NAME;

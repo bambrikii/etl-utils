@@ -10,19 +10,19 @@ import java.util.List;
 
 public class EtlAdapterBuilder {
     private final List<EtlFieldConversionPair> fieldConversionPairs;
-    private EtlFieldReaderStrategy readerStrategy;
-    private EtlFieldWriterStrategy writerStrategy;
+    private EtlFieldReader readerStrategy;
+    private EtlFieldWriter writerStrategy;
 
     public EtlAdapterBuilder() {
         this.fieldConversionPairs = new ArrayList<>();
     }
 
-    public EtlAdapterBuilder readerStrategy(EtlFieldReaderStrategy strategy) {
+    public EtlAdapterBuilder readerStrategy(EtlFieldReader strategy) {
         this.readerStrategy = strategy;
         return this;
     }
 
-    public EtlAdapterBuilder writerStrategy(EtlFieldWriterStrategy strategy) {
+    public EtlAdapterBuilder writerStrategy(EtlFieldWriter strategy) {
         this.writerStrategy = strategy;
         return this;
     }

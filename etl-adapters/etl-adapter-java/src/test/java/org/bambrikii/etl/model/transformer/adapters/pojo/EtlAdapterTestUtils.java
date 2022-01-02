@@ -2,24 +2,24 @@ package org.bambrikii.etl.model.transformer.adapters.pojo;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldConversionPair;
 import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
-import org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy;
-import org.bambikii.etl.model.transformer.builders.EtlFieldWriterStrategy;
+import org.bambikii.etl.model.transformer.builders.EtlFieldReader;
+import org.bambikii.etl.model.transformer.builders.EtlFieldWriter;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy.INT;
-import static org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy.STRING;
+import static org.bambikii.etl.model.transformer.builders.EtlFieldReader.INT;
+import static org.bambikii.etl.model.transformer.builders.EtlFieldReader.STRING;
 
 public class EtlAdapterTestUtils {
     public static EtlModelAdapter createTestAdapter(
-            EtlFieldReaderStrategy etlFieldReaderStrategy,
-            EtlFieldWriterStrategy etlFieldWriterStrategy
+            EtlFieldReader fieldReader,
+            EtlFieldWriter fieldWriter
     ) {
         return new EtlModelAdapter(Arrays.asList(
-                new EtlFieldConversionPair(etlFieldReaderStrategy.createOne("field1", STRING), etlFieldWriterStrategy.createOne("field1", STRING)),
-                new EtlFieldConversionPair(etlFieldReaderStrategy.createOne("field2", INT), etlFieldWriterStrategy.createOne("field2", INT)))
+                new EtlFieldConversionPair(fieldReader.createOne("field1", STRING), fieldWriter.createOne("field1", STRING)),
+                new EtlFieldConversionPair(fieldReader.createOne("field2", INT), fieldWriter.createOne("field2", INT)))
         );
     }
 

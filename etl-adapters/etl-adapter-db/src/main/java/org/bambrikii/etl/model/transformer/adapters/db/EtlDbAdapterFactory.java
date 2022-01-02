@@ -1,9 +1,9 @@
 package org.bambrikii.etl.model.transformer.adapters.db;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelInputFactory;
-import org.bambikii.etl.model.transformer.adapters.EtlModelOutputFactory;
-import org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy;
-import org.bambikii.etl.model.transformer.builders.EtlFieldWriterStrategy;
+import org.bambikii.etl.model.transformer.adapters.EtlModelReader;
+import org.bambikii.etl.model.transformer.adapters.EtlModelWriter;
+import org.bambikii.etl.model.transformer.builders.EtlFieldReader;
+import org.bambikii.etl.model.transformer.builders.EtlFieldWriter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,19 +13,19 @@ public class EtlDbAdapterFactory {
     private EtlDbAdapterFactory() {
     }
 
-    public static EtlFieldReaderStrategy<ResultSet> createDbFieldReader() {
-        return new EtlDbFieldReaderAdapter();
+    public static EtlFieldReader<ResultSet> createDbFieldReader() {
+        return new EtlDbFieldReader();
     }
 
-    public static EtlFieldWriterStrategy<PreparedStatement> createDbFieldWriter() {
-        return new EtlDbFieldWriterAdapter();
+    public static EtlFieldWriter<PreparedStatement> createDbFieldWriter() {
+        return new EtlDbFieldWriter();
     }
 
-    public static EtlModelInputFactory<ResultSet> createDbInputAdapter(Connection cn, String selectQuery) {
-        return new EtlDbInputFactory(cn, selectQuery);
+    public static EtlModelReader<ResultSet> createDbReader(Connection cn, String selectQuery) {
+        return new EtlDbModelReader(cn, selectQuery);
     }
 
-    public static EtlModelOutputFactory<PreparedStatement> createDbOutputAdapter(Connection cn, String insertQuery) {
-        return new EtlDbOutputFactory(cn, insertQuery);
+    public static EtlModelWriter<PreparedStatement> createDbWriter(Connection cn, String insertQuery) {
+        return new EtlDbModelWriter(cn, insertQuery);
     }
 }

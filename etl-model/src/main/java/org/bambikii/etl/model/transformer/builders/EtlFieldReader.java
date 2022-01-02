@@ -2,7 +2,7 @@ package org.bambikii.etl.model.transformer.builders;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldExtractable;
 
-public abstract class EtlFieldReaderStrategy<T> {
+public abstract class EtlFieldReader<T> {
     public static final String STRING = "string";
     public static final String INT = "int";
     public static final String DOUBLE = "double";

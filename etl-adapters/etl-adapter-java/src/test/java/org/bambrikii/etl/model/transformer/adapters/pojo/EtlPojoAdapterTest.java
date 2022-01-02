@@ -17,9 +17,9 @@ public class EtlPojoAdapterTest {
 
         Map<String, Object> source = EtlAdapterTestUtils.createTestInMap();
 
-        EtlPojoOutputFactory outputAdapter = EtlPojoAdapterFactory.createPojoOutputAdapter();
+        EtlPojoModelWriter outputAdapter = EtlPojoAdapterFactory.createPojoWriter();
         adapter.adapt(
-                EtlPojoAdapterFactory.createPojoInputAdapter(source),
+                EtlPojoAdapterFactory.createPojoReader(source),
                 outputAdapter
         );
         Map<String, Object> target = (Map<String, Object>) outputAdapter.getTarget();
@@ -39,8 +39,8 @@ public class EtlPojoAdapterTest {
         TestOutClass target = EtlAdapterTestUtils.createTestOutClass();
 
         adapter.adapt(
-                EtlPojoAdapterFactory.createPojoInputAdapter(source),
-                EtlPojoAdapterFactory.createPojoOutputAdapter(target)
+                EtlPojoAdapterFactory.createPojoReader(source),
+                EtlPojoAdapterFactory.createPojoWriter(target)
         );
 
         assertEquals("str1", target.getField1());

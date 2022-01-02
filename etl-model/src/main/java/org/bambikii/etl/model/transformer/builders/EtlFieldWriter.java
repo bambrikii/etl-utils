@@ -2,9 +2,9 @@ package org.bambikii.etl.model.transformer.builders;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
 
-import static org.bambikii.etl.model.transformer.builders.EtlFieldReaderStrategy.*;
+import static org.bambikii.etl.model.transformer.builders.EtlFieldReader.*;
 
-public abstract class EtlFieldWriterStrategy<T> {
+public abstract class EtlFieldWriter<T> {
     public EtlFieldLoadable<T, ?> createOne(String name, String type) {
         switch (type) {
             case STRING:
