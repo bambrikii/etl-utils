@@ -1,0 +1,10 @@
+conversions:
+  - name: conversion1
+    sourceModel: model1
+    sourceReaderType: db
+    targetReaderType: db
+    fields:
+      - source: col1
+        target: col1_2
+      - source: col2
+        target: col2_2

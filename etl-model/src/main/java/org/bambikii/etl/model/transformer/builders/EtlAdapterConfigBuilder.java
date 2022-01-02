@@ -6,12 +6,10 @@ import org.bambikii.etl.model.transformer.adapters.EtlFieldExtractable;
 import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
 import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
 import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
-import org.bambikii.etl.model.transformer.config.EtlConfigMarshaller;
 import org.bambikii.etl.model.transformer.config.model.ConversionRootConfig;
 import org.bambikii.etl.model.transformer.config.model.ModelFieldConfig;
 import org.bambikii.etl.model.transformer.config.model.ModelRootConfig;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -62,9 +60,7 @@ public class EtlAdapterConfigBuilder {
         return this;
     }
 
-    public EtlAdapterConfigBuilder modelConfig(InputStream modelInputStream) throws JAXBException {
-        ModelRootConfig modelRoot = EtlConfigMarshaller.unmarshalModelConfig(modelInputStream);
-
+    public EtlAdapterConfigBuilder modelConfig(ModelRootConfig modelRoot) {
         Map<String, LinkedHashMap<String, ModelFieldConfig>> modelFieldConfigs = new HashMap<>();
         modelRoot
                 .getModelConfigs()
@@ -79,8 +75,8 @@ public class EtlAdapterConfigBuilder {
         return this;
     }
 
-    public EtlAdapterConfigBuilder conversionConfig(InputStream conversionInputStream) throws JAXBException {
-        conversionRoot = EtlConfigMarshaller.unmarshalConversionConfig(conversionInputStream);
+    public EtlAdapterConfigBuilder conversionConfig(ConversionRootConfig conversionRoot) throws JAXBException {
+        this.conversionRoot = conversionRoot;
         return this;
     }
 

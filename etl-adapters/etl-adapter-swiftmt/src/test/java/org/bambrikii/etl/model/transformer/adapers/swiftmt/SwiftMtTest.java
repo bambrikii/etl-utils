@@ -4,7 +4,7 @@ import jakarta.xml.bind.JAXBException;
 import org.apache.commons.io.IOUtils;
 import org.bambikii.etl.model.transformer.adapters.EtlModelReader;
 import org.bambikii.etl.model.transformer.builders.TransformBuilder;
-import org.bambikii.etl.model.transformer.config.EtlConfigMarshaller;
+import org.bambikii.etl.model.transformer.config.EtlConfigXmlMarshaller;
 import org.bambikii.etl.model.transformer.config.model.ConversionRootConfig;
 import org.bambikii.etl.model.transformer.config.model.ModelRootConfig;
 import org.bambrikii.etl.model.transformer.adapers.swiftmt.io.SwiftMtResultSet;
@@ -29,8 +29,8 @@ public class SwiftMtTest {
         EtlModelReader<SwiftMtResultSet> swiftMtInputAdapter = EtlSwiftMtAdapterFactory.createSwiftMtReader(swiftMtMessage);
         EtlPojoModelWriter pojoOutputFactory = EtlPojoAdapterFactory.createPojoWriter();
 
-        ModelRootConfig models = EtlConfigMarshaller.unmarshalModelConfig(SwiftMtTest.class.getResourceAsStream("/model-config.xml"));
-        ConversionRootConfig conversions = EtlConfigMarshaller.unmarshalConversionConfig(SwiftMtTest.class.getResourceAsStream("/mapping-config.xml"));
+        ModelRootConfig models = EtlConfigXmlMarshaller.unmarshalModelConfig(SwiftMtTest.class.getResourceAsStream("/model-config.xml"));
+        ConversionRootConfig conversions = EtlConfigXmlMarshaller.unmarshalConversionConfig(SwiftMtTest.class.getResourceAsStream("/mapping-config.xml"));
 
         TransformBuilder
                 .of(swiftMtInputAdapter, pojoOutputFactory, models, conversions)

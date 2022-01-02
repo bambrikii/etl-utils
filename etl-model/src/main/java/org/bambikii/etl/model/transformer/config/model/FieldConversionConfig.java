@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FieldCoversionConfig {
+public class FieldConversionConfig {
     @XmlAttribute(name = "source")
     private String source;
 

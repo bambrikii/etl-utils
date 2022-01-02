@@ -5,6 +5,7 @@
  */
 package org.bambikii.etl.model.transformer.config.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -23,5 +24,6 @@ import java.util.List;
 public class ConversionRootConfig {
     @XmlElementWrapper(name = "conversions")
     @XmlElement(name = "conversion")
+    @JsonProperty("conversions")
     private List<ModelConversionConfig> modelConversionConfigs = new ArrayList<>();
 }

@@ -3,6 +3,9 @@ package org.bambrikii.etl.model.transformer.adapters.pojo;
 import jakarta.xml.bind.JAXBException;
 import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
 import org.bambikii.etl.model.transformer.builders.EtlAdapterConfigBuilder;
+import org.bambikii.etl.model.transformer.config.EtlConfigXmlMarshaller;
+import org.bambikii.etl.model.transformer.config.model.ConversionRootConfig;
+import org.bambikii.etl.model.transformer.config.model.ModelRootConfig;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -13,11 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class EtlAdapterConfigBuilderTest {
     @Test
     public void shouldConvert() throws JAXBException {
+        ModelRootConfig modelRoot = EtlConfigXmlMarshaller.unmarshalModelConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/model-config.xml"));
+        ConversionRootConfig conversionRoot = EtlConfigXmlMarshaller.unmarshalConversionConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/converter-config.xml"));
+
         Map<String, EtlModelAdapter> adapters = new EtlAdapterConfigBuilder()
                 .readerStrategy(EtlPojoAdapterFactory.createPojoFieldReader())
                 .writerStrategy(EtlPojoAdapterFactory.createPojoFieldWriter())
-                .modelConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/model-config.xml"))
-                .conversionConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/converter-config.xml"))
+                .modelConfig(modelRoot)
+                .conversionConfig(conversionRoot)
                 .buildMap();
 
         EtlModelAdapter modelAdapter = adapters.get("conversion1");

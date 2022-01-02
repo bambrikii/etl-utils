@@ -1,5 +1,6 @@
 package org.bambikii.etl.model.transformer.config.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -32,5 +33,6 @@ public class ModelConversionConfig {
 
     @XmlElementWrapper(name = "fields")
     @XmlElement(name = "field")
-    private List<FieldCoversionConfig> fields = new ArrayList<>();
+    @JsonProperty("fields")
+    private List<FieldConversionConfig> fields = new ArrayList<>();
 }

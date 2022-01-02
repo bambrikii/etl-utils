@@ -3,8 +3,12 @@ package org.bambrikii.etl.model.transformer.adapters.db;
 import jakarta.xml.bind.JAXBException;
 import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
 import org.bambikii.etl.model.transformer.builders.EtlAdapterConfigBuilder;
+import org.bambikii.etl.model.transformer.config.EtlConfigYmlMarshaller;
+import org.bambikii.etl.model.transformer.config.model.ConversionRootConfig;
+import org.bambikii.etl.model.transformer.config.model.ModelRootConfig;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -17,16 +21,18 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class EtlDbAdapterTest {
     @Test
-    public void shouldReadAndWrite() throws SQLException, JAXBException {
-        EtlAdapterConfigBuilder builder = new EtlAdapterConfigBuilder();
-        Map<String, EtlModelAdapter> adapters = builder.readerStrategy(EtlDbAdapterFactory.createDbFieldReader())
+    public void shouldReadAndWrite() throws SQLException, JAXBException, IOException {
+        ModelRootConfig modelRoot = EtlConfigYmlMarshaller.unmarshalModelConfig(EtlDbAdapterTest.class.getResourceAsStream("/model-config.yml"));
+        ConversionRootConfig conversionRoot = EtlConfigYmlMarshaller.unmarshalConversionConfig(EtlDbAdapterTest.class.getResourceAsStream("/mapping-config.yml"));
+
+        Map<String, EtlModelAdapter> adapters = new EtlAdapterConfigBuilder().readerStrategy(EtlDbAdapterFactory.createDbFieldReader())
                 .writerStrategy(EtlDbAdapterFactory.createDbFieldWriter())
-                .modelConfig(EtlDbAdapterTest.class.getResourceAsStream("/model-config.xml"))
-                .conversionConfig(EtlDbAdapterTest.class.getResourceAsStream("/mapping-config.xml")).buildMap();
+                .modelConfig(modelRoot)
+                .conversionConfig(conversionRoot).buildMap();
 
         try (Connection cn = DriverManager.getConnection("jdbc:h2:mem:");
-                Statement statement1 = cn.createStatement();
-                Statement statement2 = cn.createStatement();) {
+             Statement statement1 = cn.createStatement();
+             Statement statement2 = cn.createStatement();) {
             cn.setAutoCommit(true);
             statement1.execute("create table t1 (col1 varchar2(256), col2 number(11, 0))");
             statement2.execute("create table t2 (col1_2 varchar2(256), col2_2 number(11, 0))");

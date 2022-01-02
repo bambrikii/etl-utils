@@ -8,7 +8,7 @@ import org.bambikii.etl.model.transformer.config.model.ModelRootConfig;
 
 import java.io.InputStream;
 
-public class EtlConfigMarshaller {
+public class EtlConfigXmlMarshaller {
     private static final JAXBContext MODEL_CONTEXT;
     private static final JAXBContext CONVERTER_CONTEXT;
 
@@ -28,7 +28,7 @@ public class EtlConfigMarshaller {
         }
     }
 
-    private EtlConfigMarshaller() {
+    private EtlConfigXmlMarshaller() {
     }
 
     public static ModelRootConfig unmarshalModelConfig(InputStream inputStream) throws JAXBException {

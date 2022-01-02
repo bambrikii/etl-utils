@@ -5,6 +5,10 @@ apply plugin: "java-library"
 dependencies {
     api(libs.jakarta.jaxb.api)
     api(libs.jakarta.jaxb.impl)
+
+    api(libs.jackson.databind)
+    api(libs.jackson.yaml)
+    api(libs.jackson.jsr310)
 }
 
 uploadArchives {

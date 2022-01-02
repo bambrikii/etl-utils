@@ -1,7 +1,12 @@
-apply from: "../../gradle/publish.gradle"
+apply from: "${rootDir}/gradle/publish.gradle"
+apply from: "${rootDir}/gradle/libraries.gradle"
+apply plugin: "java-library"
 
 dependencies {
-    compile project(":etl-model")
+    api(project(":etl-model"))
+
+    api(libs.jackson.yaml)
+    api(libs.jackson.jsr310)
 }
 
 uploadArchives {
