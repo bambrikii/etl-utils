@@ -10,40 +10,40 @@ import java.util.List;
 
 public class EtlAdapterBuilder {
     private final List<EtlFieldConversionPair> fieldConversionPairs;
-    private EtlFieldReader readerStrategy;
-    private EtlFieldWriter writerStrategy;
+    private EtlFieldReader reader;
+    private EtlFieldWriter writer;
 
     public EtlAdapterBuilder() {
         this.fieldConversionPairs = new ArrayList<>();
     }
 
-    public EtlAdapterBuilder readerStrategy(EtlFieldReader strategy) {
-        this.readerStrategy = strategy;
+    public EtlAdapterBuilder reader(EtlFieldReader reader) {
+        this.reader = reader;
         return this;
     }
 
-    public EtlAdapterBuilder writerStrategy(EtlFieldWriter strategy) {
-        this.writerStrategy = strategy;
+    public EtlAdapterBuilder writer(EtlFieldWriter writer) {
+        this.writer = writer;
         return this;
     }
 
-    public EtlAdapterBuilder addFieldConversion(
+    public EtlAdapterBuilder mapping(
             String sourceFieldName, String sourceFieldType,
             String targetFieldName, String targetFieldType
     ) {
-        EtlFieldExtractable fieldReader = readerStrategy.createOne(sourceFieldName, sourceFieldType);
-        EtlFieldLoadable fieldWriter = writerStrategy.createOne(targetFieldName, targetFieldType);
+        EtlFieldExtractable fieldReader = reader.createOne(sourceFieldName, sourceFieldType);
+        EtlFieldLoadable fieldWriter = writer.createOne(targetFieldName, targetFieldType);
         fieldConversionPairs.add(new EtlFieldConversionPair<>(fieldReader, fieldWriter));
         return this;
     }
 
-    public EtlAdapterBuilder addFieldConversion(
+    public EtlAdapterBuilder mapping(
             String sourceFieldName, String sourceFieldType,
             String targetFieldName
     ) {
         fieldConversionPairs.add(new EtlFieldConversionPair(
-                readerStrategy.createOne(sourceFieldName, sourceFieldType),
-                writerStrategy.createOne(targetFieldName, sourceFieldType)
+                reader.createOne(sourceFieldName, sourceFieldType),
+                writer.createOne(targetFieldName, sourceFieldType)
         ));
         return this;
     }

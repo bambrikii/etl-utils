@@ -16,9 +16,9 @@ import static org.mockito.Mockito.when;
 
 public class EtlAdapterBuilderTest {
     @Mock
-    private EtlFieldReader readerStrategy;
+    private EtlFieldReader reader;
     @Mock
-    private EtlFieldWriter writerStrategy;
+    private EtlFieldWriter writer;
 
     @Mock
     private Object source;
@@ -42,17 +42,17 @@ public class EtlAdapterBuilderTest {
 
     @Test
     public void shouldBuild() {
-        when(readerStrategy.createOne(eq("field1"), eq("int"))).thenReturn(extractor1);
-        when(writerStrategy.createOne(eq("field1_2"), eq("int"))).thenReturn(loader1);
+        when(reader.createOne(eq("field1"), eq("int"))).thenReturn(extractor1);
+        when(writer.createOne(eq("field1_2"), eq("int"))).thenReturn(loader1);
 
-        when(readerStrategy.createOne(eq("field2"), eq("string"))).thenReturn(extractor2);
-        when(writerStrategy.createOne(eq("field2_2"), eq("string"))).thenReturn(loader2);
+        when(reader.createOne(eq("field2"), eq("string"))).thenReturn(extractor2);
+        when(writer.createOne(eq("field2_2"), eq("string"))).thenReturn(loader2);
 
         EtlModelAdapter adapter = new EtlAdapterBuilder()
-                .readerStrategy(readerStrategy)
-                .writerStrategy(writerStrategy)
-                .addFieldConversion("field1", "int", "field1_2")
-                .addFieldConversion("field2", "string", "field2_2", "string")
+                .reader(reader)
+                .writer(writer)
+                .mapping("field1", "int", "field1_2")
+                .mapping("field2", "string", "field2_2", "string")
                 .buildAdapter();
 
         assertNotNull(adapter);
