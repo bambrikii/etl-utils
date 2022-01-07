@@ -69,4 +69,17 @@ public class EtlDbFieldReader extends EtlFieldReader<ResultSet> implements EtlNa
             }
         };
     }
+
+    @Override
+    protected EtlFieldExtractable<ResultSet, Map<String, Object>> getMapReader(String name) {
+        return obj -> {
+            try {
+                Map<String, Object> result = new HashMap<>();
+                result.put(name, obj.getObject(name));
+                return result;
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        };
+    }
 }

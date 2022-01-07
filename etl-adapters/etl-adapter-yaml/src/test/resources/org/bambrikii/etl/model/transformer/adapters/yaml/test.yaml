@@ -1,0 +1,12 @@
+field0:
+  field1: str1
+  field6:
+    field7: '7'
+    field8: '8'
+    field9: '9'
+  field3: Thu Jan 06 19:06:24 EST 2022
+  field2: 2
+  field4:
+  - '111'
+  - '112'
+  - '113'

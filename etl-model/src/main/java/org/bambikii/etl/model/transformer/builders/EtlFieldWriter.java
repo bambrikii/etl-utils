@@ -2,6 +2,8 @@ package org.bambikii.etl.model.transformer.builders;
 
 import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
 
+import java.util.Map;
+
 import static org.bambikii.etl.model.transformer.builders.EtlFieldReader.*;
 
 public abstract class EtlFieldWriter<T> {
@@ -13,6 +15,8 @@ public abstract class EtlFieldWriter<T> {
                 return getIntWriter(name);
             case DOUBLE:
                 return getDoubleWriter(name);
+            case MAP:
+                return getMapWriter(name);
             default:
                 return getMoreWriter(name, type);
         }
@@ -23,6 +27,8 @@ public abstract class EtlFieldWriter<T> {
     protected abstract EtlFieldLoadable<T, Integer> getIntWriter(String name);
 
     protected abstract EtlFieldLoadable<T, Double> getDoubleWriter(String name);
+
+    protected abstract EtlFieldLoadable<T, Map<String, Object>> getMapWriter(String name);
 
     protected <O> EtlFieldLoadable<T, O> getMoreWriter(String name, String type) {
         throw new IllegalStateException("Unexpected value: " + name + ", " + type);

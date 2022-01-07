@@ -5,6 +5,8 @@ import org.bambikii.etl.model.transformer.builders.EtlFieldReader;
 import org.bambikii.etl.model.transformer.builders.EtlNamable;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.resultsets.PojoResultSet;
 
+import java.util.Map;
+
 import static org.bambrikii.etl.model.transformer.adapters.pojo.EtlPojoModelReader.ETL_POJO;
 
 public class EtlPojoFieldReader extends EtlFieldReader<PojoResultSet> implements EtlNamable {
@@ -26,5 +28,10 @@ public class EtlPojoFieldReader extends EtlFieldReader<PojoResultSet> implements
     @Override
     protected EtlFieldExtractable<PojoResultSet, Double> getDoubleReader(String name) {
         return resultSet -> resultSet.getObject(name, Double.class);
+    }
+
+    @Override
+    protected EtlFieldExtractable<PojoResultSet, Map<String, Object>> getMapReader(String name) {
+        return resultSet -> resultSet.getObject(name, Map.class);
     }
 }

@@ -123,6 +123,9 @@ public class PojoStatement {
         if (cls != null) {
             return ReflectionUtils.tryNewInstance(cls);
         }
+        if (cls == null) { // TODO: is it conditional? can there be other options?
+            return new HashMap<>();
+        }
         throw new EtlRuntimeException("Cannot determine type for [" + fieldDescriptor.getDistinctName() + "] field!");
     }
 

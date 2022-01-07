@@ -6,6 +6,7 @@ import org.bambikii.etl.model.transformer.builders.EtlNamable;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Map;
 
 import static org.bambrikii.etl.model.transformer.adapters.db.EtlDbModelReader.ETL_DB_NAME;
 
@@ -52,6 +53,21 @@ public class EtlDbFieldWriter extends EtlFieldWriter<PreparedStatement> implemen
         return (obj, value) -> {
             try {
                 obj.setDouble(paramIndex++, value);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        };
+    }
+
+    @Override
+    protected EtlFieldLoadable<PreparedStatement, Map<String, Object>> getMapWriter(String name) {
+        return (obj, value) -> {
+            try {
+                for (Map.Entry<String, Object> entry : value.entrySet()) {
+                    String field = entry.getKey();
+                    Object val = entry.getValue();
+                    obj.setObject(Integer.parseInt(field), val);
+                }
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }

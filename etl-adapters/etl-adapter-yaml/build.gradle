@@ -4,6 +4,8 @@ apply plugin: "java-library"
 
 dependencies {
     api(project(":etl-model"))
+    api(project(":etl-adapters:etl-adapter-java"))
+    api("org.yaml:snakeyaml:1.21")
 
     api(libs.jackson.yaml)
     api(libs.jackson.jsr310)
@@ -13,7 +15,7 @@ uploadArchives {
     repositories {
         mavenDeployer {
             pom.project {
-                name 'ETL Utils - YML'
+                name 'ETL Utils - YAML'
                 packaging 'jar'
                 // optionally artifactId can be defined here
                 description 'YML (Reflection, Collections) Implementation of ETL Utils'
@@ -34,9 +36,9 @@ uploadArchives {
 
                 developers {
                     developer {
-                        id 'bambrikii'
+                        id 'alexander-arakelyan'
                         name 'Alexander Arakelyan'
-                        email 'bambrikii@gmail.com'
+                        email 'alexander.arakelyan@gmail.com'
                     }
                 }
             }

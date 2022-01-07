@@ -5,6 +5,8 @@ import org.bambikii.etl.model.transformer.builders.EtlFieldWriter;
 import org.bambikii.etl.model.transformer.builders.EtlNamable;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.resultsets.PojoStatement;
 
+import java.util.Map;
+
 import static org.bambrikii.etl.model.transformer.adapters.pojo.EtlPojoModelReader.ETL_POJO;
 
 public class EtlPojoFieldWriter extends EtlFieldWriter<PojoStatement> implements EtlNamable {
@@ -26,5 +28,10 @@ public class EtlPojoFieldWriter extends EtlFieldWriter<PojoStatement> implements
     @Override
     protected EtlFieldLoadable<PojoStatement, Double> getDoubleWriter(String name) {
         return (obj, value) -> obj.setField(name, value, Double.class);
+    }
+
+    @Override
+    protected EtlFieldLoadable<PojoStatement, Map<String, Object>> getMapWriter(String name) {
+        return (obj, value) -> obj.setField(name, value, Map.class);
     }
 }

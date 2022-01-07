@@ -35,9 +35,9 @@ uploadArchives {
 
                 developers {
                     developer {
-                        id 'bambrikii'
+                        id 'alexander-arakelyan'
                         name 'Alexander Arakelyan'
-                        email 'bambrikii@gmail.com'
+                        email 'alexander.arakelyan@gmail.com'
                     }
                 }
             }
