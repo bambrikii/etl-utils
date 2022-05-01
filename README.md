@@ -13,9 +13,9 @@ It has adapters to read and write the data.
 The conversion can be configured in XML. For this there should be two XML files: one - to define model structure, another - to set field-to-field mappings.
 For example:
 
-![db adapter model-config.xml](./etl-adapters/etl-adapter-db/src/test/resources/model-config.xml)
+![db adapter schema.xml](./etl-adapters/etl-adapter-db/src/test/resources/schema.xml)
 
-![db adapter mapping-config.xml](./etl-adapters/etl-adapter-db/src/test/resources/mapping-config.xml)
+![db adapter conversions.xml](./etl-adapters/etl-adapter-db/src/test/resources/conversions.xml)
 
 It can be completed using EtlAdapterConfigBuilder class.
 For example:
@@ -24,8 +24,8 @@ For example:
         Map<String, EtlModelAdapter> adapters = new EtlAdapterConfigBuilder()
                 .readerStrategy(EtlPojoAdapterFactory.createPojoFieldReader())
                 .writerStrategy(EtlPojoAdapterFactory.createPojoFieldWriter())
-                .modelConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/model-config.xml"))
-                .conversionConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/mapping-config.xml"))
+                .modelConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/schema.xml"))
+                .conversionConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/conversions.xml"))
                 .buildMap();
 
         EtlModelAdapter modelAdapter = adapters.get("conversion1");

@@ -7,10 +7,10 @@ import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
 import org.bambikii.etl.model.transformer.adapters.EtlModelReader;
 import org.bambikii.etl.model.transformer.adapters.EtlModelWriter;
 import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
-import org.bambikii.etl.model.transformer.config.model.ConversionRootConfig;
-import org.bambikii.etl.model.transformer.config.model.ModelConfig;
-import org.bambikii.etl.model.transformer.config.model.ModelFieldConfig;
-import org.bambikii.etl.model.transformer.config.model.ModelRootConfig;
+import org.bambikii.etl.model.transformer.mapping.model.MappingRoot;
+import org.bambikii.etl.model.transformer.schema.model.SchemaModel;
+import org.bambikii.etl.model.transformer.schema.model.SchemaField;
+import org.bambikii.etl.model.transformer.schema.model.SchemaRoot;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,25 +25,28 @@ import static org.bambikii.etl.model.transformer.builders.EtlFieldReader.INT;
 import static org.bambikii.etl.model.transformer.builders.EtlFieldReader.STRING;
 
 public class TransformBuilder {
-    private EtlFieldReader fieldReader;
-    private EtlFieldWriter fieldWriter;
-    private List<EtlFieldConversionPair> fieldMaps = new ArrayList<>();
+    private SchemaRoot schemaRoot;
+    private MappingRoot mappingRoot;
+
     private EtlModelReader modelReader;
     private EtlModelWriter modelWriter;
-    private ConversionRootConfig conversionRootConfig;
-    private ModelRootConfig modelRootConfig;
+
+    private EtlFieldReader fieldReader;
+    private EtlFieldWriter fieldWriter;
+
     private String modelReaderType;
     private String modelWriterType;
+    private List<EtlFieldConversionPair> fieldMaps = new ArrayList<>();
 
     public static TransformBuilder of(
             EtlModelReader<?> reader, EtlModelWriter<?> writer,
-            ModelRootConfig models, ConversionRootConfig conversions
+            SchemaRoot models, MappingRoot mappings
     ) {
         return new TransformBuilder()
                 .modelReader(reader)
                 .modelWriter(writer)
                 .models(models)
-                .conversions(conversions);
+                .mappings(mappings);
     }
 
     public TransformBuilder modelReader(EtlModelReader modelReader) {
@@ -93,19 +96,19 @@ public class TransformBuilder {
         adapter.adapt(modelReader, modelWriter);
     }
 
-    public TransformBuilder models(ModelRootConfig modelRootConfig) {
-        this.modelRootConfig = modelRootConfig;
+    public TransformBuilder models(SchemaRoot modelRootConfig) {
+        this.schemaRoot = modelRootConfig;
         return this;
     }
 
-    public TransformBuilder conversions(ConversionRootConfig conversionRootConfig) {
-        this.conversionRootConfig = conversionRootConfig;
+    public TransformBuilder mappings(MappingRoot mappingRoot) {
+        this.mappingRoot = mappingRoot;
         return this;
     }
 
-    public TransformBuilder fieldsByConversion(String conversionName) {
-        conversionRootConfig
-                .getModelConversionConfigs()
+    public TransformBuilder fieldsByMapping(String conversionName) {
+        mappingRoot
+                .getMappingModels()
                 .stream()
                 .filter(converter -> converter.getName().equals(conversionName))
                 .findFirst()
@@ -118,8 +121,8 @@ public class TransformBuilder {
                     if (!modelWriterType.equals(targetReaderType)) {
                         throw new RuntimeException("Target conversion strategy [" + targetReaderType + "] not found. Available strategies: [" + modelWriterType + "]");
                     }
-                    LinkedHashMap<String, ModelFieldConfig> sourceModelFieldConfig = extractSourceModelConfig(conversion.getSourceModel());
-                    LinkedHashMap<String, ModelFieldConfig> targetModelFieldConfig = extractTargetModelConfig(conversion.getTargetModel());
+                    LinkedHashMap<String, SchemaField> sourceModelFieldConfig = extractSourceModelConfig(conversion.getSourceSchema(), conversion.getSourceModel());
+                    LinkedHashMap<String, SchemaField> targetModelFieldConfig = extractTargetModelConfig(conversion.getTargetSchema(), conversion.getTargetModel());
                     conversion
                             .getFields()
                             .forEach(fieldConversionConfig -> {
@@ -131,29 +134,37 @@ public class TransformBuilder {
         return this;
     }
 
-    private LinkedHashMap<String, ModelFieldConfig> extractModel(String modelName) {
-        ModelConfig modelConfig = modelRootConfig
-                .getModelConfigs()
+    private LinkedHashMap<String, SchemaField> extractModel(String schemaName, String modelName) {
+        SchemaModel modelConfig = schemaRoot
+                .getSchemas()
+                .stream()
+                .filter(schema -> schema.getName().equals(schemaName))
+                .findFirst()
+                .get()
+                .getModels()
                 .stream()
                 .filter(converter -> converter.getName().equals(modelName))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Model " + modelName + " has not been found!"));
         return modelConfig
-                .getModelFields()
+                .getFields()
                 .stream()
-                .collect(Collectors.toMap(ModelFieldConfig::getName, Function.identity(), (u, v) -> {
+                .collect(Collectors.toMap(SchemaField::getName, Function.identity(), (u, v) -> {
                     throw new IllegalStateException(String.format("Duplicate key %s", u));
                 }, LinkedHashMap::new));
     }
 
-    private LinkedHashMap<String, ModelFieldConfig> extractSourceModelConfig(String modelName) {
-        return extractModel(modelName);
+    private LinkedHashMap<String, SchemaField> extractSourceModelConfig(String schemaName, String modelName) {
+        return extractModel(schemaName, modelName);
     }
 
-    private LinkedHashMap<String, ModelFieldConfig> extractTargetModelConfig(String modelName) {
+    private LinkedHashMap<String, SchemaField> extractTargetModelConfig(String schemaName, String modelName) {
+        if (schemaName == null) {
+            return null;
+        }
         if (modelName == null) {
             return null;
         }
-        return extractSourceModelConfig(modelName);
+        return extractSourceModelConfig(schemaName, modelName);
     }
 }

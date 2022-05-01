@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.bambikii.etl.model.transformer.config.model;
+package org.bambikii.etl.model.transformer.mapping.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -20,10 +20,10 @@ import java.util.List;
 @Getter
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "conversion-root")
-public class ConversionRootConfig {
-    @XmlElementWrapper(name = "conversions")
-    @XmlElement(name = "conversion")
-    @JsonProperty("conversions")
-    private List<ModelConversionConfig> modelConversionConfigs = new ArrayList<>();
+@XmlRootElement(name = "mappings")
+public class MappingRoot {
+    @XmlElementWrapper(name = "mappings")
+    @XmlElement(name = "mapping")
+    @JsonProperty("mappings")
+    private List<MappingModel> mappingModels = new ArrayList<>();
 }

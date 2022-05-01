@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.bambikii.etl.model.transformer.config.model;
+package org.bambikii.etl.model.transformer.mapping.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FieldConversionConfig {
+public class MappingField {
     @XmlAttribute(name = "source")
     private String source;
 

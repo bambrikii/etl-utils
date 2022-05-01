@@ -1,11 +1,11 @@
 package org.bambrikii.etl.model.transformer.adapters.db;
 
-import jakarta.xml.bind.JAXBException;
 import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
 import org.bambikii.etl.model.transformer.builders.EtlAdapterConfigBuilder;
-import org.bambikii.etl.model.transformer.config.EtlConfigYmlMarshaller;
-import org.bambikii.etl.model.transformer.config.model.ConversionRootConfig;
-import org.bambikii.etl.model.transformer.config.model.ModelRootConfig;
+import org.bambikii.etl.model.transformer.mapping.EtlMappingYmlMarshaller;
+import org.bambikii.etl.model.transformer.schema.EtlSchemaYmlMarshaller;
+import org.bambikii.etl.model.transformer.mapping.model.MappingRoot;
+import org.bambikii.etl.model.transformer.schema.model.SchemaRoot;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -21,14 +21,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class EtlDbAdapterTest {
     @Test
-    public void shouldReadAndWrite() throws SQLException, JAXBException, IOException {
-        ModelRootConfig modelRoot = EtlConfigYmlMarshaller.unmarshalModelConfig(EtlDbAdapterTest.class.getResourceAsStream("/model-config.yml"));
-        ConversionRootConfig conversionRoot = EtlConfigYmlMarshaller.unmarshalConversionConfig(EtlDbAdapterTest.class.getResourceAsStream("/mapping-config.yml"));
+    public void shouldReadAndWrite() throws SQLException, IOException {
+        SchemaRoot modelRoot = EtlSchemaYmlMarshaller.unmarshal(EtlDbAdapterTest.class.getResourceAsStream("/schema.yml"));
+        MappingRoot conversionRoot = EtlMappingYmlMarshaller.unmarshal(EtlDbAdapterTest.class.getResourceAsStream("/mapping.yml"));
 
         Map<String, EtlModelAdapter> adapters = new EtlAdapterConfigBuilder().readerStrategy(EtlDbAdapterFactory.createDbFieldReader())
                 .writerStrategy(EtlDbAdapterFactory.createDbFieldWriter())
                 .modelConfig(modelRoot)
-                .conversionConfig(conversionRoot).buildMap();
+                .mappingConfig(conversionRoot).buildMap();
 
         try (Connection cn = DriverManager.getConnection("jdbc:h2:mem:");
              Statement statement1 = cn.createStatement();

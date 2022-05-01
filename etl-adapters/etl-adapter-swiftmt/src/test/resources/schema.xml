@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemas>
+    <schemas>
+        <schema name="schema1">
+            <models>
+                <model name="model1">
+                    <fields>
+                        <field name="seme" type="string"/>
+                        <field name="function" type="string"/>
+                        <field name="linkedMessages" type="string" length="35"/>
+                    </fields>
+                </model>
+            </models>
+        </schema>
+    </schemas>
+</schemas>

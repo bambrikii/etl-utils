@@ -3,9 +3,10 @@ package org.bambrikii.etl.model.transformer.adapters.pojo;
 import jakarta.xml.bind.JAXBException;
 import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
 import org.bambikii.etl.model.transformer.builders.EtlAdapterConfigBuilder;
-import org.bambikii.etl.model.transformer.config.EtlConfigXmlMarshaller;
-import org.bambikii.etl.model.transformer.config.model.ConversionRootConfig;
-import org.bambikii.etl.model.transformer.config.model.ModelRootConfig;
+import org.bambikii.etl.model.transformer.mapping.EtlMappingXmlMarshaller;
+import org.bambikii.etl.model.transformer.schema.EtlSchemaXmlMarshaller;
+import org.bambikii.etl.model.transformer.mapping.model.MappingRoot;
+import org.bambikii.etl.model.transformer.schema.model.SchemaRoot;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -16,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class EtlAdapterConfigBuilderTest {
     @Test
     public void shouldConvert() throws JAXBException {
-        ModelRootConfig modelRoot = EtlConfigXmlMarshaller.unmarshalModelConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/model-config.xml"));
-        ConversionRootConfig conversionRoot = EtlConfigXmlMarshaller.unmarshalConversionConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/converter-config.xml"));
+        SchemaRoot modelRoot = EtlSchemaXmlMarshaller.unmarshalModelConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/schema.xml"));
+        MappingRoot conversionRoot = EtlMappingXmlMarshaller.unmarshalConversionConfig(EtlAdapterConfigBuilderTest.class.getResourceAsStream("/mapping.xml"));
 
         Map<String, EtlModelAdapter> adapters = new EtlAdapterConfigBuilder()
                 .readerStrategy(EtlPojoAdapterFactory.createPojoFieldReader())
                 .writerStrategy(EtlPojoAdapterFactory.createPojoFieldWriter())
                 .modelConfig(modelRoot)
-                .conversionConfig(conversionRoot)
+                .mappingConfig(conversionRoot)
                 .buildMap();
 
         EtlModelAdapter modelAdapter = adapters.get("conversion1");

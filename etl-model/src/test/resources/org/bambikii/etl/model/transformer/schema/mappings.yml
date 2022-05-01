@@ -1,5 +1,7 @@
-conversions:
+mappings:
   - name: conversion1
+    sourceSchema: schema1
+    targetSchema: schema1
     sourceModel: model1
     sourceReaderType: db
     targetReaderType: db

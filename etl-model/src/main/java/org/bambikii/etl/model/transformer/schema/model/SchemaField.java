@@ -1,4 +1,4 @@
-package org.bambikii.etl.model.transformer.config.model;
+package org.bambikii.etl.model.transformer.schema.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ModelFieldConfig {
+public class SchemaField {
     @XmlAttribute(name = "name")
     private String name;
 

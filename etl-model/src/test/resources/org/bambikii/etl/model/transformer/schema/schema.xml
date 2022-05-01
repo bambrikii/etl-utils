@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemas>
+    <schema>
+        <models>
+            <model name="model1">
+                <fields>
+                    <field name="col1" type="string"/>
+                    <field name="col2" type="int"/>
+                </fields>
+            </model>
+        </models>
+    </schema>
+</schemas>

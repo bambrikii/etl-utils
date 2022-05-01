@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.bambikii.etl.model.transformer.config.model;
+package org.bambikii.etl.model.transformer.schema.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -22,12 +22,12 @@ import java.util.List;
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "model")
-public class ModelConfig {
+public class SchemaModel {
     @XmlAttribute(name = "name")
     private String name;
 
     @XmlElementWrapper(name = "fields")
     @XmlElement(name = "field")
     @JsonProperty("fields")
-    private List<ModelFieldConfig> modelFields = new ArrayList<>();
+    private List<SchemaField> fields = new ArrayList<>();
 }

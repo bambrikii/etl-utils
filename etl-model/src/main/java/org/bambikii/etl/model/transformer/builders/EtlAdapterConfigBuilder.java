@@ -1,14 +1,13 @@
 package org.bambikii.etl.model.transformer.builders;
 
-import jakarta.xml.bind.JAXBException;
 import org.bambikii.etl.model.transformer.adapters.EtlFieldConversionPair;
 import org.bambikii.etl.model.transformer.adapters.EtlFieldExtractable;
 import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
 import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
 import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
-import org.bambikii.etl.model.transformer.config.model.ConversionRootConfig;
-import org.bambikii.etl.model.transformer.config.model.ModelFieldConfig;
-import org.bambikii.etl.model.transformer.config.model.ModelRootConfig;
+import org.bambikii.etl.model.transformer.mapping.model.MappingRoot;
+import org.bambikii.etl.model.transformer.schema.model.SchemaField;
+import org.bambikii.etl.model.transformer.schema.model.SchemaRoot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +22,8 @@ public class EtlAdapterConfigBuilder {
     protected final Map<String, EtlFieldReader> readerStrategies;
     protected final Map<String, EtlFieldWriter> writerStrategies;
 
-    protected ConversionRootConfig conversionRoot;
-    protected Map<String, LinkedHashMap<String, ModelFieldConfig>> modelFieldConfigs;
+    protected MappingRoot mappingRoot;
+    protected LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, SchemaField>>> schemaConfigs;
 
     public EtlAdapterConfigBuilder() {
         this.readerStrategies = new HashMap<>();
@@ -60,53 +59,65 @@ public class EtlAdapterConfigBuilder {
         return this;
     }
 
-    public EtlAdapterConfigBuilder modelConfig(ModelRootConfig modelRoot) {
-        Map<String, LinkedHashMap<String, ModelFieldConfig>> modelFieldConfigs = new HashMap<>();
+    public EtlAdapterConfigBuilder modelConfig(SchemaRoot modelRoot) {
+        LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, SchemaField>>> schemaConfigs = new LinkedHashMap<>();
         modelRoot
-                .getModelConfigs()
-                .forEach(modelConfig -> {
-                    LinkedHashMap<String, ModelFieldConfig> fieldConfigs = new LinkedHashMap<>();
-                    modelFieldConfigs.put(modelConfig.getName(), fieldConfigs);
-                    modelConfig
-                            .getModelFields()
-                            .forEach(fieldConfig -> fieldConfigs.put(fieldConfig.getName(), fieldConfig));
-                });
-        this.modelFieldConfigs = modelFieldConfigs;
+                .getSchemas()
+                .forEach(schema -> {
+                    String schemaName = schema.getName();
+                    if (!schemaConfigs.containsKey(schemaName)) {
+                        schemaConfigs.put(schemaName, new LinkedHashMap<>());
+                    }
+                    LinkedHashMap<String, LinkedHashMap<String, SchemaField>> modelFieldConfigs = schemaConfigs.get(schemaName);
+                    schema.getModels()
+                            .forEach(modelConfig -> {
+                                if (!modelFieldConfigs.containsKey(modelConfig.getName())) {
+                                    modelFieldConfigs.put(modelConfig.getName(), new LinkedHashMap<>());
+                                }
+                                LinkedHashMap<String, SchemaField> fieldConfigs = modelFieldConfigs.get(modelConfig.getName());
+                                modelFieldConfigs.put(modelConfig.getName(), fieldConfigs);
+                                modelConfig
+                                        .getFields()
+                                        .forEach(fieldConfig -> fieldConfigs.put(fieldConfig.getName(), fieldConfig));
+                            });
+                })
+        ;
+        this.schemaConfigs = schemaConfigs;
         return this;
     }
 
-    public EtlAdapterConfigBuilder conversionConfig(ConversionRootConfig conversionRoot) throws JAXBException {
-        this.conversionRoot = conversionRoot;
+    public EtlAdapterConfigBuilder mappingConfig(MappingRoot mappingRoot) {
+        this.mappingRoot = mappingRoot;
         return this;
     }
 
     public Map<String, EtlModelAdapter> buildMap() {
-        Map<String, EtlModelAdapter> converters = new HashMap<>();
-        conversionRoot
-                .getModelConversionConfigs()
-                .forEach(conversion -> {
-                    LinkedHashMap<String, ModelFieldConfig> sourceModelFieldConfig = modelFieldConfigs.get(conversion.getSourceModel());
-                    LinkedHashMap<String, ModelFieldConfig> targetModelFieldConfig = modelFieldConfigs.get(conversion.getTargetModel());
-                    String sourceReaderType = conversion.getSourceReaderType();
+        Map<String, EtlModelAdapter> maps = new HashMap<>();
+        mappingRoot
+                .getMappingModels()
+                .forEach(mappingModel -> {
+                    LinkedHashMap<String, SchemaField> sourceModelFieldConfig = schemaConfigs.get(mappingModel.getSourceSchema()).get(mappingModel.getSourceModel());
+                    LinkedHashMap<String, SchemaField> targetModelFieldConfig = schemaConfigs.get(mappingModel.getTargetSchema()).get(mappingModel.getTargetModel());
+                    String sourceReaderType = mappingModel.getSourceReaderType();
                     if (!readerStrategies.containsKey(sourceReaderType)) {
-                        throw new RuntimeException("Source conversion strategy [" + sourceReaderType + "] not found. Available strategies: [" + readerStrategies.keySet() + "]");
+                        throw new RuntimeException("Source mappingModel strategy [" + sourceReaderType + "] not found. Available strategies: [" + readerStrategies.keySet() + "]");
                     }
                     EtlFieldReader etlFieldReaderStrategy = readerStrategies.get(sourceReaderType);
-                    String targetReaderType = conversion.getTargetReaderType();
+                    String targetReaderType = mappingModel.getTargetReaderType();
                     if (!readerStrategies.containsKey(sourceReaderType)) {
-                        throw new RuntimeException("Target conversion strategy [" + targetReaderType + "] not found. Available strategies: [" + writerStrategies.keySet() + "]");
+                        throw new RuntimeException("Target mappingModel strategy [" + targetReaderType + "] not found. Available strategies: [" + writerStrategies.keySet() + "]");
                     }
                     EtlFieldWriter etlFieldWriterStrategy = writerStrategies.get(targetReaderType);
                     List<EtlFieldConversionPair> etlFieldConversionPairs = new ArrayList<>();
-                    conversion
+                    mappingModel
                             .getFields()
-                            .forEach(fieldConversionConfig -> {
-                                EtlFieldExtractable fieldReader = createFieldReader(sourceModelFieldConfig, targetModelFieldConfig, fieldConversionConfig, etlFieldReaderStrategy);
-                                EtlFieldLoadable fieldWriter = createFieldWriter(sourceModelFieldConfig, targetModelFieldConfig, fieldConversionConfig, etlFieldWriterStrategy);
+                            .forEach(mappingField -> {
+                                EtlFieldExtractable fieldReader = createFieldReader(sourceModelFieldConfig, targetModelFieldConfig, mappingField, etlFieldReaderStrategy);
+                                EtlFieldLoadable fieldWriter = createFieldWriter(sourceModelFieldConfig, targetModelFieldConfig, mappingField, etlFieldWriterStrategy);
                                 etlFieldConversionPairs.add(new EtlFieldConversionPair(fieldReader, fieldWriter));
                             });
-                    converters.put(conversion.getName(), new EtlModelAdapter(etlFieldConversionPairs));
+                    maps.put(mappingModel.getName(), new EtlModelAdapter(etlFieldConversionPairs));
                 });
-        return converters;
+        return maps;
     }
 }

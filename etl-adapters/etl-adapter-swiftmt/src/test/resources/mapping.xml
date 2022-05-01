@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<conversion-root>
-    <conversions>
-        <conversion name="conversion1" sourceModel="model1" sourceReaderType="swift-mt"
-                    targetReaderType="pojo">
+<mappings>
+    <mappings>
+        <mapping name="conversion1" sourceSchema="schema1" sourceModel="model1" sourceReaderType="swift-mt"
+                 targetSchema="schema1"
+                 targetReaderType="pojo">
             <fields>
                 <field source="A::20C:SEME:2" target="seme"/>
                 <field source="A::23G::1" target="function"/>
                 <field source="E[]::13A[]:CAON:2" target="linkedMessages"/>
             </fields>
-        </conversion>
-    </conversions>
-</conversion-root>
+        </mapping>
+    </mappings>
+</mappings>
