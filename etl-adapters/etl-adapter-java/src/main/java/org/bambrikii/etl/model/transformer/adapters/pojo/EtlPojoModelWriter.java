@@ -1,8 +1,8 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelWriter;
-import org.bambikii.etl.model.transformer.builders.EtlFieldWriter;
-import org.bambikii.etl.model.transformer.builders.EtlNamable;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelWriter;
+import org.bambrikii.etl.model.transformer.builders.EtlFieldWriter;
+import org.bambrikii.etl.model.transformer.builders.EtlNamable;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.resultsets.PojoStatement;
 
 import java.util.HashMap;

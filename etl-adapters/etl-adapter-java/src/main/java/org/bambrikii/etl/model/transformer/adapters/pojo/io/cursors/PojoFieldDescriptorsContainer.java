@@ -1,14 +1,14 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors;
 
-import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
-import org.bambikii.etl.model.transformer.cursors.AbstractFieldDescriptorsContainer;
+import org.bambrikii.etl.model.transformer.adapters.EtlRuntimeException;
+import org.bambrikii.etl.model.transformer.cursors.AbstractFieldDescriptorsContainer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.bambikii.etl.model.transformer.cursors.AbstractFieldDescriptor.ARRAY_SUFFIX;
+import static org.bambrikii.etl.model.transformer.cursors.AbstractFieldDescriptor.ARRAY_SUFFIX;
 
 public class PojoFieldDescriptorsContainer extends AbstractFieldDescriptorsContainer {
     public static final PojoFieldDescriptor NOT_AVAILABLE_FIELD_DESCRIPTOR = new PojoFieldDescriptor(null, null, -1, false, null);

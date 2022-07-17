@@ -1,8 +1,8 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors;
 
-import org.bambikii.etl.model.transformer.cursors.AbstractCursor;
-import org.bambikii.etl.model.transformer.cursors.AbstractCursorsContainer;
-import org.bambikii.etl.model.transformer.cursors.AbstractFieldDescriptor;
+import org.bambrikii.etl.model.transformer.cursors.AbstractCursor;
+import org.bambrikii.etl.model.transformer.cursors.AbstractCursorsContainer;
+import org.bambrikii.etl.model.transformer.cursors.AbstractFieldDescriptor;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

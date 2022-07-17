@@ -2,45 +2,10 @@ apply from: "../../gradle/publish.gradle"
 apply plugin: "java-library"
 
 dependencies {
-    compile project(":etl-model");
+    api(project(":etl-model"))
 
-    compile("com.prowidesoftware:pw-swift-core:SRU2019-8.0.2");
+    api("com.prowidesoftware:pw-swift-core:SRU2019-8.0.2")
 
-    testCompile project(":etl-adapters:etl-adapter-java");
-    testCompile("commons-io:commons-io:2.6");
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            pom.project {
-                name 'ETL Utils - SwiftMT'
-                packaging 'jar'
-                // optionally artifactId can be defined here
-                description 'Java (Reflection, Collections) Implementation of ETL Utils'
-                url 'https://github.com/bambrikii/etl-utils'
-
-                scm {
-                    connection 'scm:git:https://github.com/bambrikii/etl-utils.git'
-                    developerConnection 'scm:git:https://github.com/bambrikii/etl-utils.git'
-                    url 'https://github.com/bambrikii/etl-utils.git'
-                }
-
-                licenses {
-                    license {
-                        name 'GNU General Public License version 3'
-                        url 'https://opensource.org/licenses/GPL-3.0'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id 'alexander-arakelyan'
-                        name 'Alexander Arakelyan'
-                        email 'alexander.arakelyan@gmail.com'
-                    }
-                }
-            }
-        }
-    }
+    testImplementation(project(":etl-adapters:etl-adapter-java"))
+    testImplementation("commons-io:commons-io:2.6")
 }

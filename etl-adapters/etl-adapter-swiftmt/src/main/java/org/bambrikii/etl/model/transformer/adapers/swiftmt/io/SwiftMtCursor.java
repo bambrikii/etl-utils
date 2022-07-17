@@ -1,6 +1,6 @@
 package org.bambrikii.etl.model.transformer.adapers.swiftmt.io;
 
-import org.bambikii.etl.model.transformer.cursors.AbstractCursor;
+import org.bambrikii.etl.model.transformer.cursors.AbstractCursor;
 
 public class SwiftMtCursor extends AbstractCursor<SwiftMtNameElement, SwiftMtCursor, SwiftMtFieldDescriptor> {
     private final int size;

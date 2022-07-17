@@ -1,6 +1,6 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelReader;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelReader;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.resultsets.PojoResultSet;
 
 public class EtlPojoAdapterFactory {

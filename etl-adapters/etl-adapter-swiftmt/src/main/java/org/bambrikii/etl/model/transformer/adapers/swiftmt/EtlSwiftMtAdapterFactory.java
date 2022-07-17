@@ -1,7 +1,7 @@
 package org.bambrikii.etl.model.transformer.adapers.swiftmt;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelReader;
-import org.bambikii.etl.model.transformer.adapters.EtlModelWriter;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelReader;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelWriter;
 import org.bambrikii.etl.model.transformer.adapers.swiftmt.io.SwiftMtResultSet;
 import org.bambrikii.etl.model.transformer.adapers.swiftmt.io.SwiftMtStatement;
 

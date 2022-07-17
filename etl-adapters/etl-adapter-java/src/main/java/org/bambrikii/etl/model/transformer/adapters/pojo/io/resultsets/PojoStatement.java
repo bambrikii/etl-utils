@@ -1,6 +1,6 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo.io.resultsets;
 
-import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
+import org.bambrikii.etl.model.transformer.adapters.EtlRuntimeException;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.PojoFieldDescriptor;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.PojoFieldDescriptorsContainer;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.PojoWriteCursor;

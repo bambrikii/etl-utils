@@ -1,15 +1,13 @@
 package org.bambrikii.etl.model.transformer.adapters.yaml;
 
-import org.bambikii.etl.model.transformer.adapters.EtlFieldConversionPair;
-import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
+import org.bambrikii.etl.model.transformer.adapters.EtlFieldConversionPair;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelAdapter;
 import org.bambrikii.etl.model.transformer.adapters.pojo.EtlPojoAdapterFactory;
 import org.bambrikii.etl.model.transformer.adapters.pojo.EtlPojoFieldReader;
 import org.bambrikii.etl.model.transformer.adapters.pojo.EtlPojoFieldWriter;
 import org.bambrikii.etl.model.transformer.adapters.pojo.EtlPojoModelWriter;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
@@ -23,9 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.bambikii.etl.model.transformer.builders.EtlFieldReader.INT;
-import static org.bambikii.etl.model.transformer.builders.EtlFieldReader.MAP;
-import static org.bambikii.etl.model.transformer.builders.EtlFieldReader.STRING;
+import static org.bambrikii.etl.model.transformer.builders.EtlFieldReader.INT;
+import static org.bambrikii.etl.model.transformer.builders.EtlFieldReader.MAP;
+import static org.bambrikii.etl.model.transformer.builders.EtlFieldReader.STRING;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

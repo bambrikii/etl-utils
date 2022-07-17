@@ -1,6 +1,6 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo;
 
-import org.bambikii.etl.model.transformer.adapters.EtlRuntimeException;
+import org.bambrikii.etl.model.transformer.adapters.EtlRuntimeException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

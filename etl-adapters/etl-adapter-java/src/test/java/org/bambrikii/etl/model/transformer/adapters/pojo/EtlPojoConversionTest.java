@@ -1,7 +1,7 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelReader;
-import org.bambikii.etl.model.transformer.builders.TransformBuilder;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelReader;
+import org.bambrikii.etl.model.transformer.builders.TransformBuilder;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.resultsets.PojoResultSet;
 import org.junit.jupiter.api.Test;
 

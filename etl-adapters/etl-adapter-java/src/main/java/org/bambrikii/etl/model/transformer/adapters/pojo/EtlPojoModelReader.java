@@ -1,8 +1,8 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelReader;
-import org.bambikii.etl.model.transformer.builders.EtlFieldReader;
-import org.bambikii.etl.model.transformer.builders.EtlNamable;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelReader;
+import org.bambrikii.etl.model.transformer.builders.EtlFieldReader;
+import org.bambrikii.etl.model.transformer.builders.EtlNamable;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.resultsets.PojoResultSet;
 
 public class EtlPojoModelReader implements EtlModelReader<PojoResultSet>, EtlNamable {

@@ -1,6 +1,6 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors;
 
-import org.bambikii.etl.model.transformer.cursors.AbstractCursor;
+import org.bambrikii.etl.model.transformer.cursors.AbstractCursor;
 
 public class PojoReadCursor extends AbstractCursor<String, PojoReadCursor, PojoFieldDescriptor> {
     private final int size;

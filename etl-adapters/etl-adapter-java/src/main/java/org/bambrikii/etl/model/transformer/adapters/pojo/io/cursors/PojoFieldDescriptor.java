@@ -1,6 +1,6 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors;
 
-import org.bambikii.etl.model.transformer.cursors.AbstractFieldDescriptor;
+import org.bambrikii.etl.model.transformer.cursors.AbstractFieldDescriptor;
 
 public class PojoFieldDescriptor extends AbstractFieldDescriptor<String, PojoFieldDescriptor> {
     private final int namePos;

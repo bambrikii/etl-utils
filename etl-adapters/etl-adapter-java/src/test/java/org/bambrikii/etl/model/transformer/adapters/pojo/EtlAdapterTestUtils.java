@@ -1,16 +1,16 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo;
 
-import org.bambikii.etl.model.transformer.adapters.EtlFieldConversionPair;
-import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
-import org.bambikii.etl.model.transformer.builders.EtlFieldReader;
-import org.bambikii.etl.model.transformer.builders.EtlFieldWriter;
+import org.bambrikii.etl.model.transformer.adapters.EtlFieldConversionPair;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelAdapter;
+import org.bambrikii.etl.model.transformer.builders.EtlFieldReader;
+import org.bambrikii.etl.model.transformer.builders.EtlFieldWriter;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.bambikii.etl.model.transformer.builders.EtlFieldReader.INT;
-import static org.bambikii.etl.model.transformer.builders.EtlFieldReader.STRING;
+import static org.bambrikii.etl.model.transformer.builders.EtlFieldReader.INT;
+import static org.bambrikii.etl.model.transformer.builders.EtlFieldReader.STRING;
 
 public class EtlAdapterTestUtils {
     public static EtlModelAdapter createTestAdapter(

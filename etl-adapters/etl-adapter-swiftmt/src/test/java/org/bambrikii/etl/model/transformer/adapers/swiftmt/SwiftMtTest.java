@@ -2,12 +2,12 @@ package org.bambrikii.etl.model.transformer.adapers.swiftmt;
 
 import jakarta.xml.bind.JAXBException;
 import org.apache.commons.io.IOUtils;
-import org.bambikii.etl.model.transformer.adapters.EtlModelReader;
-import org.bambikii.etl.model.transformer.builders.TransformBuilder;
-import org.bambikii.etl.model.transformer.mapping.EtlMappingXmlMarshaller;
-import org.bambikii.etl.model.transformer.schema.EtlSchemaXmlMarshaller;
-import org.bambikii.etl.model.transformer.mapping.model.MappingRoot;
-import org.bambikii.etl.model.transformer.schema.model.SchemaRoot;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelReader;
+import org.bambrikii.etl.model.transformer.builders.TransformBuilder;
+import org.bambrikii.etl.model.transformer.mapping.EtlMappingXmlMarshaller;
+import org.bambrikii.etl.model.transformer.schema.EtlSchemaXmlMarshaller;
+import org.bambrikii.etl.model.transformer.mapping.model.MappingRoot;
+import org.bambrikii.etl.model.transformer.schema.model.SchemaRoot;
 import org.bambrikii.etl.model.transformer.adapers.swiftmt.io.SwiftMtResultSet;
 import org.bambrikii.etl.model.transformer.adapters.pojo.EtlPojoAdapterFactory;
 import org.bambrikii.etl.model.transformer.adapters.pojo.EtlPojoModelWriter;
@@ -31,11 +31,11 @@ public class SwiftMtTest {
         EtlPojoModelWriter pojoOutputFactory = EtlPojoAdapterFactory.createPojoWriter();
 
         SchemaRoot models = EtlSchemaXmlMarshaller.unmarshalModelConfig(SwiftMtTest.class.getResourceAsStream("/schema.xml"));
-        MappingRoot conversions = EtlMappingXmlMarshaller.unmarshalConversionConfig(SwiftMtTest.class.getResourceAsStream("/mapping.xml"));
+        MappingRoot mappings = EtlMappingXmlMarshaller.unmarshalConversionConfig(SwiftMtTest.class.getResourceAsStream("/mapping.xml"));
 
         TransformBuilder
-                .of(swiftMtInputAdapter, pojoOutputFactory, models, conversions)
-                .fieldsByMapping("conversion1")
+                .of(swiftMtInputAdapter, pojoOutputFactory, models, mappings)
+                .mapping("conversion1")
                 .transform();
 
         Object result = pojoOutputFactory.getTarget();

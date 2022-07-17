@@ -1,6 +1,6 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors;
 
-import org.bambikii.etl.model.transformer.cursors.AbstractCursorsContainer;
+import org.bambrikii.etl.model.transformer.cursors.AbstractCursorsContainer;
 
 public class PojoWriteCursorsContainer extends AbstractCursorsContainer<String, PojoWriteCursor, PojoFieldDescriptor> {
     @Override

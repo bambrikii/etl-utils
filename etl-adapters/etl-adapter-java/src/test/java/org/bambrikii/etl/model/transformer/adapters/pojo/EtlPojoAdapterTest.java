@@ -1,6 +1,6 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelAdapter;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

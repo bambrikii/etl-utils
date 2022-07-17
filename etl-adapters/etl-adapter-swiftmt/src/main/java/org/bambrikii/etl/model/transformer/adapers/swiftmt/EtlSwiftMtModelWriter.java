@@ -1,8 +1,8 @@
 package org.bambrikii.etl.model.transformer.adapers.swiftmt;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelWriter;
-import org.bambikii.etl.model.transformer.builders.EtlFieldWriter;
-import org.bambikii.etl.model.transformer.builders.EtlNamable;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelWriter;
+import org.bambrikii.etl.model.transformer.builders.EtlFieldWriter;
+import org.bambrikii.etl.model.transformer.builders.EtlNamable;
 import org.bambrikii.etl.model.transformer.adapers.swiftmt.io.SwiftMtStatement;
 
 import static org.bambrikii.etl.model.transformer.adapers.swiftmt.EtlSwiftMtModelReader.ETL_SWIFT_MT_NAME;

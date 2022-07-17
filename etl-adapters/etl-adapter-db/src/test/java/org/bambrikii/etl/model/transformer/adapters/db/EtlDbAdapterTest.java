@@ -1,11 +1,11 @@
 package org.bambrikii.etl.model.transformer.adapters.db;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelAdapter;
-import org.bambikii.etl.model.transformer.builders.EtlAdapterConfigBuilder;
-import org.bambikii.etl.model.transformer.mapping.EtlMappingYmlMarshaller;
-import org.bambikii.etl.model.transformer.schema.EtlSchemaYmlMarshaller;
-import org.bambikii.etl.model.transformer.mapping.model.MappingRoot;
-import org.bambikii.etl.model.transformer.schema.model.SchemaRoot;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelAdapter;
+import org.bambrikii.etl.model.transformer.builders.EtlAdapterConfigBuilder;
+import org.bambrikii.etl.model.transformer.mapping.EtlMappingYmlMarshaller;
+import org.bambrikii.etl.model.transformer.schema.EtlSchemaYmlMarshaller;
+import org.bambrikii.etl.model.transformer.mapping.model.MappingRoot;
+import org.bambrikii.etl.model.transformer.schema.model.SchemaRoot;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

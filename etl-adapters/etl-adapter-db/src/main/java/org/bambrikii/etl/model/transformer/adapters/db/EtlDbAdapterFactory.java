@@ -1,9 +1,9 @@
 package org.bambrikii.etl.model.transformer.adapters.db;
 
-import org.bambikii.etl.model.transformer.adapters.EtlModelReader;
-import org.bambikii.etl.model.transformer.adapters.EtlModelWriter;
-import org.bambikii.etl.model.transformer.builders.EtlFieldReader;
-import org.bambikii.etl.model.transformer.builders.EtlFieldWriter;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelReader;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelWriter;
+import org.bambrikii.etl.model.transformer.builders.EtlFieldReader;
+import org.bambrikii.etl.model.transformer.builders.EtlFieldWriter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

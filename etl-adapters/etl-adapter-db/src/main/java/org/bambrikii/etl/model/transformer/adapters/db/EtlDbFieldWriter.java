@@ -1,8 +1,8 @@
 package org.bambrikii.etl.model.transformer.adapters.db;
 
-import org.bambikii.etl.model.transformer.adapters.EtlFieldLoadable;
-import org.bambikii.etl.model.transformer.builders.EtlFieldWriter;
-import org.bambikii.etl.model.transformer.builders.EtlNamable;
+import org.bambrikii.etl.model.transformer.adapters.EtlFieldLoadable;
+import org.bambrikii.etl.model.transformer.builders.EtlFieldWriter;
+import org.bambrikii.etl.model.transformer.builders.EtlNamable;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

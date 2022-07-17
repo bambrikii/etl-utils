@@ -3,8 +3,8 @@ package org.bambrikii.etl.model.transformer.adapers.swiftmt.io;
 import com.prowidesoftware.swift.model.SwiftTagListBlock;
 import com.prowidesoftware.swift.model.field.Field;
 import com.prowidesoftware.swift.model.mt.AbstractMT;
-import org.bambikii.etl.model.transformer.cursors.AbstractResultSet;
-import org.bambikii.etl.model.transformer.utils.StringUtils;
+import org.bambrikii.etl.model.transformer.cursors.AbstractResultSet;
+import org.bambrikii.etl.model.transformer.utils.StringUtils;
 
 import java.util.List;
 

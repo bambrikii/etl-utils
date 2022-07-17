@@ -3,44 +3,9 @@ apply from: "${rootDir}/gradle/libraries.gradle"
 apply plugin: "java-library"
 
 dependencies {
-    compile project(":etl-model")
+    api(project(":etl-model"))
 
-    compile("com.h2database:h2:$h2dbVersion")
-    compile(libs.jakarta.jaxb.api)
-    compile(libs.jakarta.jaxb.impl)
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            pom.project {
-                name 'ETL Utils - DB'
-                packaging 'jar'
-                // optionally artifactId can be defined here
-                description 'DB Implementation of ETL Utils'
-                url 'https://github.com/bambrikii/etl-utils'
-
-                scm {
-                    connection 'scm:git:https://github.com/bambrikii/etl-utils.git'
-                    developerConnection 'scm:git:https://github.com/bambrikii/etl-utils.git'
-                    url 'https://github.com/bambrikii/etl-utils.git'
-                }
-
-                licenses {
-                    license {
-                        name 'GNU General Public License version 3'
-                        url 'https://opensource.org/licenses/GPL-3.0'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id 'alexander-arakelyan'
-                        name 'Alexander Arakelyan'
-                        email 'alexander.arakelyan@gmail.com'
-                    }
-                }
-            }
-        }
-    }
+    api("com.h2database:h2:$h2dbVersion")
+    api(libs.jakarta.jaxb.api)
+    api(libs.jakarta.jaxb.impl)
 }

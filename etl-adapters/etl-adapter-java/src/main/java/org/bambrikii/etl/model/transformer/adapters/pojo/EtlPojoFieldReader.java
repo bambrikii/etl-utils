@@ -1,8 +1,8 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo;
 
-import org.bambikii.etl.model.transformer.adapters.EtlFieldExtractable;
-import org.bambikii.etl.model.transformer.builders.EtlFieldReader;
-import org.bambikii.etl.model.transformer.builders.EtlNamable;
+import org.bambrikii.etl.model.transformer.adapters.EtlFieldExtractable;
+import org.bambrikii.etl.model.transformer.builders.EtlFieldReader;
+import org.bambrikii.etl.model.transformer.builders.EtlNamable;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.resultsets.PojoResultSet;
 
 import java.util.Map;

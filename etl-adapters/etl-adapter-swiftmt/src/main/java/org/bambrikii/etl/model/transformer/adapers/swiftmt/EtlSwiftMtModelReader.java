@@ -2,9 +2,9 @@ package org.bambrikii.etl.model.transformer.adapers.swiftmt;
 
 import com.prowidesoftware.swift.model.SwiftMessage;
 import com.prowidesoftware.swift.model.mt.AbstractMT;
-import org.bambikii.etl.model.transformer.adapters.EtlModelReader;
-import org.bambikii.etl.model.transformer.builders.EtlFieldReader;
-import org.bambikii.etl.model.transformer.builders.EtlNamable;
+import org.bambrikii.etl.model.transformer.adapters.EtlModelReader;
+import org.bambrikii.etl.model.transformer.builders.EtlFieldReader;
+import org.bambrikii.etl.model.transformer.builders.EtlNamable;
 import org.bambrikii.etl.model.transformer.adapers.swiftmt.io.SwiftMtResultSet;
 
 import java.io.IOException;

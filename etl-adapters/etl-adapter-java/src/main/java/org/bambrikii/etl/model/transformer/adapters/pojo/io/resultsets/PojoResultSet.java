@@ -1,8 +1,8 @@
 package org.bambrikii.etl.model.transformer.adapters.pojo.io.resultsets;
 
-import org.bambikii.etl.model.transformer.cursors.AbstractCursor;
-import org.bambikii.etl.model.transformer.cursors.AbstractResultSet;
-import org.bambikii.etl.model.transformer.cursors.ReadStatusEnum;
+import org.bambrikii.etl.model.transformer.cursors.AbstractCursor;
+import org.bambrikii.etl.model.transformer.cursors.AbstractResultSet;
+import org.bambrikii.etl.model.transformer.cursors.ReadStatusEnum;
 import org.bambrikii.etl.model.transformer.adapters.pojo.ReflectionUtils;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.PojoFieldDescriptor;
 import org.bambrikii.etl.model.transformer.adapters.pojo.io.cursors.PojoFieldDescriptorsContainer;

@@ -1,11 +1,11 @@
 package org.bambrikii.etl.model.transformer.adapers.swiftmt.io;
 
-import org.bambikii.etl.model.transformer.cursors.AbstractFieldDescriptorsContainer;
+import org.bambrikii.etl.model.transformer.cursors.AbstractFieldDescriptorsContainer;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.bambikii.etl.model.transformer.cursors.AbstractFieldDescriptor.ARRAY_SUFFIX;
+import static org.bambrikii.etl.model.transformer.cursors.AbstractFieldDescriptor.ARRAY_SUFFIX;
 import static org.bambrikii.etl.model.transformer.adapers.swiftmt.io.SwiftMtNameType.BLOCK;
 import static org.bambrikii.etl.model.transformer.adapers.swiftmt.io.SwiftMtNameType.COMPONENT;
 import static org.bambrikii.etl.model.transformer.adapers.swiftmt.io.SwiftMtNameType.SEQUENCE;
